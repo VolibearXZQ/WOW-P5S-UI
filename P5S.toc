@@ -1,0 +1,16 @@
+## Interface: 120100
+## Title: P5S
+## Notes: 女神异闻录5 魅影攻手风格的玩家界面、目标姓名板与技能语音
+## Author: XZQ
+## Version: 1.0
+## SavedVariablesPerCharacter: P5S_UI_DB, P5_NameplateDB, P5S_Voice_DB
+
+P5S_UI\PanelTheme.lua
+P5S_UI\core.lua
+P5S_UI\BuffOptions.lua
+P5S_UI\BuffRuntime.lua
+P5S_UI\WeakOptions.lua
+P5S_UI\WeakRuntime.lua
+P5_Nameplate\Core.lua
+P5_Voice\AudioCatalog.lua
+P5_Voice\Voice.lua

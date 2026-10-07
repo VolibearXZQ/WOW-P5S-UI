@@ -1,0 +1,9 @@
+## Interface: 120100
+## Title: P5S UI
+## Notes: 魅影攻手风格的血条与能量条
+## Author: XZQ
+## Version: 1.0
+## SavedVariablesPerCharacter: P5S_UI_DB
+
+PanelTheme.lua
+core.lua

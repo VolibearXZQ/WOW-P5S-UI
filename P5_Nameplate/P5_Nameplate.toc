@@ -1,0 +1,8 @@
+## Interface: 120000
+## Title: P5_Nameplate
+## Notes: 还原女神异闻录5风格的目标姓名板
+## Author: XZQ
+## Version: 1.1
+## SavedVariablesPerCharacter: P5_NameplateDB
+
+Core.lua

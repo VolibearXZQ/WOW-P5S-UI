@@ -4,6 +4,7 @@
 ## Author: XZQ
 ## Version: 1.0.0
 ## SavedVariablesPerCharacter: P5S_UI_DB, P5_NameplateDB, P5S_Voice_DB
+## IconTexture: Interface\AddOns\P5S\P5S_UI\Media\P5S_Icon.tga
 
 P5S_UI\PanelTheme.lua
 P5S_UI\core.lua

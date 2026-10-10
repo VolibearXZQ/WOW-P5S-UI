@@ -332,7 +332,7 @@ do
 
     function fire:CreateControl(section)
         self.check = CreateFrame("CheckButton", "P5S_ShowtimeFireEnabled", section, "UICheckButtonTemplate")
-        self.check:SetPoint("TOPLEFT", section, "TOPLEFT", 18, -217)
+        self.check:SetPoint("TOPLEFT", section, "TOPLEFT", 18, -183)
         self:RefreshControl()
         self.check:SetScript("OnClick", function(control)
             if not P5S_UI_DB then return end
@@ -423,7 +423,6 @@ local runtimeShowtimeSpellID = nil
 local runtimeShowtimeSpellName = nil
 local showtimeResolutionWarning = nil
 
-local showtimeEnabledCheck
 local showtimeSpellInput
 local showtimeBurstInput
 local showtimeCooldownInput
@@ -967,6 +966,7 @@ local function ResolveSavedShowtimeSpell()
         runtimeShowtimeSpellID = nil
         runtimeShowtimeSpellName = nil
         P5S_UI_DB.showtimeSpellID = nil
+        P5S_UI_DB.showtimeEnabled = false
         showtimeResolutionWarning = nil
         RefreshShowtimeStatusText()
         return false
@@ -977,6 +977,7 @@ local function ResolveSavedShowtimeSpell()
         runtimeShowtimeSpellID = spellID
         runtimeShowtimeSpellName = spellName or GetShowtimeSpellName(spellID)
         P5S_UI_DB.showtimeSpellID = spellID
+        P5S_UI_DB.showtimeEnabled = true
         showtimeResolutionWarning = nil
         RefreshShowtimeStatusText()
         return true
@@ -992,6 +993,7 @@ local function ResolveSavedShowtimeSpell()
         runtimeShowtimeSpellName = nil
         showtimeResolutionWarning = "技能无法识别；建议改用 Spell ID。"
     end
+    P5S_UI_DB.showtimeEnabled = runtimeShowtimeSpellID ~= nil
     RefreshShowtimeStatusText()
     return runtimeShowtimeSpellID ~= nil
 end
@@ -2437,7 +2439,7 @@ end)
 -- 5. 创建设置面板 (GUI)
 -- ==========================================
 local OptionsPanel = CreateFrame("Frame", "P5S_OptionsPanel", UIParent, "BackdropTemplate")
-OptionsPanel:SetSize(700, 854)
+OptionsPanel:SetSize(700, 820)
 OptionsPanel:SetPoint("CENTER")
 OptionsPanel:SetClampedToScreen(true)
 OptionsPanel:Hide()
@@ -2534,7 +2536,7 @@ end
 
 local appearanceSection = CreateSettingsSection(-116, 180, "Joker 资源条", "显示生命、法力/能量及职业专属资源。")
 local indicatorSection = CreateSettingsSection(-308, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
-local showtimeSection = CreateSettingsSection(-552, 266, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
+local showtimeSection = CreateSettingsSection(-552, 232, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
 
 do
     local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -2811,22 +2813,14 @@ local function InstallShowtimeSpellLinkInputHook()
     end)
 end
 
-showtimeEnabledCheck = CreateFrame("CheckButton", "P5S_ShowtimeEnabled", showtimeSection, "UICheckButtonTemplate")
-showtimeEnabledCheck:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 18, -35)
-_G[showtimeEnabledCheck:GetName() .. "Text"]:SetText("启用技能联动")
-showtimeEnabledCheck:SetScript("OnClick", function()
-    if CommitShowtimeOptions then CommitShowtimeOptions(true) end
-end)
-ApplyPanelTheme("StyleCheckBox", showtimeEnabledCheck)
-
 local showtimeSpellLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-showtimeSpellLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -76)
+showtimeSpellLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -42)
 showtimeSpellLabel:SetText("爆发技能")
 ApplyPanelTheme("StyleBodyText", showtimeSpellLabel)
 
 showtimeSpellInput = CreateFrame("EditBox", "P5S_ShowtimeSpellInput", showtimeSection, "InputBoxTemplate")
 showtimeSpellInput:SetSize(300, 25)
-showtimeSpellInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -69)
+showtimeSpellInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -35)
 showtimeSpellInput:SetAutoFocus(false)
 showtimeSpellInput:SetMaxLetters(255)
 showtimeSpellInput:SetScript("OnEnterPressed", function(self)
@@ -2843,21 +2837,13 @@ showtimeSpellInput:SetScript("OnEditFocusGained", function(self)
 end)
 showtimeSpellInput:SetScript("OnEditFocusLost", function(self)
     if activeShowtimeSpellInput == self then activeShowtimeSpellInput = nil end
+    if CommitShowtimeOptions then CommitShowtimeOptions(true) end
 end)
 ApplyPanelTheme("StyleEditBox", showtimeSpellInput)
 
-local showtimeApplyButton = CreateFrame("Button", "P5S_ShowtimeApplyButton", showtimeSection, "UIPanelButtonTemplate")
-showtimeApplyButton:SetSize(64, 26)
-showtimeApplyButton:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 418, -69)
-showtimeApplyButton:SetText("应用")
-showtimeApplyButton:SetScript("OnClick", function()
-    if CommitShowtimeOptions then CommitShowtimeOptions(false) end
-end)
-ApplyPanelTheme("StyleButton", showtimeApplyButton)
-
 local showtimePreviewButton = CreateFrame("Button", "P5S_ShowtimePreviewButton", showtimeSection, "UIPanelButtonTemplate")
 showtimePreviewButton:SetSize(76, 26)
-showtimePreviewButton:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 488, -69)
+showtimePreviewButton:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 418, -35)
 showtimePreviewButton:SetText("快速预览")
 showtimePreviewButton:SetScript("OnClick", function()
     if IsRealShowtimeCycleActive() then
@@ -2870,20 +2856,20 @@ end)
 ApplyPanelTheme("StyleButton", showtimePreviewButton)
 
 showtimeStatusText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-showtimeStatusText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -101)
+showtimeStatusText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -67)
 showtimeStatusText:SetWidth(450)
 showtimeStatusText:SetJustifyH("LEFT")
 showtimeStatusText:SetText("尚未绑定技能")
 ApplyPanelTheme("StyleMutedText", showtimeStatusText)
 
 local showtimeBurstLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-showtimeBurstLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -134)
+showtimeBurstLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -100)
 showtimeBurstLabel:SetText("爆发持续")
 ApplyPanelTheme("StyleBodyText", showtimeBurstLabel)
 
 showtimeBurstInput = CreateFrame("EditBox", "P5S_ShowtimeBurstInput", showtimeSection, "InputBoxTemplate")
 showtimeBurstInput:SetSize(62, 24)
-showtimeBurstInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -127)
+showtimeBurstInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -93)
 showtimeBurstInput:SetAutoFocus(false)
 showtimeBurstInput:SetJustifyH("CENTER")
 showtimeBurstInput:SetMaxLetters(8)
@@ -2895,13 +2881,13 @@ showtimeBurstUnit:SetText("秒")
 ApplyPanelTheme("StyleMutedText", showtimeBurstUnit)
 
 local showtimeCooldownLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-showtimeCooldownLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 232, -134)
+showtimeCooldownLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 232, -100)
 showtimeCooldownLabel:SetText("技能总冷却")
 ApplyPanelTheme("StyleBodyText", showtimeCooldownLabel)
 
 showtimeCooldownInput = CreateFrame("EditBox", "P5S_ShowtimeCooldownInput", showtimeSection, "InputBoxTemplate")
 showtimeCooldownInput:SetSize(70, 24)
-showtimeCooldownInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 338, -127)
+showtimeCooldownInput:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 338, -93)
 showtimeCooldownInput:SetAutoFocus(false)
 showtimeCooldownInput:SetJustifyH("CENTER")
 showtimeCooldownInput:SetMaxLetters(8)
@@ -2918,6 +2904,12 @@ local function CommitShowtimeNumericInput(self)
 end
 showtimeBurstInput:SetScript("OnEnterPressed", CommitShowtimeNumericInput)
 showtimeCooldownInput:SetScript("OnEnterPressed", CommitShowtimeNumericInput)
+showtimeBurstInput:HookScript("OnEditFocusLost", function()
+    if CommitShowtimeOptions then CommitShowtimeOptions(true) end
+end)
+showtimeCooldownInput:HookScript("OnEditFocusLost", function()
+    if CommitShowtimeOptions then CommitShowtimeOptions(true) end
+end)
 showtimeBurstInput:SetScript("OnEscapePressed", function(self)
     if P5S_UI_DB then self:SetText(FormatShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration)) end
     self:ClearFocus()
@@ -2927,8 +2919,28 @@ showtimeCooldownInput:SetScript("OnEscapePressed", function(self)
     self:ClearFocus()
 end)
 
+-- 只监听面板打开期间的点击；Shift+点击仍留给技能链接输入。
+local showtimeInputs = { showtimeSpellInput, showtimeBurstInput, showtimeCooldownInput }
+OptionsPanel:HookScript("OnShow", function(self)
+    self:RegisterEvent("GLOBAL_MOUSE_DOWN")
+end)
+OptionsPanel:HookScript("OnHide", function(self)
+    self:UnregisterEvent("GLOBAL_MOUSE_DOWN")
+    for _, input in ipairs(showtimeInputs) do input:ClearFocus() end
+end)
+OptionsPanel:HookScript("OnEvent", function(_, event)
+    if event ~= "GLOBAL_MOUSE_DOWN" then return end
+    for _, input in ipairs(showtimeInputs) do
+        if input:HasFocus() and not input:IsMouseOver()
+            and not (input == showtimeSpellInput and IsShiftKeyDown())
+        then
+            input:ClearFocus()
+        end
+    end
+end)
+
 local showtimeHelpText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-showtimeHelpText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -171)
+showtimeHelpText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -137)
 showtimeHelpText:SetWidth(540)
 showtimeHelpText:SetJustifyH("LEFT")
 showtimeHelpText:SetText("总冷却从施放算起且不短于爆发；普通技能提前转好时用 0.5 秒补全。充能技能首版仅按手填时间。预览：3 秒 / 8 秒。")
@@ -2943,7 +2955,7 @@ do
     local aboutFailed = false
     local aboutButton = CreateFrame("Button", nil, showtimeSection, "UIPanelButtonTemplate")
     aboutButton:SetSize(90, 26)
-    aboutButton:SetPoint("TOPRIGHT", showtimeSection, "TOPRIGHT", -22, -220)
+    aboutButton:SetPoint("TOPRIGHT", showtimeSection, "TOPRIGHT", -22, -186)
     ApplyPanelTheme("StyleButton", aboutButton)
     aboutButton:SetText("关于")
 
@@ -3157,34 +3169,49 @@ local function ApplyShowtimeSpellInput(inputText)
     return false
 end
 
-RefreshShowtimeOptionControls = function()
+RefreshShowtimeOptionControls = function(force)
     if not P5S_UI_DB then return end
     P5SFrame.firePreview:RefreshControl()
-    showtimeEnabledCheck:SetChecked(P5S_UI_DB.showtimeEnabled and true or false)
-    showtimeSpellInput:SetText(P5S_UI_DB.showtimeSpellInput or "")
-    showtimeBurstInput:SetText(FormatShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration))
-    showtimeCooldownInput:SetText(FormatShowtimeSeconds(P5S_UI_DB.showtimeCooldownDuration))
+    if force or not showtimeSpellInput:HasFocus() then
+        showtimeSpellInput:SetText(P5S_UI_DB.showtimeSpellInput or "")
+    end
+    if force or not showtimeBurstInput:HasFocus() then
+        showtimeBurstInput:SetText(FormatShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration))
+    end
+    if force or not showtimeCooldownInput:HasFocus() then
+        showtimeCooldownInput:SetText(FormatShowtimeSeconds(P5S_UI_DB.showtimeCooldownDuration))
+    end
     RefreshShowtimeStatusText()
 end
 
 CommitShowtimeOptions = function(silent)
     if not P5S_UI_DB then return false end
+    -- 回车后的失焦、关闭和预览可能连续提交；无编辑时不重复解析或重置周期。
+    if showtimeSpellInput:GetText() == (P5S_UI_DB.showtimeSpellInput or "")
+        and showtimeBurstInput:GetText() == FormatShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration)
+        and showtimeCooldownInput:GetText() == FormatShowtimeSeconds(P5S_UI_DB.showtimeCooldownDuration)
+    then
+        return true
+    end
 
     local oldEnabled = P5S_UI_DB.showtimeEnabled and true or false
     local oldSpellID = runtimeShowtimeSpellID
     local oldBurstDuration = P5S_UI_DB.showtimeBurstDuration
     local oldCooldownDuration = P5S_UI_DB.showtimeCooldownDuration
 
-    local enabled = showtimeEnabledCheck:GetChecked() and true or false
     local burstDuration = GetValidatedShowtimeSeconds(showtimeBurstInput:GetText(), oldBurstDuration or 15)
     local cooldownDuration = GetValidatedShowtimeSeconds(showtimeCooldownInput:GetText(), oldCooldownDuration or 120)
     if cooldownDuration < burstDuration then cooldownDuration = burstDuration end
     local inputText = TrimShowtimeText(showtimeSpellInput:GetText())
 
-    P5S_UI_DB.showtimeEnabled = enabled
     P5S_UI_DB.showtimeBurstDuration = burstDuration
     P5S_UI_DB.showtimeCooldownDuration = cooldownDuration
-    local resolved = ApplyShowtimeSpellInput(inputText)
+    local resolved = true
+    if inputText ~= (P5S_UI_DB.showtimeSpellInput or "") or not runtimeShowtimeSpellID then
+        resolved = ApplyShowtimeSpellInput(inputText)
+    end
+    local enabled = runtimeShowtimeSpellID ~= nil
+    P5S_UI_DB.showtimeEnabled = enabled
 
     local changed = oldEnabled ~= enabled
         or oldSpellID ~= runtimeShowtimeSpellID
@@ -3196,7 +3223,7 @@ CommitShowtimeOptions = function(silent)
     else
         RefreshShowtimeStatusText()
     end
-    RefreshShowtimeOptionControls()
+    RefreshShowtimeOptionControls(true)
 
     if not silent then
         if resolved and runtimeShowtimeSpellID then
@@ -3213,7 +3240,7 @@ end
 
 OptionsPanel:HookScript("OnShow", function()
     -- 放大后的面板在较小 UI 尺寸下等比缩小，保留所有底部控件。
-    OptionsPanel:SetScale(math.min(1, UIParent:GetWidth() / 740, UIParent:GetHeight() / 894))
+    OptionsPanel:SetScale(math.min(1, UIParent:GetWidth() / 740, UIParent:GetHeight() / 860))
     P5SFrame:ApplyResourceBarVisibility()
     P5SFrame.thirdResource:RefreshOptionControls()
     if RefreshShowtimeOptionControls then RefreshShowtimeOptionControls() end
@@ -3269,7 +3296,7 @@ EventFrame:SetScript("OnEvent", function(self, event, ...)
         if P5S_UI_DB.stBreathDur == nil then P5S_UI_DB.stBreathDur = 1.0 end
 
         -- Showtime 爆发槽使用独立字段；总冷却从成功施放时开始计算。
-        if P5S_UI_DB.showtimeEnabled == nil then P5S_UI_DB.showtimeEnabled = false end
+        -- showtimeEnabled 保留兼容字段，由下方技能解析结果自动同步。
         if type(P5S_UI_DB.showtimeFireEnabled) ~= "boolean" then P5S_UI_DB.showtimeFireEnabled = true end
         if type(P5S_UI_DB.showtimeSpellInput) ~= "string" then P5S_UI_DB.showtimeSpellInput = "" end
         if P5S_UI_DB.showtimeBurstDuration == nil then P5S_UI_DB.showtimeBurstDuration = 15 end

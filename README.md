@@ -35,11 +35,10 @@ P5S 是一款为《魔兽世界》正式服制作的粉丝创作 UI 插件，灵
 ![P5S 主界面](screenshots/main-ui.png)
 
 **战斗特效**
-![P5S 战斗特效]
-(screenshots/combat1.png)
-(screenshots/combat2.png)
-(screenshots/combat3.png)
-(screenshots/combat4.png)
+![P5S 战斗特效1](screenshots/combat1.png)
+![P5S 战斗特效2](screenshots/combat2.png)
+![P5S 战斗特效3](screenshots/combat3.png)
+![P5S 战斗特效4](screenshots/combat4.png)
 
 **设置面板**
 ![P5S 设置面板](screenshots/settings.png)

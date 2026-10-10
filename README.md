@@ -3,7 +3,7 @@
 **《女神异闻录》风格的《魔兽世界》正式服界面插件。**  
 *A Persona-inspired UI addon for World of Warcraft Retail.*
 
-**版本 / Version:** 1.0  
+**版本 / Version:** 1.0.0
 **作者 / Creator:** 难刷素材的XZQ (VolibearXZQ)  
 **游戏版本 / Game:** World of Warcraft Retail（当前 `.toc` 接口号 / current `.toc` interface: `120100`）
 
@@ -107,7 +107,17 @@ Behavior may vary across classes and game versions. Some features are subject to
 
 ### Screenshots
 
-In-game screenshots will be added in a future update.
+**Main Frame**
+![P5S 主界面](screenshots/main-ui.png)
+
+**Combat**
+![P5S 战斗特效1](screenshots/combat1.png)
+![P5S 战斗特效2](screenshots/combat2.png)
+![P5S 战斗特效3](screenshots/combat3.png)
+![P5S 战斗特效4](screenshots/combat4.png)
+
+**Settings**
+![P5S 设置面板](screenshots/settings.png)
 
 ### Installation
 

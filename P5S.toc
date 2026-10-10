@@ -2,7 +2,7 @@
 ## Title: P5S
 ## Notes: 女神异闻录5 魅影攻手风格的玩家界面、目标姓名板与技能语音
 ## Author: XZQ
-## Version: 1.0
+## Version: 1.0.0
 ## SavedVariablesPerCharacter: P5S_UI_DB, P5_NameplateDB, P5S_Voice_DB
 
 P5S_UI\PanelTheme.lua

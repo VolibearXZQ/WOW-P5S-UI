@@ -1,6 +1,14 @@
+
+# Codex development files
+/AGENTS.md
+/PROJECT_CONTEXT.md
 .agents/
 .codex/
+
+# Editor settings
 **/.vscode/
+
+# Temporary and system files
 *.log
 Thumbs.db
 .DS_Store

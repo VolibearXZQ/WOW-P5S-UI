@@ -2556,7 +2556,7 @@ do
     copyrightText:SetJustifyV("BOTTOM")
     copyrightText:SetSpacing(1)
     copyrightText:SetWordWrap(true)
-    copyrightText:SetText("Persona 5 Strikers ©ATLUS ©SEGA / ©KOEI TECMO GAMES\nPersona 3 Reload / Persona Q ©ATLUS ©SEGA")
+    copyrightText:SetText("Persona 5 Strikers (C)ATLUS (C)SEGA / (C)KOEI TECMO GAMES\nPersona 3 Reload / Persona Q (C)ATLUS (C)SEGA")
     ApplyPanelTheme("StyleMutedText", copyrightText)
 end
 
@@ -3019,11 +3019,11 @@ do
             {"section", "原作品与版权声明"},
             {"body", "本插件使用了以下作品中的部分原始游戏素材，包括界面贴图、角色美术、音效及语音等："},
             {"lead", "Persona 5 Strikers"},
-            {"body", "©ATLUS ©SEGA / ©KOEI TECMO GAMES"},
+            {"body", "(C)ATLUS (C)SEGA / (C)KOEI TECMO GAMES"},
             {"lead", "Persona 3 Reload"},
-            {"body", "©ATLUS ©SEGA"},
+            {"body", "(C)ATLUS (C)SEGA"},
             {"lead", "Persona Q: Shadow of the Labyrinth"},
-            {"body", "©ATLUS ©SEGA"},
+            {"body", "(C)ATLUS (C)SEGA"},
             {"body", "上述游戏的原始素材、角色、音频及相关知识产权均归其各自权利人所有。"},
             {"body", "P5SUI 是独立制作的免费、非官方粉丝项目，未获得上述游戏版权方的正式授权，也不代表 ATLUS、SEGA、KOEI TECMO GAMES、Blizzard Entertainment 或 OpenAI 的官方立场。"},
             {"lead", "感谢所有使用和支持 P5SUI 的玩家！"},
@@ -3042,11 +3042,11 @@ do
             {"section", "Copyright & Disclaimer"},
             {"body", "This addon contains original game assets, including UI textures, character artwork, sound effects, and voice clips, derived from the following titles:"},
             {"lead", "Persona 5 Strikers"},
-            {"body", "©ATLUS ©SEGA / ©KOEI TECMO GAMES"},
+            {"body", "(C)ATLUS (C)SEGA / (C)KOEI TECMO GAMES"},
             {"lead", "Persona 3 Reload"},
-            {"body", "©ATLUS ©SEGA"},
+            {"body", "(C)ATLUS (C)SEGA"},
             {"lead", "Persona Q: Shadow of the Labyrinth"},
-            {"body", "©ATLUS ©SEGA"},
+            {"body", "(C)ATLUS (C)SEGA"},
             {"body", "All original game assets, characters, audio, and related intellectual property belong to their respective rights holders."},
             {"body", "P5SUI is an independently developed, free, unofficial fan project. It is not officially licensed, affiliated with, sponsored by, or endorsed by ATLUS, SEGA, KOEI TECMO GAMES, Blizzard Entertainment, or OpenAI."},
             {"lead", "Thank you to everyone who uses and supports P5SUI!"},

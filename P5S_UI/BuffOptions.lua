@@ -391,7 +391,7 @@ end
 
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 title:SetPoint("CENTER", panel.TitleBg, "CENTER")
-title:SetText("攻 · 防 · 速 — 战斗增益设置 · BY 难刷素材的XZQ")
+title:SetText("攻 · 防 · 速 — 战斗增益设置")
 Theme("StylePanelTitle", title)
 local modeLabel = Label(panel, "", 24, -62, 730)
 

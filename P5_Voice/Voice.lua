@@ -876,7 +876,7 @@ EnsureVoicePanelChrome(VoicePanel)
 
 VoicePanel.title = VoicePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 VoicePanel.title:SetPoint("CENTER", VoicePanel.TitleBg, "CENTER", 0, 0)
-VoicePanel.title:SetText("P5S 技能语音设置  ·  BY 难刷素材的 XZQ")
+VoicePanel.title:SetText("P5S 技能语音设置")
 ApplyVoicePanelTheme("StylePanelTitle", VoicePanel.title)
 ApplyVoicePanelTheme("StyleCloseButton", VoicePanel.CloseButton)
 

@@ -63,7 +63,7 @@ end)
 
 panel.title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 panel.title:SetPoint("CENTER", panel.TitleBg, "CENTER", 0, 0)
-panel.title:SetText("Weak眼神特写 · BY 难刷素材的XZQ")
+panel.title:SetText("Weak眼神特写")
 ApplyWeakTheme("StylePanelTitle", panel.title)
 
 local description = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")

@@ -2486,7 +2486,7 @@ end)
 
 OptionsPanel.title = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 OptionsPanel.title:SetPoint("CENTER", OptionsPanel.TitleBg, "CENTER", 0, 0)
-OptionsPanel.title:SetText("P5S 资源条设置 · BY 难刷素材的XZQ")
+OptionsPanel.title:SetText("P5S 资源条设置")
 ApplyPanelTheme("StylePanelTitle", OptionsPanel.title)
 
 local function OpenSiblingSettingsPanel(slashKey, panelName)
@@ -2537,6 +2537,15 @@ local indicatorSection = CreateSettingsSection(-308, 232, "攻/防/速 战斗提
 local showtimeSection = CreateSettingsSection(-552, 266, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
 
 do
+    local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    authorText:SetFont(authorText:GetFont(), 11, "")
+    authorText:SetPoint("BOTTOMLEFT", OptionsPanel, "BOTTOMLEFT", 24, 11)
+    authorText:SetSize(240, 14)
+    authorText:SetJustifyH("LEFT")
+    authorText:SetJustifyV("MIDDLE")
+    authorText:SetText("插件制作：难刷素材的XZQ")
+    ApplyPanelTheme("StyleMutedText", authorText)
+
     local copyrightText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     copyrightText:SetFont(copyrightText:GetFont(), 10, "")
     copyrightText:SetPoint("BOTTOMRIGHT", OptionsPanel, "BOTTOMRIGHT", -34, 6)

@@ -1358,7 +1358,7 @@ end)
 
 ConfigPanel.title = ConfigPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 ConfigPanel.title:SetPoint("CENTER", ConfigPanel.TitleBg, "CENTER", 0, 0)
-ConfigPanel.title:SetText("P5S 目标血条设置  ·  BY 难刷素材的 XZQ")
+ConfigPanel.title:SetText("P5S 目标血条设置")
 ApplyTargetPanelTheme("StylePanelTitle", ConfigPanel.title)
 
 local p5CloseButton = ConfigPanel.CloseButton

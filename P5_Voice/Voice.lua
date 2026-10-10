@@ -952,7 +952,18 @@ local function GetAudioDisplayName(audioID)
     return sourceLabel .. "｜" .. item.fileName
 end
 
-local function PlayAudioFile(audioID, quiet)
+-- 只记录手动试听的句柄；自动触发语音不随设置窗口关闭而停止。
+local previewSoundHandles = {}
+local function StopAudioPreview()
+    local handles = previewSoundHandles
+    previewSoundHandles = {}
+    if type(StopSound) ~= "function" then return end
+    for _, soundHandle in ipairs(handles) do
+        pcall(StopSound, soundHandle, 0)
+    end
+end
+
+local function PlayAudioFile(audioID, quiet, isPreview)
     EnsureDatabase()
     if not audioID or audioID == "" then return false end
 
@@ -966,29 +977,33 @@ local function PlayAudioFile(audioID, quiet)
         return false
     end
 
-    local ok, willPlay = pcall(PlaySoundFile, AUDIO_ROOT_PATH .. item.relativePath, P5S_Voice_DB.channel)
+    local ok, willPlay, soundHandle = pcall(PlaySoundFile, AUDIO_ROOT_PATH .. item.relativePath, P5S_Voice_DB.channel)
     if not ok or willPlay == false then
         if not quiet then SetStatus("音频播放失败：" .. GetAudioDisplayName(audioID), true) end
         return false
     end
 
+    if isPreview and type(soundHandle) == "number" then
+        previewSoundHandles[#previewSoundHandles + 1] = soundHandle
+    end
     if not quiet then
         SetStatus("正在试听：" .. GetAudioDisplayName(audioID) .. "（" .. channelLabels[P5S_Voice_DB.channel] .. "）", false)
     end
     return true
 end
 
-local function PlayConfiguredEntry(sectionKey, index)
+local function PlayConfiguredEntry(sectionKey, index, isPreview)
+    if isPreview then StopAudioPreview() end
     local entry = GetVoiceAudioEntry(sectionKey, index)
     if not entry then return false end
 
     local played = false
     local mainAudioID = GetRandomMainAudioID(entry)
     if mainAudioID then
-        played = PlayAudioFile(mainAudioID, true) or played
+        played = PlayAudioFile(mainAudioID, true, isPreview) or played
     end
     if sectionKey ~= "victory" and sectionKey ~= "characterEvents" and entry.audio2 and entry.audio2 ~= mainAudioID then
-        played = PlayAudioFile(entry.audio2, true) or played
+        played = PlayAudioFile(entry.audio2, true, isPreview) or played
     end
     return played, mainAudioID
 end
@@ -1791,6 +1806,7 @@ AudioPicker:RegisterForDrag("LeftButton")
 AudioPicker:SetScript("OnDragStart", AudioPicker.StartMoving)
 AudioPicker:SetScript("OnDragStop", AudioPicker.StopMovingOrSizing)
 AudioPicker:Hide()
+AudioPicker:HookScript("OnHide", StopAudioPreview)
 
 if not ApplyVoicePanelTheme("ApplyOptionsPanel", AudioPicker) then
     ApplyVoicePanelFallback(AudioPicker)
@@ -2079,7 +2095,8 @@ for rowIndex = 1, #audioItems do
     row.previewButton:SetPoint("LEFT", 646, 0)
     row.previewButton:SetText("试听")
     row.previewButton:SetScript("OnClick", function()
-        PlayAudioFile(row.audioID)
+        StopAudioPreview()
+        PlayAudioFile(row.audioID, false, true)
     end)
     ApplyVoicePanelTheme("StyleButton", row.previewButton)
     ApplyVoiceLocalStyle("StylePickerAccentButton:preview", StylePickerAccentButton, row.previewButton)
@@ -2337,6 +2354,7 @@ local function OpenAudioPicker(sectionKey, index, slotKey)
 end
 
 VoicePanel:SetScript("OnHide", function()
+    StopAudioPreview()
     SaveActiveVoiceInput()
     AudioPicker:Hide()
     print("|cffFF0000[P5S 语音]|r 语音已保存，偏铝唢呐！")
@@ -2448,9 +2466,10 @@ do
     previewButton:SetSize(84, 30)
     previewButton:SetText("试听")
     previewButton:SetScript("OnClick", function()
+        StopAudioPreview()
         EnsureDatabase()
         local audioID = GetRandomMainAudioID(P5S_Voice_DB.victorySettings.mainAudio)
-        if audioID then PlayAudioFile(audioID)
+        if audioID then PlayAudioFile(audioID, false, true)
         else SetStatus("请先选择至少一条有效的胜利主音频。", true) end
     end)
     ApplyVoicePanelTheme("StyleButton", previewButton)
@@ -2585,9 +2604,10 @@ do
         preview:SetSize(84, 30)
         preview:SetText("试听")
         preview:SetScript("OnClick", function()
+            StopAudioPreview()
             EnsureDatabase()
             local audioID = GetRandomMainAudioID(GetVoiceAudioEntry("characterEvents", key))
-            if audioID then PlayAudioFile(audioID)
+            if audioID then PlayAudioFile(audioID, false, true)
             else SetStatus("请先选择至少一条有效的" .. title .. "。", true) end
         end)
         ApplyVoicePanelTheme("StyleButton", preview)
@@ -2883,7 +2903,7 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
     previewButton:SetScript("OnClick", function()
         EnsureDatabase()
         local entry = P5S_Voice_DB.inputs[sectionKey][index]
-        local played, mainAudioID = PlayConfiguredEntry(sectionKey, index)
+        local played, mainAudioID = PlayConfiguredEntry(sectionKey, index, true)
         if played then
             local randomNote = mainAudioID and #GetMainAudioChoices(entry) > 1
                 and "；本次随机：" .. GetAudioDisplayName(mainAudioID)

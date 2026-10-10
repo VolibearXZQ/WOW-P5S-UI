@@ -2539,7 +2539,7 @@ local showtimeSection = CreateSettingsSection(-552, 266, "Showtime 爆发槽", "
 do
     local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     authorText:SetFont(authorText:GetFont(), 11, "")
-    authorText:SetPoint("BOTTOMLEFT", OptionsPanel, "BOTTOMLEFT", 24, 11)
+    authorText:SetPoint("BOTTOMLEFT", OptionsPanel, "BOTTOMLEFT", 24, 19)
     authorText:SetSize(240, 14)
     authorText:SetJustifyH("LEFT")
     authorText:SetJustifyV("MIDDLE")
@@ -2936,6 +2936,191 @@ ApplyPanelTheme("StyleMutedText", showtimeHelpText)
 end
 
 P5SFrame.firePreview:CreateControl(showtimeSection)
+
+-- 关于窗口只展示静态文案，不读取战斗数据或改动角色设置。
+do
+    local aboutPanel
+    local aboutFailed = false
+    local aboutButton = CreateFrame("Button", nil, showtimeSection, "UIPanelButtonTemplate")
+    aboutButton:SetSize(90, 26)
+    aboutButton:SetPoint("TOPRIGHT", showtimeSection, "TOPRIGHT", -22, -220)
+    ApplyPanelTheme("StyleButton", aboutButton)
+    aboutButton:SetText("关于")
+
+    local function CreateAboutPanel()
+        local panel = CreateFrame("Frame", "P5S_AboutPanel", UIParent, "BackdropTemplate")
+        aboutPanel = panel
+        panel:Hide()
+        panel:SetSize(720, 680)
+        panel:SetPoint("CENTER")
+        panel:SetFrameStrata("DIALOG")
+        panel:SetToplevel(true)
+        panel:SetClampedToScreen(true)
+        panel:SetMovable(true)
+        panel:EnableMouse(true)
+        panel:RegisterForDrag("LeftButton")
+        panel:SetScript("OnDragStart", panel.StartMoving)
+        panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
+        panel:SetScript("OnHide", panel.StopMovingOrSizing)
+
+        -- 先创建基础背景与关闭按钮，主题缺失或单项失败仍可阅读与关闭。
+        panel:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Buttons\\WHITE8X8",
+            edgeSize = 1,
+        })
+        panel:SetBackdropColor(0.035, 0.040, 0.060, 0.98)
+        panel:SetBackdropBorderColor(0.24, 0.28, 0.36, 1)
+        ApplyPanelTheme("ApplyOptionsPanel", panel)
+        if not panel.CloseButton then
+            panel.CloseButton = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
+            panel.CloseButton:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -14, -7)
+            panel.CloseButton:SetScript("OnClick", function() panel:Hide() end)
+        end
+
+        local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        title:SetPoint("TOP", panel, "TOP", 0, -12)
+        title:SetText("关于 P5SUI / About P5SUI")
+        ApplyPanelTheme("StylePanelTitle", title)
+
+        local scroll = CreateFrame("ScrollFrame", "P5S_AboutScroll", panel, "UIPanelScrollFrameTemplate")
+        scroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 28, -90)
+        scroll:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -48, 56)
+        local content = CreateFrame("Frame", nil, scroll)
+        content:SetSize(640, 1)
+        scroll:SetScrollChild(content)
+
+        -- 独立段落按实际文本高度排版，中文和英文均完整保留。
+        local blocks = {
+            {"title", "关于 P5SUI"},
+            {"lead", "P5SUI — Persona 5 Strikers Inspired UI"},
+            {"body", "P5SUI 是一款为《魔兽世界》制作的免费、非官方粉丝创作插件，旨在将《女神异闻录5 乱战：魅影攻手》（Persona 5 Strikers）的视觉风格与战斗界面体验带入《魔兽世界》。"},
+            {"section", "开发信息"},
+            {"lead", "创作者 / 项目维护：难刷素材的XZQ"},
+            {"body", "由 |cffffffff难刷素材的XZQ|r 开发，负责界面设计、功能规划、游戏素材处理、测试及维护。"},
+            {"body", "插件的功能系统、动画交互、职业适配、语音播放和设置界面均在 AI 辅助下开发完成，附加美术素材由 |cffffffff难刷素材的XZQ|r 自行绘制。"},
+            {"section", "特别鸣谢"},
+            {"lead", "OpenAI Codex"},
+            {"body", "Codex 提供的代码编写、功能实现、调试与技术支持，让许多复杂的设计构想得以实现。"},
+            {"lead", "ChatGPT"},
+            {"body", "ChatGPT 提供的技术研究、功能规划、设计讨论与问题分析，帮助本项目从最初的构想逐步发展为完整的插件。"},
+            {"section", "原作品与版权声明"},
+            {"body", "本插件使用了以下作品中的部分原始游戏素材，包括界面贴图、角色美术、音效及语音等："},
+            {"lead", "Persona 5 Strikers"},
+            {"body", "©ATLUS ©SEGA / ©KOEI TECMO GAMES"},
+            {"lead", "Persona 3 Reload"},
+            {"body", "©ATLUS ©SEGA"},
+            {"lead", "Persona Q: Shadow of the Labyrinth"},
+            {"body", "©ATLUS ©SEGA"},
+            {"body", "上述游戏的原始素材、角色、音频及相关知识产权均归其各自权利人所有。"},
+            {"body", "P5SUI 是独立制作的免费、非官方粉丝项目，未获得上述游戏版权方的正式授权，也不代表 ATLUS、SEGA、KOEI TECMO GAMES、Blizzard Entertainment 或 OpenAI 的官方立场。"},
+            {"lead", "感谢所有使用和支持 P5SUI 的玩家！"},
+            {"title", "About P5SUI", "english"},
+            {"lead", "P5SUI — Persona 5 Strikers Inspired UI"},
+            {"body", "P5SUI is a free, unofficial fan-made addon for World of Warcraft, created to bring the distinctive visual style and combat interface experience of Persona 5 Strikers into World of Warcraft."},
+            {"section", "Development"},
+            {"lead", "Creator / Project Maintainer: 难刷素材的XZQ"},
+            {"body", "This project was initiated and directed by 难刷素材的XZQ, including UI design, feature planning, game asset processing, testing, and maintenance."},
+            {"body", "The addon's functionality, animations, class integrations, and configuration systems were developed with AI assistance. Additional original artwork was also created by 难刷素材的XZQ."},
+            {"section", "Special Thanks"},
+            {"lead", "OpenAI Codex"},
+            {"body", "For providing invaluable assistance with code development, feature implementation, debugging, and technical challenges, helping bring complex design ideas to life."},
+            {"lead", "ChatGPT"},
+            {"body", "For supporting technical research, feature planning, design discussions, and problem-solving throughout development, helping transform the initial concept into a fully featured addon."},
+            {"section", "Copyright & Disclaimer"},
+            {"body", "This addon contains original game assets, including UI textures, character artwork, sound effects, and voice clips, derived from the following titles:"},
+            {"lead", "Persona 5 Strikers"},
+            {"body", "©ATLUS ©SEGA / ©KOEI TECMO GAMES"},
+            {"lead", "Persona 3 Reload"},
+            {"body", "©ATLUS ©SEGA"},
+            {"lead", "Persona Q: Shadow of the Labyrinth"},
+            {"body", "©ATLUS ©SEGA"},
+            {"body", "All original game assets, characters, audio, and related intellectual property belong to their respective rights holders."},
+            {"body", "P5SUI is an independently developed, free, unofficial fan project. It is not officially licensed, affiliated with, sponsored by, or endorsed by ATLUS, SEGA, KOEI TECMO GAMES, Blizzard Entertainment, or OpenAI."},
+            {"lead", "Thank you to everyone who uses and supports P5SUI!"},
+        }
+        local offset, englishOffset = 4, 0
+        for _, block in ipairs(blocks) do
+            local kind, text = block[1], block[2]
+            if block[3] == "english" then
+                local divider = content:CreateTexture(nil, "ARTWORK")
+                divider:SetColorTexture(0.82, 0.07, 0.05, 0.65)
+                divider:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -offset - 10)
+                divider:SetSize(640, 1)
+                offset = offset + 38
+                englishOffset = offset
+            elseif kind == "section" then
+                offset = offset + 12
+            end
+            local textRegion = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            textRegion:SetFont(textRegion:GetFont(), kind == "title" and 22 or (kind == "section" and 16 or 14), "")
+            textRegion:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -offset)
+            textRegion:SetWidth(640)
+            textRegion:SetJustifyH("LEFT")
+            textRegion:SetJustifyV("TOP")
+            textRegion:SetWordWrap(true)
+            textRegion:SetSpacing(4)
+            if kind == "section" then
+                textRegion:SetTextColor(1, 0.30, 0.25)
+            elseif kind == "body" then
+                textRegion:SetTextColor(0.82, 0.84, 0.88)
+            else
+                textRegion:SetTextColor(0.96, 0.97, 1)
+            end
+            textRegion:SetText(text)
+            offset = offset + textRegion:GetStringHeight() + (kind == "lead" and 8 or 16)
+        end
+        content:SetHeight(offset + 12)
+
+        local function JumpTo(offsetY)
+            scroll:SetVerticalScroll(math.min(offsetY, scroll:GetVerticalScrollRange()))
+        end
+        local chineseButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+        chineseButton:SetPoint("TOPLEFT", panel, "TOPLEFT", 28, -52)
+        chineseButton:SetSize(90, 26)
+        chineseButton:SetText("中文")
+        chineseButton:SetScript("OnClick", function() JumpTo(0) end)
+        ApplyPanelTheme("StyleButton", chineseButton)
+        local englishButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+        englishButton:SetPoint("LEFT", chineseButton, "RIGHT", 10, 0)
+        englishButton:SetSize(90, 26)
+        englishButton:SetText("English")
+        englishButton:SetScript("OnClick", function() JumpTo(englishOffset) end)
+        ApplyPanelTheme("StyleButton", englishButton)
+
+        local closeButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+        closeButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -28, 16)
+        closeButton:SetSize(100, 26)
+        closeButton:SetText("关闭 / Close")
+        closeButton:SetScript("OnClick", function() panel:Hide() end)
+        ApplyPanelTheme("StyleButton", closeButton)
+        panel:HookScript("OnShow", function(self)
+            self:SetScale(math.min(1, UIParent:GetWidth() / 760, UIParent:GetHeight() / 720))
+            scroll:SetVerticalScroll(0)
+            self:Raise()
+        end)
+        table.insert(UISpecialFrames, "P5S_AboutPanel")
+        return panel
+    end
+
+    aboutButton:SetScript("OnClick", function()
+        if aboutFailed then return end
+        local ok = pcall(function()
+            local panel = aboutPanel or CreateAboutPanel()
+            panel:Show()
+            panel:Raise()
+        end)
+        if not ok then
+            aboutFailed = true
+            if aboutPanel then aboutPanel:Hide() end
+            aboutButton:SetText("关于（不可用）")
+            aboutButton:Disable()
+        end
+    end)
+    OptionsPanel:HookScript("OnHide", function()
+        if aboutPanel then aboutPanel:Hide() end
+    end)
+end
 
 local function ApplyShowtimeSpellInput(inputText)
     inputText = TrimShowtimeText(inputText)

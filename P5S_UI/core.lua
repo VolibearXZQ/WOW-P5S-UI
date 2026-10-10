@@ -2536,6 +2536,19 @@ local appearanceSection = CreateSettingsSection(-116, 180, "Joker 资源条", "�
 local indicatorSection = CreateSettingsSection(-308, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
 local showtimeSection = CreateSettingsSection(-552, 266, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
 
+do
+    local copyrightText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    copyrightText:SetFont(copyrightText:GetFont(), 10, "")
+    copyrightText:SetPoint("BOTTOMRIGHT", OptionsPanel, "BOTTOMRIGHT", -34, 6)
+    copyrightText:SetSize(642, 26)
+    copyrightText:SetJustifyH("RIGHT")
+    copyrightText:SetJustifyV("BOTTOM")
+    copyrightText:SetSpacing(1)
+    copyrightText:SetWordWrap(true)
+    copyrightText:SetText("Persona 5 Strikers ©ATLUS ©SEGA / ©KOEI TECMO GAMES\nPersona 3 Reload / Persona Q ©ATLUS ©SEGA")
+    ApplyPanelTheme("StyleMutedText", copyrightText)
+end
+
 local navigationLabel = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 navigationLabel:SetPoint("LEFT", OptionsPanel, "TOPLEFT", 34, -76)
 navigationLabel:SetText("快速切换")

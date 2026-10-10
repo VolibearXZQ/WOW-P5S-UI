@@ -3270,7 +3270,7 @@ EventFrame:SetScript("OnEvent", function(self, event, ...)
         if P5S_UI_DB.relativePoint == nil then P5S_UI_DB.relativePoint = "CENTER" end
         if P5S_UI_DB.xOfs == nil then P5S_UI_DB.xOfs = 0 end
         if P5S_UI_DB.yOfs == nil then P5S_UI_DB.yOfs = 0 end
-        if P5S_UI_DB.isLocked == nil then P5S_UI_DB.isLocked = true end
+        if P5S_UI_DB.isLocked == nil then P5S_UI_DB.isLocked = false end
         if type(P5S_UI_DB.resourceBarEnabled) ~= "boolean" then
             P5S_UI_DB.resourceBarEnabled = true
         end

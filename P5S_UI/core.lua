@@ -592,13 +592,132 @@ do
     end
 end
 
+-- WoW 不能扫描磁盘目录；Font 内新增/改名字体时同步维护此清单。
+-- 字体选择只改变文件，字号、锚点、旋转、描边和阴影沿用原有设置。
+do
+    local fonts = {
+        defaultKey = "P5S-Rhythm-Compact-Bold.ttf",
+        directory = "Interface\\AddOns\\P5S\\P5S_UI\\Font\\",
+        gameFont = STANDARD_TEXT_FONT or GameFontNormal:GetFont(),
+        entries = {
+            { key = "P5S-Rhythm-Compact-Bold.ttf", label = "P5S-Rhythm-紧凑" },
+            { key = "P5S-Showtime-Compact.ttf", label = "P5S-Showtime-紧凑" },
+            { key = "P5S-Bounce-Compact.ttf", label = "P5S-Bounce-紧凑" },
+            { key = "P5S-Rhythm-Bold.ttf", label = "P5S-Rhythm-标准" },
+            { key = "P5S-Showtime-Regular.ttf", label = "P5S-Showtime-标准" },
+            { key = "P5S-Bounce-Regular.ttf", label = "P5S-Bounce-标准" },
+        },
+        texts = {},
+    }
+    P5SFrame.resourceFont = fonts
+
+    function fonts:FindEntry(key)
+        if type(key) ~= "string" then return nil end
+        for _, entry in ipairs(self.entries) do
+            if entry.key == key then return entry end
+        end
+    end
+
+    function fonts:NormalizeKey(key)
+        -- 缺失、旧字体和非法选择统一迁入默认项；有效的新选择继续保留。
+        return self:FindEntry(key) and key or self.defaultKey
+    end
+
+    function fonts:SetRegionFont(region, path, size)
+        local ok, applied = pcall(region.SetFont, region, path, size, "OUTLINE")
+        if not ok or applied == false then return false end
+        -- 某些客户端调用可能没有返回值；只核对字体元数据，不读取文字/战斗数值。
+        if applied then return true end
+        local readOK, currentPath, currentSize = pcall(region.GetFont, region)
+        return readOK and type(currentPath) == "string"
+            and currentPath:lower():gsub("/", "\\") == path:lower():gsub("/", "\\")
+            and currentSize == size
+    end
+
+    function fonts:AddText(region, size, staticText)
+        self.texts[#self.texts + 1] = { region = region, size = size, staticText = staticText }
+        -- 先提供客户端字体，保证自定义文件缺失时仍有可用文字。
+        if not self:SetRegionFont(region, self.gameFont, size) then
+            pcall(region.SetFontObject, region, GameFontNormal)
+        end
+    end
+
+    function fonts:ApplyPath(path)
+        local success = true
+        for _, text in ipairs(self.texts) do
+            if not self:SetRegionFont(text.region, path, text.size) then success = false end
+        end
+        return success
+    end
+
+    function fonts:RefreshControl()
+        if not self.dropdown then return end
+        local key = self.activeKey or self.defaultKey
+        local entry = self:FindEntry(key)
+        UIDropDownMenu_SetSelectedValue(self.dropdown, key)
+        UIDropDownMenu_SetText(self.dropdown,
+            self.usingFallback and "游戏默认字体（所选字体不可用）" or entry.label)
+    end
+
+    function fonts:Apply(key)
+        key = self:NormalizeKey(key)
+        local path = key == "game" and self.gameFont or (self.directory .. key)
+        local success = self:ApplyPath(path)
+        if not success then
+            -- 本次只尝试一次后整组回退；用户再次选择可重试，不禁用菜单。
+            -- 不设定时器或在 OnShow/OnUpdate 中反复尝试失败文件。
+            if key ~= "game" then self:ApplyPath(self.gameFont) end
+        end
+        -- 固定标签没有数据事件来刷新，切换字体后显式重建其文字布局。
+        -- 不通过 GetText 回读可能包含 Secret Value 的生命/能量文字。
+        for _, text in ipairs(self.texts) do
+            if text.staticText then
+                text.region:SetText("")
+                text.region:SetText(text.staticText)
+            end
+        end
+        self.activeKey = success and key or "game"
+        self.usingFallback = not success
+        self:RefreshControl()
+    end
+
+    function fonts:CreateOptionControls(parent)
+        local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        label:SetPoint("TOPLEFT", parent, "TOPLEFT", 22, -175)
+        label:SetText("文字字体")
+        ApplyPanelTheme("StyleBodyText", label)
+
+        local dropdown = CreateFrame("Frame", "P5S_ResourceFontDropdown", parent, "UIDropDownMenuTemplate")
+        dropdown:SetPoint("TOPLEFT", parent, "TOPLEFT", 116, -166)
+        UIDropDownMenu_SetWidth(dropdown, 399)
+        UIDropDownMenu_Initialize(dropdown, function(_, level)
+            for _, entry in ipairs(self.entries) do
+                local info = UIDropDownMenu_CreateInfo()
+                info.text = entry.label
+                info.value = entry.key
+                info.arg1 = entry.key
+                info.checked = self.activeKey == entry.key
+                info.func = function(_, selectedKey)
+                    if not P5S_UI_DB or not self:FindEntry(selectedKey) then return end
+                    P5S_UI_DB.resourceFont = selectedKey
+                    self:Apply(selectedKey)
+                end
+                UIDropDownMenu_AddButton(info, level)
+            end
+        end)
+        self.dropdown = dropdown
+        ApplyPanelTheme("StyleDropDown", dropdown)
+        self:RefreshControl()
+    end
+end
+
 local lvFrame = CreateFrame("Frame", "P5S_LvFrame", P5SFrame)
 lvFrame:SetSize(50, 50)
 lvFrame:SetPoint("CENTER", P5SFrame, "CENTER", LV_X, LV_Y)
 lvFrame:SetFrameLevel(P5SFrame:GetFrameLevel() + 1)
 
 local lvText = lvFrame:CreateFontString(nil, "OVERLAY")
-lvText:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", LV_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(lvText, LV_SIZE)
 lvText:SetPoint("CENTER", lvFrame, "CENTER", 0, 0)
 lvText:SetTextColor(1, 1, 1) 
 
@@ -608,14 +727,14 @@ textFrame:SetPoint("CENTER", P5SFrame, "CENTER", TEXT_X, TEXT_Y)
 textFrame:SetFrameLevel(P5SFrame:GetFrameLevel() + 1)
 
 local hpValueText = textFrame:CreateFontString(nil, "OVERLAY")
-hpValueText:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", VALUE_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(hpValueText, VALUE_SIZE)
 hpValueText:SetPoint("BOTTOMLEFT", textFrame, "BOTTOMLEFT", 0, 0)
 hpValueText:SetTextColor(0.4, 1.0, 0.8) 
 hpValueText:SetShadowColor(0, 0, 0, 1) 
 hpValueText:SetShadowOffset(SHADOW_X, SHADOW_Y) 
 
 local hpLabel = textFrame:CreateFontString(nil, "OVERLAY")
-hpLabel:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", LABEL_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(hpLabel, LABEL_SIZE, "HP")
 hpLabel:SetPoint("BOTTOMLEFT", hpValueText, "TOPLEFT", -5, -1)
 hpLabel:SetText("HP")
 hpLabel:SetTextColor(0.4, 1.0, 0.8)
@@ -623,7 +742,7 @@ hpLabel:SetShadowColor(0, 0, 0, 1)
 hpLabel:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local slashText = textFrame:CreateFontString(nil, "OVERLAY")
-slashText:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", SLASH_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(slashText, SLASH_SIZE, "/")
 slashText:SetPoint("LEFT", hpValueText, "RIGHT", 4, 0)
 slashText:SetText("/")
 slashText:SetTextColor(0.6, 0.6, 0.6)
@@ -631,14 +750,14 @@ slashText:SetShadowColor(0, 0, 0, 1)
 slashText:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local spValueText = textFrame:CreateFontString(nil, "OVERLAY")
-spValueText:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", VALUE_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(spValueText, VALUE_SIZE)
 spValueText:SetPoint("LEFT", slashText, "RIGHT", 4, 0)
 spValueText:SetTextColor(1.0, 0.4, 0.8) 
 spValueText:SetShadowColor(0, 0, 0, 1)
 spValueText:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local spLabel = textFrame:CreateFontString(nil, "OVERLAY")
-spLabel:SetFont("Interface\\AddOns\\P5S\\P5S_UI\\Media\\微软雅黑粗体.ttf", LABEL_SIZE, "OUTLINE")
+P5SFrame.resourceFont:AddText(spLabel, LABEL_SIZE, "SP")
 spLabel:SetPoint("BOTTOMLEFT", spValueText, "TOPLEFT", -5, -1)
 spLabel:SetText("SP")
 spLabel:SetTextColor(1.0, 0.4, 0.8)
@@ -2439,7 +2558,7 @@ end)
 -- 5. 创建设置面板 (GUI)
 -- ==========================================
 local OptionsPanel = CreateFrame("Frame", "P5S_OptionsPanel", UIParent, "BackdropTemplate")
-OptionsPanel:SetSize(700, 820)
+OptionsPanel:SetSize(700, 860)
 OptionsPanel:SetPoint("CENTER")
 OptionsPanel:SetClampedToScreen(true)
 OptionsPanel:Hide()
@@ -2534,9 +2653,9 @@ local function CreateSettingsSection(topOffset, height, titleText, descriptionTe
     return section
 end
 
-local appearanceSection = CreateSettingsSection(-116, 180, "Joker 资源条", "显示生命、法力/能量及职业专属资源。")
-local indicatorSection = CreateSettingsSection(-308, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
-local showtimeSection = CreateSettingsSection(-552, 232, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
+local appearanceSection = CreateSettingsSection(-116, 220, "Joker 资源条", "显示生命、法力/能量及职业专属资源。")
+local indicatorSection = CreateSettingsSection(-348, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
+local showtimeSection = CreateSettingsSection(-592, 232, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
 
 do
     local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -2643,6 +2762,7 @@ lockCheck:SetScript("OnClick", function(self)
 end)
 ApplyPanelTheme("StyleCheckBox", lockCheck)
 P5SFrame.thirdResource:CreateOptionControls(appearanceSection)
+P5SFrame.resourceFont:CreateOptionControls(appearanceSection)
 
 local stateOptions = {
     "1. 攻小", "2. 防小", "3. 速小", "4. 攻小+防小", "5. 攻小+速小", "6. 防小+速小", "7. 攻小+防小+速小",
@@ -3240,9 +3360,10 @@ end
 
 OptionsPanel:HookScript("OnShow", function()
     -- 放大后的面板在较小 UI 尺寸下等比缩小，保留所有底部控件。
-    OptionsPanel:SetScale(math.min(1, UIParent:GetWidth() / 740, UIParent:GetHeight() / 860))
+    OptionsPanel:SetScale(math.min(1, UIParent:GetWidth() / 740, UIParent:GetHeight() / 900))
     P5SFrame:ApplyResourceBarVisibility()
     P5SFrame.thirdResource:RefreshOptionControls()
+    P5SFrame.resourceFont:RefreshControl()
     if RefreshShowtimeOptionControls then RefreshShowtimeOptionControls() end
 end)
 
@@ -3321,6 +3442,8 @@ EventFrame:SetScript("OnEvent", function(self, event, ...)
         end
 
         -- UI 层数据投射
+        P5S_UI_DB.resourceFont = P5SFrame.resourceFont:NormalizeKey(P5S_UI_DB.resourceFont)
+        P5SFrame.resourceFont:Apply(P5S_UI_DB.resourceFont)
         P5SFrame:SetScale(P5S_UI_DB.size / BASE_SIZE)
         slider:SetValue(P5S_UI_DB.size)
         P5SFrame:ClearAllPoints()

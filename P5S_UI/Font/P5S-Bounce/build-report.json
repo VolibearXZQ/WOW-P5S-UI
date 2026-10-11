@@ -1,0 +1,452 @@
+{
+  "family": "P5S Bounce",
+  "version": "1.000",
+  "license": "Apache-2.0",
+  "source_sha256": "7cf75ea288f82fd20badea8ab4da7a656a96a7277c170811e813b3d3d6294147",
+  "source_matches_google_fonts": true,
+  "upstream": "https://github.com/google/fonts/tree/main/apache/chewy",
+  "output_sha256": "dca391c479c057221b5223d6b5efe0a24cd13ea217153591c552c889a8168dde",
+  "units_per_em": 1024,
+  "glyphs": 229,
+  "characters": 228,
+  "modified_characters": 62,
+  "kerning_pairs_adjusted": 65,
+  "tilts": [
+    {
+      "character": "0",
+      "rotation_degrees": -11,
+      "advance": 651,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "1",
+      "rotation_degrees": 9,
+      "advance": 298,
+      "left": 26,
+      "right": 49
+    },
+    {
+      "character": "2",
+      "rotation_degrees": -5,
+      "advance": 546,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "3",
+      "rotation_degrees": 6,
+      "advance": 544,
+      "left": 26,
+      "right": 31
+    },
+    {
+      "character": "4",
+      "rotation_degrees": 15,
+      "advance": 583,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "5",
+      "rotation_degrees": -5,
+      "advance": 564,
+      "left": 36,
+      "right": 25
+    },
+    {
+      "character": "6",
+      "rotation_degrees": 9,
+      "advance": 551,
+      "left": 25,
+      "right": 26
+    },
+    {
+      "character": "7",
+      "rotation_degrees": 9,
+      "advance": 565,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "8",
+      "rotation_degrees": -8,
+      "advance": 651,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "9",
+      "rotation_degrees": 10,
+      "advance": 550,
+      "left": 26,
+      "right": 25
+    },
+    {
+      "character": "A",
+      "rotation_degrees": 4,
+      "advance": 576,
+      "left": 26,
+      "right": 35
+    },
+    {
+      "character": "B",
+      "rotation_degrees": -7,
+      "advance": 535,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "C",
+      "rotation_degrees": 5,
+      "advance": 542,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "D",
+      "rotation_degrees": -10,
+      "advance": 582,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "E",
+      "rotation_degrees": 11,
+      "advance": 582,
+      "left": 26,
+      "right": 25
+    },
+    {
+      "character": "F",
+      "rotation_degrees": 5,
+      "advance": 503,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "G",
+      "rotation_degrees": -12,
+      "advance": 611,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "H",
+      "rotation_degrees": -7,
+      "advance": 570,
+      "left": 31,
+      "right": 36
+    },
+    {
+      "character": "I",
+      "rotation_degrees": 9,
+      "advance": 544,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "J",
+      "rotation_degrees": -10,
+      "advance": 480,
+      "left": 25,
+      "right": 30
+    },
+    {
+      "character": "K",
+      "rotation_degrees": 11,
+      "advance": 664,
+      "left": 26,
+      "right": 25
+    },
+    {
+      "character": "L",
+      "rotation_degrees": 5,
+      "advance": 521,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "M",
+      "rotation_degrees": -22,
+      "advance": 865,
+      "left": 36,
+      "right": 41
+    },
+    {
+      "character": "N",
+      "rotation_degrees": -7,
+      "advance": 644,
+      "left": 31,
+      "right": 36
+    },
+    {
+      "character": "O",
+      "rotation_degrees": 5,
+      "advance": 555,
+      "left": 25,
+      "right": 26
+    },
+    {
+      "character": "P",
+      "rotation_degrees": -10,
+      "advance": 532,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "Q",
+      "rotation_degrees": 2,
+      "advance": 547,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "R",
+      "rotation_degrees": 5,
+      "advance": 582,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "S",
+      "rotation_degrees": 3,
+      "advance": 440,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "T",
+      "rotation_degrees": -7,
+      "advance": 557,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "U",
+      "rotation_degrees": 9,
+      "advance": 614,
+      "left": 26,
+      "right": 36
+    },
+    {
+      "character": "V",
+      "rotation_degrees": -10,
+      "advance": 553,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "W",
+      "rotation_degrees": 12,
+      "advance": 726,
+      "left": 26,
+      "right": 25
+    },
+    {
+      "character": "X",
+      "rotation_degrees": 0,
+      "advance": 581,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "Y",
+      "rotation_degrees": 11,
+      "advance": 587,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "Z",
+      "rotation_degrees": -7,
+      "advance": 552,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "a",
+      "rotation_degrees": -13,
+      "advance": 564,
+      "left": 25,
+      "right": 30
+    },
+    {
+      "character": "b",
+      "rotation_degrees": 13,
+      "advance": 581,
+      "left": 36,
+      "right": 31
+    },
+    {
+      "character": "c",
+      "rotation_degrees": 4,
+      "advance": 457,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "d",
+      "rotation_degrees": 5,
+      "advance": 546,
+      "left": 25,
+      "right": 36
+    },
+    {
+      "character": "e",
+      "rotation_degrees": -14,
+      "advance": 516,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "f",
+      "rotation_degrees": 4,
+      "advance": 553,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "g",
+      "rotation_degrees": -13,
+      "advance": 563,
+      "left": 25,
+      "right": 41
+    },
+    {
+      "character": "h",
+      "rotation_degrees": 13,
+      "advance": 574,
+      "left": 36,
+      "right": 41
+    },
+    {
+      "character": "i",
+      "rotation_degrees": -3,
+      "advance": 248,
+      "left": 36,
+      "right": 41
+    },
+    {
+      "character": "j",
+      "rotation_degrees": 5,
+      "advance": 525,
+      "left": 25,
+      "right": 49
+    },
+    {
+      "character": "k",
+      "rotation_degrees": -19,
+      "advance": 647,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "l",
+      "rotation_degrees": 4,
+      "advance": 285,
+      "left": 36,
+      "right": 46
+    },
+    {
+      "character": "m",
+      "rotation_degrees": -13,
+      "advance": 722,
+      "left": 30,
+      "right": 36
+    },
+    {
+      "character": "n",
+      "rotation_degrees": 13,
+      "advance": 539,
+      "left": 26,
+      "right": 26
+    },
+    {
+      "character": "o",
+      "rotation_degrees": 4,
+      "advance": 481,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "p",
+      "rotation_degrees": 5,
+      "advance": 552,
+      "left": 31,
+      "right": 31
+    },
+    {
+      "character": "q",
+      "rotation_degrees": -19,
+      "advance": 651,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "r",
+      "rotation_degrees": 4,
+      "advance": 485,
+      "left": 26,
+      "right": 25
+    },
+    {
+      "character": "s",
+      "rotation_degrees": -2,
+      "advance": 378,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "t",
+      "rotation_degrees": 13,
+      "advance": 478,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "u",
+      "rotation_degrees": -3,
+      "advance": 509,
+      "left": 25,
+      "right": 31
+    },
+    {
+      "character": "v",
+      "rotation_degrees": -8,
+      "advance": 539,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "w",
+      "rotation_degrees": -12,
+      "advance": 734,
+      "left": 31,
+      "right": 25
+    },
+    {
+      "character": "x",
+      "rotation_degrees": 0,
+      "advance": 502,
+      "left": 25,
+      "right": 25
+    },
+    {
+      "character": "y",
+      "rotation_degrees": 9,
+      "advance": 559,
+      "left": 25,
+      "right": 35
+    },
+    {
+      "character": "z",
+      "rotation_degrees": 12,
+      "advance": 567,
+      "left": 25,
+      "right": 25
+    }
+  ],
+  "scope": "Standard edition; ASCII letters and digits; no Chinese glyphs added; no addon integration",
+  "game_verification": "pending"
+}

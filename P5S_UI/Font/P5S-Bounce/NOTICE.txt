@@ -1,0 +1,23 @@
+P5S Bounce Regular 1.000
+Modified version of Chewy Regular 1.001.
+
+Original font:
+Copyright (c) 2010 by Font Diner, Inc DBA Sideshow. All rights reserved.
+Original designer: Squid. Foundry: Font Diner, Inc DBA Sideshow.
+Chewy is a trademark of Font Diner, Inc DBA Sideshow.
+Original font licensed under the Apache License, Version 2.0.
+https://github.com/google/fonts/tree/main/apache/chewy
+http://www.fontbros.com/sideshow.php
+http://www.squidart.com
+
+Modifications for the P5S project, 2026-10-11:
+Renamed the family to P5S Bounce; individually rotated A-Z, a-z and 0-9;
+adjusted standard spacing and affected kerning; removed obsolete hinting;
+expanded vertical metrics where necessary and added this modification notice.
+The derivative font is distributed under Apache License 2.0; see LICENSE.txt.
+The reference font supplied for visual comparison is not included in this
+derivative. No reference glyph outlines or Chinese glyphs were imported.
+The original authors have not endorsed this modified version.
+
+This notice was prepared for the P5S derivative. The checked Google Fonts
+apache/chewy distribution did not contain a separate upstream NOTICE file.

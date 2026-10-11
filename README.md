@@ -95,6 +95,9 @@ P5S is a fan-made UI addon for **World of Warcraft Retail**, primarily inspired 
 
 The goal is to bring some of Persona's distinctive style into WoW combat while allowing players to customize the interface for their own classes and abilities.
 
+### Language Support
+Currently, the addon is available in Chinese only. English localization is planned for a future update. Thank you for your patience!
+
 ### Features
 
 - **Player UI (P5S_UI):** Joker-inspired health, absorb shields, and class resource display, with additional resource indicators, attack/defense/speed visuals, and a configurable Showtime ability display.

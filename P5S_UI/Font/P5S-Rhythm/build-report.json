@@ -1,0 +1,453 @@
+{
+  "family": "P5S Rhythm",
+  "style": "Bold",
+  "edition": "standard",
+  "version": "1.000",
+  "license": "SIL OFL 1.1",
+  "source_sha256": "d5b9534228a0359dad311598dd57e3d14111ce44aee9d8aac6aeca349bcbffea",
+  "output_sha256": "6ce362f57a1e0d4d3ee20c10e2670b562366d15118aec2fe4ae07e3f903ff4ba",
+  "glyphs": 327,
+  "characters": 320,
+  "modified_characters": 62,
+  "removed_old_kerning_pairs": 2719,
+  "transformed_base_mark_anchors": 133,
+  "disabled_ligature_rules": 12,
+  "tilts": [
+    {
+      "character": "A",
+      "rotation_degrees": 4,
+      "left": 24,
+      "right": 24,
+      "advance": 750
+    },
+    {
+      "character": "B",
+      "rotation_degrees": -7,
+      "left": 30,
+      "right": 24,
+      "advance": 663
+    },
+    {
+      "character": "C",
+      "rotation_degrees": 5,
+      "left": 24,
+      "right": 24,
+      "advance": 679
+    },
+    {
+      "character": "D",
+      "rotation_degrees": -10,
+      "left": 28,
+      "right": 24,
+      "advance": 717
+    },
+    {
+      "character": "E",
+      "rotation_degrees": 11,
+      "left": 38,
+      "right": 24,
+      "advance": 714
+    },
+    {
+      "character": "F",
+      "rotation_degrees": 5,
+      "left": 38,
+      "right": 25,
+      "advance": 662
+    },
+    {
+      "character": "G",
+      "rotation_degrees": -12,
+      "left": 35,
+      "right": 45,
+      "advance": 772
+    },
+    {
+      "character": "H",
+      "rotation_degrees": -7,
+      "left": 28,
+      "right": 28,
+      "advance": 714
+    },
+    {
+      "character": "I",
+      "rotation_degrees": 9,
+      "left": 28,
+      "right": 28,
+      "advance": 325
+    },
+    {
+      "character": "J",
+      "rotation_degrees": -10,
+      "left": 24,
+      "right": 38,
+      "advance": 524
+    },
+    {
+      "character": "K",
+      "rotation_degrees": 11,
+      "left": 40,
+      "right": 24,
+      "advance": 691
+    },
+    {
+      "character": "L",
+      "rotation_degrees": 5,
+      "left": 48,
+      "right": 24,
+      "advance": 578
+    },
+    {
+      "character": "M",
+      "rotation_degrees": -22,
+      "left": 28,
+      "right": 28,
+      "advance": 981
+    },
+    {
+      "character": "N",
+      "rotation_degrees": -7,
+      "left": 28,
+      "right": 28,
+      "advance": 734
+    },
+    {
+      "character": "O",
+      "rotation_degrees": 5,
+      "left": 24,
+      "right": 24,
+      "advance": 751
+    },
+    {
+      "character": "P",
+      "rotation_degrees": -10,
+      "left": 35,
+      "right": 24,
+      "advance": 641
+    },
+    {
+      "character": "Q",
+      "rotation_degrees": 2,
+      "left": 24,
+      "right": 24,
+      "advance": 799
+    },
+    {
+      "character": "R",
+      "rotation_degrees": 5,
+      "left": 35,
+      "right": 24,
+      "advance": 642
+    },
+    {
+      "character": "S",
+      "rotation_degrees": 3,
+      "left": 24,
+      "right": 24,
+      "advance": 570
+    },
+    {
+      "character": "T",
+      "rotation_degrees": -7,
+      "left": 24,
+      "right": 24,
+      "advance": 663
+    },
+    {
+      "character": "U",
+      "rotation_degrees": 9,
+      "left": 28,
+      "right": 28,
+      "advance": 724
+    },
+    {
+      "character": "V",
+      "rotation_degrees": -10,
+      "left": 24,
+      "right": 24,
+      "advance": 727
+    },
+    {
+      "character": "W",
+      "rotation_degrees": 12,
+      "left": 24,
+      "right": 24,
+      "advance": 955
+    },
+    {
+      "character": "X",
+      "rotation_degrees": 0,
+      "left": 24,
+      "right": 24,
+      "advance": 722
+    },
+    {
+      "character": "Y",
+      "rotation_degrees": 11,
+      "left": 24,
+      "right": 24,
+      "advance": 675
+    },
+    {
+      "character": "Z",
+      "rotation_degrees": -7,
+      "left": 24,
+      "right": 24,
+      "advance": 688
+    },
+    {
+      "character": "a",
+      "rotation_degrees": -13,
+      "left": 24,
+      "right": 30,
+      "advance": 607
+    },
+    {
+      "character": "b",
+      "rotation_degrees": 13,
+      "left": 30,
+      "right": 24,
+      "advance": 606
+    },
+    {
+      "character": "c",
+      "rotation_degrees": 4,
+      "left": 25,
+      "right": 24,
+      "advance": 517
+    },
+    {
+      "character": "d",
+      "rotation_degrees": 5,
+      "left": 24,
+      "right": 30,
+      "advance": 602
+    },
+    {
+      "character": "e",
+      "rotation_degrees": -14,
+      "left": 24,
+      "right": 24,
+      "advance": 582
+    },
+    {
+      "character": "f",
+      "rotation_degrees": 4,
+      "left": 24,
+      "right": 24,
+      "advance": 463
+    },
+    {
+      "character": "g",
+      "rotation_degrees": -13,
+      "left": 24,
+      "right": 30,
+      "advance": 618
+    },
+    {
+      "character": "h",
+      "rotation_degrees": 13,
+      "left": 28,
+      "right": 28,
+      "advance": 611
+    },
+    {
+      "character": "i",
+      "rotation_degrees": -3,
+      "left": 35,
+      "right": 35,
+      "advance": 283
+    },
+    {
+      "character": "j",
+      "rotation_degrees": 5,
+      "left": 24,
+      "right": 28,
+      "advance": 464
+    },
+    {
+      "character": "k",
+      "rotation_degrees": -19,
+      "left": 35,
+      "right": 24,
+      "advance": 704
+    },
+    {
+      "character": "l",
+      "rotation_degrees": 4,
+      "left": 35,
+      "right": 24,
+      "advance": 328
+    },
+    {
+      "character": "m",
+      "rotation_degrees": -13,
+      "left": 28,
+      "right": 27,
+      "advance": 859
+    },
+    {
+      "character": "n",
+      "rotation_degrees": 13,
+      "left": 30,
+      "right": 28,
+      "advance": 610
+    },
+    {
+      "character": "o",
+      "rotation_degrees": 4,
+      "left": 24,
+      "right": 24,
+      "advance": 586
+    },
+    {
+      "character": "p",
+      "rotation_degrees": 5,
+      "left": 26,
+      "right": 24,
+      "advance": 593
+    },
+    {
+      "character": "q",
+      "rotation_degrees": -19,
+      "left": 24,
+      "right": 28,
+      "advance": 683
+    },
+    {
+      "character": "r",
+      "rotation_degrees": 4,
+      "left": 30,
+      "right": 24,
+      "advance": 472
+    },
+    {
+      "character": "s",
+      "rotation_degrees": -2,
+      "left": 24,
+      "right": 24,
+      "advance": 475
+    },
+    {
+      "character": "t",
+      "rotation_degrees": 13,
+      "left": 24,
+      "right": 24,
+      "advance": 467
+    },
+    {
+      "character": "u",
+      "rotation_degrees": -3,
+      "left": 30,
+      "right": 30,
+      "advance": 587
+    },
+    {
+      "character": "v",
+      "rotation_degrees": -8,
+      "left": 24,
+      "right": 24,
+      "advance": 600
+    },
+    {
+      "character": "w",
+      "rotation_degrees": -12,
+      "left": 24,
+      "right": 24,
+      "advance": 773
+    },
+    {
+      "character": "x",
+      "rotation_degrees": 0,
+      "left": 24,
+      "right": 24,
+      "advance": 574
+    },
+    {
+      "character": "y",
+      "rotation_degrees": 9,
+      "left": 24,
+      "right": 24,
+      "advance": 610
+    },
+    {
+      "character": "z",
+      "rotation_degrees": 12,
+      "left": 24,
+      "right": 24,
+      "advance": 626
+    },
+    {
+      "character": "0",
+      "rotation_degrees": -11,
+      "left": 24,
+      "right": 24,
+      "advance": 602
+    },
+    {
+      "character": "1",
+      "rotation_degrees": 9,
+      "left": 24,
+      "right": 29,
+      "advance": 425
+    },
+    {
+      "character": "2",
+      "rotation_degrees": -5,
+      "left": 24,
+      "right": 24,
+      "advance": 631
+    },
+    {
+      "character": "3",
+      "rotation_degrees": 6,
+      "left": 24,
+      "right": 24,
+      "advance": 605
+    },
+    {
+      "character": "4",
+      "rotation_degrees": 15,
+      "left": 24,
+      "right": 28,
+      "advance": 654
+    },
+    {
+      "character": "5",
+      "rotation_degrees": -5,
+      "left": 24,
+      "right": 24,
+      "advance": 524
+    },
+    {
+      "character": "6",
+      "rotation_degrees": 9,
+      "left": 24,
+      "right": 24,
+      "advance": 589
+    },
+    {
+      "character": "7",
+      "rotation_degrees": 9,
+      "left": 24,
+      "right": 24,
+      "advance": 564
+    },
+    {
+      "character": "8",
+      "rotation_degrees": -8,
+      "left": 24,
+      "right": 24,
+      "advance": 589
+    },
+    {
+      "character": "9",
+      "rotation_degrees": 10,
+      "left": 24,
+      "right": 24,
+      "advance": 597
+    }
+  ],
+  "game_verification": "pending",
+  "addon_integration": "not performed"
+}

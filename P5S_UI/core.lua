@@ -57,13 +57,42 @@ local LV_ANGLE  = 0.5
 -- 【数值文字区块调整参数】
 local TEXT_X     = 122      
 local TEXT_Y     = -5     
-local TEXT_ANGLE = 0.5     
+local TEXT_ANGLE = 0.5
 local VALUE_SIZE = 26      
 local SLASH_SIZE = 20      
 local LABEL_SIZE = 14      
 
+-- 【各字体 HP/SP 排版微调】同一字体的紧凑版与标准版共用一套。
+-- size 为字号；x 向右为正，y 向上为正。修改后 /reload 生效。
+-- hpValue 相对文字区块左下角；hpLabel/spLabel 相对各自数字左上角。
+-- slash 相对 HP 数字右侧；spValue 相对斜杠右侧，保留随数字宽度排布。
+-- 因为沿用相对锚点，调整前一项会带动其后相连的文字。
+local RESOURCE_FONT_LAYOUTS = {
+    Rhythm = {
+        hpValue = { size = 27, x = 0,  y = 0 },
+        spValue = { size = 27, x = 4,  y = 1 },
+        hpLabel = { size = 14, x = -5, y = -3 },
+        spLabel = { size = 14, x = -5, y = -3 },
+        slash   = { size = 19, x = 5,  y = 0 },
+    },
+    Showtime = {
+        hpValue = { size = 25, x = 0,  y = -2 },
+        spValue = { size = 25, x = 4,  y = -1 },
+        hpLabel = { size = 13, x = -5, y = -1 },
+        spLabel = { size = 13, x = -5, y = -1 },
+        slash   = { size = 14, x = 4,  y = 3 },
+    },
+    Bounce = {
+        hpValue = { size = 27, x = 0,  y = 0 },
+        spValue = { size = 27, x = 5,  y = 0 },
+        hpLabel = { size = 14, x = -6, y = -1 },
+        spLabel = { size = 14, x = -6, y = -1 },
+        slash   = { size = 21, x = 4,  y = -1 },
+    },
+}
+
 -- 【漫画风错位黑底参数】
-local SHADOW_X   = 5.5       
+local SHADOW_X   = 5       
 local SHADOW_Y   = 1      
 
 -- 【状态图标调整参数 (攻、防、速)】
@@ -593,12 +622,11 @@ do
 end
 
 -- WoW 不能扫描磁盘目录；Font 内新增/改名字体时同步维护此清单。
--- 字体选择只改变文件，字号、锚点、旋转、描边和阴影沿用原有设置。
+-- 字体选择同时应用对应排版；等级、旋转、描边和阴影沿用原有设置。
 do
     local fonts = {
         defaultKey = "P5S-Rhythm-Compact-Bold.ttf",
         directory = "Interface\\AddOns\\P5S\\P5S_UI\\Font\\",
-        gameFont = STANDARD_TEXT_FONT or GameFontNormal:GetFont(),
         entries = {
             { key = "P5S-Rhythm-Compact-Bold.ttf", label = "P5S-Rhythm-紧凑" },
             { key = "P5S-Showtime-Compact.ttf", label = "P5S-Showtime-紧凑" },
@@ -625,49 +653,63 @@ do
 
     function fonts:SetRegionFont(region, path, size)
         local ok, applied = pcall(region.SetFont, region, path, size, "OUTLINE")
-        if not ok or applied == false then return false end
-        -- 某些客户端调用可能没有返回值；只核对字体元数据，不读取文字/战斗数值。
-        if applied then return true end
-        local readOK, currentPath, currentSize = pcall(region.GetFont, region)
+        if not ok then return false end
+        if applied == true then return true end
+        -- 重复应用或没有明确成功返回时，核对实际字体文件。
+        -- 字号读回可能经过客户端换算，不用精确相等判断文件是否可用。
+        -- 只读取字体元数据，不回读文字/战斗数值。
+        local readOK, currentPath = pcall(region.GetFont, region)
         return readOK and type(currentPath) == "string"
             and currentPath:lower():gsub("/", "\\") == path:lower():gsub("/", "\\")
-            and currentSize == size
     end
 
-    function fonts:AddText(region, size, staticText)
-        self.texts[#self.texts + 1] = { region = region, size = size, staticText = staticText }
-        -- 先提供客户端字体，保证自定义文件缺失时仍有可用文字。
-        if not self:SetRegionFont(region, self.gameFont, size) then
+    function fonts:AddText(region, size, staticText, layoutKey, point, relative, relativePoint)
+        local text = { region = region, size = size, staticText = staticText,
+            layoutKey = layoutKey, point = point, relative = relative, relativePoint = relativePoint }
+        self.texts[#self.texts + 1] = text
+        local layout = layoutKey and RESOURCE_FONT_LAYOUTS.Rhythm[layoutKey]
+        if layout then
+            size = layout.size
+            region:SetPoint(point, relative, relativePoint, layout.x, layout.y)
+        end
+        -- 初始使用 P5S 默认项；文件确实不可用时才用原生对象防止空白。
+        if not self:SetRegionFont(region, self.directory .. self.defaultKey, size) then
             pcall(region.SetFontObject, region, GameFontNormal)
         end
     end
 
-    function fonts:ApplyPath(path)
+    function fonts:ApplyPath(path, layout)
         local success = true
         for _, text in ipairs(self.texts) do
-            if not self:SetRegionFont(text.region, path, text.size) then success = false end
+            local config = layout and text.layoutKey and layout[text.layoutKey]
+            if self:SetRegionFont(text.region, path, config and config.size or text.size) then
+                if config then
+                    text.region:ClearAllPoints()
+                    text.region:SetPoint(text.point, text.relative, text.relativePoint, config.x, config.y)
+                end
+            else
+                success = false
+            end
         end
         return success
     end
 
     function fonts:RefreshControl()
         if not self.dropdown then return end
-        local key = self.activeKey or self.defaultKey
+        local key = self:NormalizeKey(P5S_UI_DB and P5S_UI_DB.resourceFont)
         local entry = self:FindEntry(key)
         UIDropDownMenu_SetSelectedValue(self.dropdown, key)
         UIDropDownMenu_SetText(self.dropdown,
-            self.usingFallback and "游戏默认字体（所选字体不可用）" or entry.label)
+            entry.label .. (self.applyFailed and "（部分文字未更新）" or ""))
     end
 
     function fonts:Apply(key)
         key = self:NormalizeKey(key)
-        local path = key == "game" and self.gameFont or (self.directory .. key)
-        local success = self:ApplyPath(path)
-        if not success then
-            -- 本次只尝试一次后整组回退；用户再次选择可重试，不禁用菜单。
-            -- 不设定时器或在 OnShow/OnUpdate 中反复尝试失败文件。
-            if key ~= "game" then self:ApplyPath(self.gameFont) end
-        end
+        local path = self.directory .. key
+        local family = key:match("^P5S%-([^-]+)%-")
+        local success = self:ApplyPath(path, RESOURCE_FONT_LAYOUTS[family] or RESOURCE_FONT_LAYOUTS.Rhythm)
+        -- 失败不覆盖已应用的字体，也不把保存选择改为菜单外的值。
+        -- 只在初始化/手动选择时尝试，不设后台重试或禁用菜单。
         -- 固定标签没有数据事件来刷新，切换字体后显式重建其文字布局。
         -- 不通过 GetText 回读可能包含 Secret Value 的生命/能量文字。
         for _, text in ipairs(self.texts) do
@@ -676,8 +718,7 @@ do
                 text.region:SetText(text.staticText)
             end
         end
-        self.activeKey = success and key or "game"
-        self.usingFallback = not success
+        self.applyFailed = not success
         self:RefreshControl()
     end
 
@@ -696,7 +737,7 @@ do
                 info.text = entry.label
                 info.value = entry.key
                 info.arg1 = entry.key
-                info.checked = self.activeKey == entry.key
+                info.checked = self:NormalizeKey(P5S_UI_DB and P5S_UI_DB.resourceFont) == entry.key
                 info.func = function(_, selectedKey)
                     if not P5S_UI_DB or not self:FindEntry(selectedKey) then return end
                     P5S_UI_DB.resourceFont = selectedKey
@@ -727,38 +768,33 @@ textFrame:SetPoint("CENTER", P5SFrame, "CENTER", TEXT_X, TEXT_Y)
 textFrame:SetFrameLevel(P5SFrame:GetFrameLevel() + 1)
 
 local hpValueText = textFrame:CreateFontString(nil, "OVERLAY")
-P5SFrame.resourceFont:AddText(hpValueText, VALUE_SIZE)
-hpValueText:SetPoint("BOTTOMLEFT", textFrame, "BOTTOMLEFT", 0, 0)
+P5SFrame.resourceFont:AddText(hpValueText, VALUE_SIZE, nil, "hpValue", "BOTTOMLEFT", textFrame, "BOTTOMLEFT")
 hpValueText:SetTextColor(0.4, 1.0, 0.8) 
 hpValueText:SetShadowColor(0, 0, 0, 1) 
 hpValueText:SetShadowOffset(SHADOW_X, SHADOW_Y) 
 
 local hpLabel = textFrame:CreateFontString(nil, "OVERLAY")
-P5SFrame.resourceFont:AddText(hpLabel, LABEL_SIZE, "HP")
-hpLabel:SetPoint("BOTTOMLEFT", hpValueText, "TOPLEFT", -5, -1)
+P5SFrame.resourceFont:AddText(hpLabel, LABEL_SIZE, "HP", "hpLabel", "BOTTOMLEFT", hpValueText, "TOPLEFT")
 hpLabel:SetText("HP")
 hpLabel:SetTextColor(0.4, 1.0, 0.8)
 hpLabel:SetShadowColor(0, 0, 0, 1)
 hpLabel:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local slashText = textFrame:CreateFontString(nil, "OVERLAY")
-P5SFrame.resourceFont:AddText(slashText, SLASH_SIZE, "/")
-slashText:SetPoint("LEFT", hpValueText, "RIGHT", 4, 0)
+P5SFrame.resourceFont:AddText(slashText, SLASH_SIZE, "/", "slash", "LEFT", hpValueText, "RIGHT")
 slashText:SetText("/")
 slashText:SetTextColor(0.6, 0.6, 0.6)
 slashText:SetShadowColor(0, 0, 0, 1)
 slashText:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local spValueText = textFrame:CreateFontString(nil, "OVERLAY")
-P5SFrame.resourceFont:AddText(spValueText, VALUE_SIZE)
-spValueText:SetPoint("LEFT", slashText, "RIGHT", 4, 0)
+P5SFrame.resourceFont:AddText(spValueText, VALUE_SIZE, nil, "spValue", "LEFT", slashText, "RIGHT")
 spValueText:SetTextColor(1.0, 0.4, 0.8) 
 spValueText:SetShadowColor(0, 0, 0, 1)
 spValueText:SetShadowOffset(SHADOW_X, SHADOW_Y)
 
 local spLabel = textFrame:CreateFontString(nil, "OVERLAY")
-P5SFrame.resourceFont:AddText(spLabel, LABEL_SIZE, "SP")
-spLabel:SetPoint("BOTTOMLEFT", spValueText, "TOPLEFT", -5, -1)
+P5SFrame.resourceFont:AddText(spLabel, LABEL_SIZE, "SP", "spLabel", "BOTTOMLEFT", spValueText, "TOPLEFT")
 spLabel:SetText("SP")
 spLabel:SetTextColor(1.0, 0.4, 0.8)
 spLabel:SetShadowColor(0, 0, 0, 1)

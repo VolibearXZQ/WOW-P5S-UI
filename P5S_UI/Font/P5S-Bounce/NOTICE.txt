@@ -1,4 +1,5 @@
 P5S Bounce Regular 1.000
+P5S Bounce Compact Regular 1.000
 Modified version of Chewy Regular 1.001.
 
 Original font:
@@ -14,6 +15,9 @@ Modifications for the P5S project, 2026-10-11:
 Renamed the family to P5S Bounce; individually rotated A-Z, a-z and 0-9;
 adjusted standard spacing and affected kerning; removed obsolete hinting;
 expanded vertical metrics where necessary and added this modification notice.
+The Compact edition additionally reduces ASCII alphanumeric sidebearings and
+fits 3844 character pairs using matching GPOS and legacy kern positioning;
+glyph shapes, tilt and vertical coordinates remain those of P5S Bounce.
 The derivative font is distributed under Apache License 2.0; see LICENSE.txt.
 The reference font supplied for visual comparison is not included in this
 derivative. No reference glyph outlines or Chinese glyphs were imported.

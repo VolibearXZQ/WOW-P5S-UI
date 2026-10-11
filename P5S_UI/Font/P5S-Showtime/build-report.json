@@ -1,0 +1,447 @@
+{
+  "family": "P5S Showtime",
+  "version": "1.000",
+  "source_sha256": "14fd5becce8b0ae987e44b3f9fa9e3e6c87463e9585ac15db6c8271462068a62",
+  "output_sha256": "0137bd2740f4d4dbfb74f4f16335963e48538b00fe20e745105a2ae322a12882",
+  "glyphs": 229,
+  "characters": 226,
+  "modified_characters": 62,
+  "tilts": [
+    {
+      "character": "0",
+      "tilt_degrees": -11,
+      "advance": 730,
+      "left": 40,
+      "right": 24
+    },
+    {
+      "character": "1",
+      "tilt_degrees": 9,
+      "advance": 520,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "2",
+      "tilt_degrees": -5,
+      "advance": 656,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "3",
+      "tilt_degrees": 6,
+      "advance": 631,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "4",
+      "tilt_degrees": 15,
+      "advance": 632,
+      "left": 24,
+      "right": 29
+    },
+    {
+      "character": "5",
+      "tilt_degrees": -5,
+      "advance": 661,
+      "left": 29,
+      "right": 24
+    },
+    {
+      "character": "6",
+      "tilt_degrees": 9,
+      "advance": 652,
+      "left": 36,
+      "right": 24
+    },
+    {
+      "character": "7",
+      "tilt_degrees": 9,
+      "advance": 614,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "8",
+      "tilt_degrees": -8,
+      "advance": 673,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "9",
+      "tilt_degrees": 10,
+      "advance": 647,
+      "left": 27,
+      "right": 24
+    },
+    {
+      "character": "A",
+      "tilt_degrees": 4,
+      "advance": 662,
+      "left": 24,
+      "right": 48
+    },
+    {
+      "character": "B",
+      "tilt_degrees": -7,
+      "advance": 665,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "C",
+      "tilt_degrees": 5,
+      "advance": 641,
+      "left": 36,
+      "right": 24
+    },
+    {
+      "character": "D",
+      "tilt_degrees": -10,
+      "advance": 687,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "E",
+      "tilt_degrees": 11,
+      "advance": 679,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "F",
+      "tilt_degrees": 5,
+      "advance": 612,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "G",
+      "tilt_degrees": -12,
+      "advance": 751,
+      "left": 37,
+      "right": 24
+    },
+    {
+      "character": "H",
+      "tilt_degrees": -7,
+      "advance": 687,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "I",
+      "tilt_degrees": 9,
+      "advance": 339,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "J",
+      "tilt_degrees": -10,
+      "advance": 621,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "K",
+      "tilt_degrees": 11,
+      "advance": 747,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "L",
+      "tilt_degrees": 5,
+      "advance": 525,
+      "left": 24,
+      "right": 33
+    },
+    {
+      "character": "M",
+      "tilt_degrees": -22,
+      "advance": 979,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "N",
+      "tilt_degrees": -7,
+      "advance": 687,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "O",
+      "tilt_degrees": 5,
+      "advance": 646,
+      "left": 37,
+      "right": 24
+    },
+    {
+      "character": "P",
+      "tilt_degrees": -10,
+      "advance": 639,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "Q",
+      "tilt_degrees": 2,
+      "advance": 632,
+      "left": 35,
+      "right": 24
+    },
+    {
+      "character": "R",
+      "tilt_degrees": 5,
+      "advance": 627,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "S",
+      "tilt_degrees": 3,
+      "advance": 638,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "T",
+      "tilt_degrees": -7,
+      "advance": 759,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "U",
+      "tilt_degrees": 9,
+      "advance": 707,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "V",
+      "tilt_degrees": -10,
+      "advance": 664,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "W",
+      "tilt_degrees": 12,
+      "advance": 1032,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "X",
+      "tilt_degrees": 0,
+      "advance": 722,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "Y",
+      "tilt_degrees": 11,
+      "advance": 702,
+      "left": 48,
+      "right": 24
+    },
+    {
+      "character": "Z",
+      "tilt_degrees": -7,
+      "advance": 658,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "a",
+      "tilt_degrees": -13,
+      "advance": 694,
+      "left": 24,
+      "right": 40
+    },
+    {
+      "character": "b",
+      "tilt_degrees": 13,
+      "advance": 574,
+      "left": 27,
+      "right": 36
+    },
+    {
+      "character": "c",
+      "tilt_degrees": 4,
+      "advance": 540,
+      "left": 24,
+      "right": 27
+    },
+    {
+      "character": "d",
+      "tilt_degrees": 5,
+      "advance": 598,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "e",
+      "tilt_degrees": -14,
+      "advance": 606,
+      "left": 24,
+      "right": 32
+    },
+    {
+      "character": "f",
+      "tilt_degrees": 4,
+      "advance": 522,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "g",
+      "tilt_degrees": -13,
+      "advance": 628,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "h",
+      "tilt_degrees": 13,
+      "advance": 628,
+      "left": 24,
+      "right": 37
+    },
+    {
+      "character": "i",
+      "tilt_degrees": -3,
+      "advance": 363,
+      "left": 25,
+      "right": 24
+    },
+    {
+      "character": "j",
+      "tilt_degrees": 5,
+      "advance": 408,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "k",
+      "tilt_degrees": -19,
+      "advance": 805,
+      "left": 24,
+      "right": 48
+    },
+    {
+      "character": "l",
+      "tilt_degrees": 4,
+      "advance": 307,
+      "left": 30,
+      "right": 24
+    },
+    {
+      "character": "m",
+      "tilt_degrees": -13,
+      "advance": 1014,
+      "left": 24,
+      "right": 37
+    },
+    {
+      "character": "n",
+      "tilt_degrees": 13,
+      "advance": 607,
+      "left": 24,
+      "right": 37
+    },
+    {
+      "character": "o",
+      "tilt_degrees": 4,
+      "advance": 552,
+      "left": 24,
+      "right": 37
+    },
+    {
+      "character": "p",
+      "tilt_degrees": 5,
+      "advance": 587,
+      "left": 24,
+      "right": 38
+    },
+    {
+      "character": "q",
+      "tilt_degrees": -19,
+      "advance": 710,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "r",
+      "tilt_degrees": 4,
+      "advance": 510,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "s",
+      "tilt_degrees": -2,
+      "advance": 563,
+      "left": 24,
+      "right": 27
+    },
+    {
+      "character": "t",
+      "tilt_degrees": 13,
+      "advance": 566,
+      "left": 30,
+      "right": 24
+    },
+    {
+      "character": "u",
+      "tilt_degrees": -3,
+      "advance": 651,
+      "left": 26,
+      "right": 40
+    },
+    {
+      "character": "v",
+      "tilt_degrees": -8,
+      "advance": 580,
+      "left": 32,
+      "right": 34
+    },
+    {
+      "character": "w",
+      "tilt_degrees": -12,
+      "advance": 900,
+      "left": 31,
+      "right": 35
+    },
+    {
+      "character": "x",
+      "tilt_degrees": 0,
+      "advance": 612,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "y",
+      "tilt_degrees": 9,
+      "advance": 590,
+      "left": 24,
+      "right": 24
+    },
+    {
+      "character": "z",
+      "tilt_degrees": 12,
+      "advance": 588,
+      "left": 24,
+      "right": 24
+    }
+  ],
+  "scope": "ASCII letters and digits; no Chinese glyphs added; no addon integration",
+  "game_verification": "pending"
+}

@@ -1,0 +1,440 @@
+{
+  "family": "P5S Rhythm Compact",
+  "version": "1.000",
+  "license": "SIL OFL 1.1",
+  "source_sha256": "6ce362f57a1e0d4d3ee20c10e2670b562366d15118aec2fe4ae07e3f903ff4ba",
+  "output_sha256": "533643713fe30778ec1156b913194c9a96b8349b3996cc7be077bbb64c82902d",
+  "units_per_em": 1000,
+  "sidebearing_units": 6,
+  "target_ink_gap_units": 6,
+  "vertical_guard_units": 3,
+  "max_pair_tuck_units": 180,
+  "target_pair_count": 3844,
+  "kerning_tables": [
+    "GPOS",
+    "kern"
+  ],
+  "shifted_base_mark_anchors": 133,
+  "modified_spacing_characters": 62,
+  "metrics": [
+    {
+      "character": "0",
+      "translation_x": -18,
+      "standard_advance": 602,
+      "compact_advance": 566
+    },
+    {
+      "character": "1",
+      "translation_x": -18,
+      "standard_advance": 425,
+      "compact_advance": 384
+    },
+    {
+      "character": "2",
+      "translation_x": -18,
+      "standard_advance": 631,
+      "compact_advance": 595
+    },
+    {
+      "character": "3",
+      "translation_x": -18,
+      "standard_advance": 605,
+      "compact_advance": 569
+    },
+    {
+      "character": "4",
+      "translation_x": -18,
+      "standard_advance": 654,
+      "compact_advance": 614
+    },
+    {
+      "character": "5",
+      "translation_x": -18,
+      "standard_advance": 524,
+      "compact_advance": 488
+    },
+    {
+      "character": "6",
+      "translation_x": -18,
+      "standard_advance": 589,
+      "compact_advance": 553
+    },
+    {
+      "character": "7",
+      "translation_x": -18,
+      "standard_advance": 564,
+      "compact_advance": 528
+    },
+    {
+      "character": "8",
+      "translation_x": -18,
+      "standard_advance": 589,
+      "compact_advance": 553
+    },
+    {
+      "character": "9",
+      "translation_x": -18,
+      "standard_advance": 597,
+      "compact_advance": 561
+    },
+    {
+      "character": "A",
+      "translation_x": -18,
+      "standard_advance": 750,
+      "compact_advance": 714
+    },
+    {
+      "character": "B",
+      "translation_x": -24,
+      "standard_advance": 663,
+      "compact_advance": 621
+    },
+    {
+      "character": "C",
+      "translation_x": -18,
+      "standard_advance": 679,
+      "compact_advance": 643
+    },
+    {
+      "character": "D",
+      "translation_x": -22,
+      "standard_advance": 717,
+      "compact_advance": 677
+    },
+    {
+      "character": "E",
+      "translation_x": -32,
+      "standard_advance": 714,
+      "compact_advance": 664
+    },
+    {
+      "character": "F",
+      "translation_x": -32,
+      "standard_advance": 662,
+      "compact_advance": 611
+    },
+    {
+      "character": "G",
+      "translation_x": -29,
+      "standard_advance": 772,
+      "compact_advance": 704
+    },
+    {
+      "character": "H",
+      "translation_x": -22,
+      "standard_advance": 714,
+      "compact_advance": 670
+    },
+    {
+      "character": "I",
+      "translation_x": -22,
+      "standard_advance": 325,
+      "compact_advance": 281
+    },
+    {
+      "character": "J",
+      "translation_x": -18,
+      "standard_advance": 524,
+      "compact_advance": 474
+    },
+    {
+      "character": "K",
+      "translation_x": -34,
+      "standard_advance": 691,
+      "compact_advance": 639
+    },
+    {
+      "character": "L",
+      "translation_x": -42,
+      "standard_advance": 578,
+      "compact_advance": 518
+    },
+    {
+      "character": "M",
+      "translation_x": -22,
+      "standard_advance": 981,
+      "compact_advance": 937
+    },
+    {
+      "character": "N",
+      "translation_x": -22,
+      "standard_advance": 734,
+      "compact_advance": 690
+    },
+    {
+      "character": "O",
+      "translation_x": -18,
+      "standard_advance": 751,
+      "compact_advance": 715
+    },
+    {
+      "character": "P",
+      "translation_x": -29,
+      "standard_advance": 641,
+      "compact_advance": 594
+    },
+    {
+      "character": "Q",
+      "translation_x": -18,
+      "standard_advance": 799,
+      "compact_advance": 763
+    },
+    {
+      "character": "R",
+      "translation_x": -29,
+      "standard_advance": 642,
+      "compact_advance": 595
+    },
+    {
+      "character": "S",
+      "translation_x": -18,
+      "standard_advance": 570,
+      "compact_advance": 534
+    },
+    {
+      "character": "T",
+      "translation_x": -18,
+      "standard_advance": 663,
+      "compact_advance": 627
+    },
+    {
+      "character": "U",
+      "translation_x": -22,
+      "standard_advance": 724,
+      "compact_advance": 680
+    },
+    {
+      "character": "V",
+      "translation_x": -18,
+      "standard_advance": 727,
+      "compact_advance": 691
+    },
+    {
+      "character": "W",
+      "translation_x": -18,
+      "standard_advance": 955,
+      "compact_advance": 919
+    },
+    {
+      "character": "X",
+      "translation_x": -18,
+      "standard_advance": 722,
+      "compact_advance": 686
+    },
+    {
+      "character": "Y",
+      "translation_x": -18,
+      "standard_advance": 675,
+      "compact_advance": 639
+    },
+    {
+      "character": "Z",
+      "translation_x": -18,
+      "standard_advance": 688,
+      "compact_advance": 652
+    },
+    {
+      "character": "a",
+      "translation_x": -18,
+      "standard_advance": 607,
+      "compact_advance": 565
+    },
+    {
+      "character": "b",
+      "translation_x": -24,
+      "standard_advance": 606,
+      "compact_advance": 564
+    },
+    {
+      "character": "c",
+      "translation_x": -19,
+      "standard_advance": 517,
+      "compact_advance": 480
+    },
+    {
+      "character": "d",
+      "translation_x": -18,
+      "standard_advance": 602,
+      "compact_advance": 560
+    },
+    {
+      "character": "e",
+      "translation_x": -18,
+      "standard_advance": 582,
+      "compact_advance": 546
+    },
+    {
+      "character": "f",
+      "translation_x": -18,
+      "standard_advance": 463,
+      "compact_advance": 427
+    },
+    {
+      "character": "g",
+      "translation_x": -18,
+      "standard_advance": 618,
+      "compact_advance": 576
+    },
+    {
+      "character": "h",
+      "translation_x": -22,
+      "standard_advance": 611,
+      "compact_advance": 567
+    },
+    {
+      "character": "i",
+      "translation_x": -29,
+      "standard_advance": 283,
+      "compact_advance": 225
+    },
+    {
+      "character": "j",
+      "translation_x": -18,
+      "standard_advance": 464,
+      "compact_advance": 424
+    },
+    {
+      "character": "k",
+      "translation_x": -29,
+      "standard_advance": 704,
+      "compact_advance": 657
+    },
+    {
+      "character": "l",
+      "translation_x": -29,
+      "standard_advance": 328,
+      "compact_advance": 281
+    },
+    {
+      "character": "m",
+      "translation_x": -22,
+      "standard_advance": 859,
+      "compact_advance": 816
+    },
+    {
+      "character": "n",
+      "translation_x": -24,
+      "standard_advance": 610,
+      "compact_advance": 564
+    },
+    {
+      "character": "o",
+      "translation_x": -18,
+      "standard_advance": 586,
+      "compact_advance": 550
+    },
+    {
+      "character": "p",
+      "translation_x": -20,
+      "standard_advance": 593,
+      "compact_advance": 555
+    },
+    {
+      "character": "q",
+      "translation_x": -18,
+      "standard_advance": 683,
+      "compact_advance": 643
+    },
+    {
+      "character": "r",
+      "translation_x": -24,
+      "standard_advance": 472,
+      "compact_advance": 430
+    },
+    {
+      "character": "s",
+      "translation_x": -18,
+      "standard_advance": 475,
+      "compact_advance": 439
+    },
+    {
+      "character": "t",
+      "translation_x": -18,
+      "standard_advance": 467,
+      "compact_advance": 431
+    },
+    {
+      "character": "u",
+      "translation_x": -24,
+      "standard_advance": 587,
+      "compact_advance": 539
+    },
+    {
+      "character": "v",
+      "translation_x": -18,
+      "standard_advance": 600,
+      "compact_advance": 564
+    },
+    {
+      "character": "w",
+      "translation_x": -18,
+      "standard_advance": 773,
+      "compact_advance": 737
+    },
+    {
+      "character": "x",
+      "translation_x": -18,
+      "standard_advance": 574,
+      "compact_advance": 538
+    },
+    {
+      "character": "y",
+      "translation_x": -18,
+      "standard_advance": 610,
+      "compact_advance": 574
+    },
+    {
+      "character": "z",
+      "translation_x": -18,
+      "standard_advance": 626,
+      "compact_advance": 590
+    }
+  ],
+  "samples": {
+    "0123456789": {
+      "standard_kerned_units": 5780,
+      "compact_kerned_units": 5154,
+      "compact_without_kerning_units": 5411,
+      "reduction_percent": 10.83
+    },
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ": {
+      "standard_kerned_units": 18061,
+      "compact_kerned_units": 15893,
+      "compact_without_kerning_units": 16938,
+      "reduction_percent": 12.0
+    },
+    "abcdefghijklmnopqrstuvwxyz": {
+      "standard_kerned_units": 14900,
+      "compact_kerned_units": 12880,
+      "compact_without_kerning_units": 13842,
+      "reduction_percent": 13.56
+    },
+    "HP": {
+      "standard_kerned_units": 1355,
+      "compact_kerned_units": 1198,
+      "compact_without_kerning_units": 1264,
+      "reduction_percent": 11.59
+    },
+    "SP": {
+      "standard_kerned_units": 1211,
+      "compact_kerned_units": 1097,
+      "compact_without_kerning_units": 1128,
+      "reduction_percent": 9.41
+    },
+    "100": {
+      "standard_kerned_units": 1629,
+      "compact_kerned_units": 1465,
+      "compact_without_kerning_units": 1516,
+      "reduction_percent": 10.07
+    },
+    "Innovation in China": {
+      "standard_kerned_units": 9437,
+      "compact_kerned_units": 8233,
+      "compact_without_kerning_units": 8681,
+      "reduction_percent": 12.76
+    }
+  },
+  "outlines": "Horizontal translation only; shapes, tilt and vertical coordinates unchanged",
+  "addon_integration": "not performed",
+  "game_verification": "pending"
+}

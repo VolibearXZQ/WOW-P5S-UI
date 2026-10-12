@@ -637,6 +637,9 @@ do
             { key = "P5S-Bounce-Regular.ttf", label = "P5S-Bounce-标准" },
         },
         texts = {},
+        retryDelays = { 0, 0.15, 0.5, 1 },
+        generation = 0,
+        worldReady = false,
     }
     P5SFrame.resourceFont = fonts
 
@@ -652,16 +655,28 @@ do
         return self:FindEntry(key) and key or self.defaultKey
     end
 
+    local function FontErrorDetail(value, fallback)
+        if type(issecretvalue) == "function" then
+            local ok, secret = pcall(issecretvalue, value)
+            if not ok or secret ~= false then return fallback end
+        end
+        if type(value) == "string" and value ~= "" then return fallback .. "：" .. value:sub(1, 240) end
+        return fallback
+    end
+
     function fonts:SetRegionFont(region, path, size)
         local ok, applied = pcall(region.SetFont, region, path, size, "OUTLINE")
-        if not ok then return false end
+        if not ok then return false, FontErrorDetail(applied, "字体应用接口报错") end
         if applied == true then return true end
         -- 重复应用或没有明确成功返回时，核对实际字体文件。
         -- 字号读回可能经过客户端换算，不用精确相等判断文件是否可用。
         -- 只读取字体元数据，不回读文字/战斗数值。
         local readOK, currentPath = pcall(region.GetFont, region)
-        return readOK and type(currentPath) == "string"
-            and currentPath:lower():gsub("/", "\\") == path:lower():gsub("/", "\\")
+        if readOK and type(currentPath) == "string"
+            and currentPath:lower():gsub("/", "\\") == path:lower():gsub("/", "\\") then
+            return true
+        end
+        return false, readOK and "字体尚未应用到这处文字" or FontErrorDetail(currentPath, "无法确认当前字体")
     end
 
     function fonts:AddText(region, size, staticText, layoutKey, point, relative, relativePoint)
@@ -679,49 +694,97 @@ do
         end
     end
 
-    function fonts:ApplyPath(path, layout)
-        local success = true
-        for _, text in ipairs(self.texts) do
+    function fonts:ApplyPath(path, layout, pending)
+        local failures = {}
+        for _, text in ipairs(pending or self.texts) do
             local config = layout and text.layoutKey and layout[text.layoutKey]
-            if self:SetRegionFont(text.region, path, config and config.size or text.size) then
-                if config then
-                    text.region:ClearAllPoints()
-                    text.region:SetPoint(text.point, text.relative, text.relativePoint, config.x, config.y)
-                end
-            else
-                success = false
+            local applied, reason = self:SetRegionFont(text.region, path, config and config.size or text.size)
+            if applied then
+                local layoutOK, layoutError = pcall(function()
+                    if config then
+                        text.region:ClearAllPoints()
+                        text.region:SetPoint(text.point, text.relative, text.relativePoint, config.x, config.y)
+                    end
+                    -- 仅刷新固定标签，绝不读回或清空 HP/SP 动态数值。
+                    if text.staticText then
+                        text.region:SetText("")
+                        text.region:SetText(text.staticText)
+                    end
+                end)
+                if not layoutOK then applied = false; reason = FontErrorDetail(layoutError, "文字排版尚未更新") end
+            end
+            text.lastFailure = not applied and reason or nil
+            if not applied then
+                failures[#failures + 1] = text
             end
         end
-        return success
+        return #failures == 0, failures
     end
 
     function fonts:RefreshControl()
+        if self.tooltipOwner and not self.applyFailed and GameTooltip then
+            GameTooltip:Hide()
+            self.tooltipOwner = nil
+        end
         if not self.dropdown then return end
         local key = self:NormalizeKey(P5S_UI_DB and P5S_UI_DB.resourceFont)
         local entry = self:FindEntry(key)
         UIDropDownMenu_SetSelectedValue(self.dropdown, key)
-        UIDropDownMenu_SetText(self.dropdown,
-            entry.label .. (self.applyFailed and "（部分文字未更新）" or ""))
+        local suffix = self.pending and "（正在更新…）" or (self.applyFailed and "（部分文字未更新）" or "")
+        UIDropDownMenu_SetText(self.dropdown, entry.label .. suffix)
+    end
+
+    function fonts:RunRequest(request)
+        if request.generation ~= self.generation then return end
+        local success, failures = self:ApplyPath(request.path, request.layout, request.remaining)
+        self.failures = failures
+        if success then
+            self.pending = false
+            self.applyFailed = false
+        else
+            request.remaining = failures
+            local delay = self.retryDelays[request.retryIndex]
+            if delay and C_Timer and type(C_Timer.After) == "function" then
+                request.retryIndex = request.retryIndex + 1
+                self.pending = true
+                self.applyFailed = false
+                local scheduled = pcall(C_Timer.After, delay, function()
+                    -- 连续换字体时，旧请求不能再改控件、提示或新选择。
+                    if request.generation == self.generation then self:RunRequest(request) end
+                end)
+                if scheduled then self:RefreshControl(); return end
+            end
+            self.pending = false
+            self.applyFailed = true
+        end
+        self:RefreshControl()
     end
 
     function fonts:Apply(key)
         key = self:NormalizeKey(key)
-        local path = self.directory .. key
+        self.generation = self.generation + 1
+        self.pending = true
+        self.applyFailed = false
+        self.failures = {}
         local family = key:match("^P5S%-([^-]+)%-")
-        local success = self:ApplyPath(path, RESOURCE_FONT_LAYOUTS[family] or RESOURCE_FONT_LAYOUTS.Rhythm)
-        -- 失败不覆盖已应用的字体，也不把保存选择改为菜单外的值。
-        -- 只在初始化/手动选择时尝试，不设后台重试或禁用菜单。
-        -- 固定标签没有数据事件来刷新，切换字体后显式重建其文字布局。
-        -- 不通过 GetText 回读可能包含 Secret Value 的生命/能量文字。
-        for _, text in ipairs(self.texts) do
-            if text.staticText then
-                text.region:SetText("")
-                text.region:SetText(text.staticText)
-            end
-        end
-        self.applyFailed = not success
-        self:RefreshControl()
+        self.request = {
+            generation = self.generation, retryIndex = 1,
+            path = self.directory .. key,
+            layout = RESOURCE_FONT_LAYOUTS[family] or RESOURCE_FONT_LAYOUTS.Rhythm,
+            remaining = self.texts,
+        }
+        -- ADDON_LOADED 只记录最终选择，进入世界后再完整应用，避免新角色加载早期的失败。
+        if not self.worldReady then self:RefreshControl(); return end
+        self:RunRequest(self.request)
     end
+
+    local fontEvents = CreateFrame("Frame")
+    fontEvents:RegisterEvent("PLAYER_ENTERING_WORLD")
+    fontEvents:SetScript("OnEvent", function(self)
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        fonts.worldReady = true
+        if fonts.request then fonts:RunRequest(fonts.request) end
+    end)
 
     function fonts:CreateOptionControls(parent)
         local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -749,6 +812,28 @@ do
         end)
         self.dropdown = dropdown
         ApplyPanelTheme("StyleDropDown", dropdown)
+        -- 只有有限重试仍失败时才显示详情；不新增命令、保存字段或聊天报错。
+        local hoverTarget = _G["P5S_ResourceFontDropdownButton"] or dropdown
+        if hoverTarget.HasScript and hoverTarget:HasScript("OnEnter") and hoverTarget:HasScript("OnLeave") then
+            local names = { hpValue = "HP 数字", spValue = "SP 数字", hpLabel = "HP 标签", spLabel = "SP 标签", slash = "斜杠" }
+            hoverTarget:HookScript("OnEnter", function(owner)
+                if not self.applyFailed or not GameTooltip then return end
+                GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
+                GameTooltip:SetText("部分文字未更新")
+                for _, text in ipairs(self.failures or {}) do
+                    GameTooltip:AddLine((names[text.layoutKey] or "等级") .. "：" .. text.lastFailure, 1, 0.75, 0.3, true)
+                end
+                GameTooltip:AddLine("自动重试已结束，可再次选择当前字体重试。", 0.8, 0.8, 0.8, true)
+                GameTooltip:Show()
+                self.tooltipOwner = owner
+            end)
+            hoverTarget:HookScript("OnLeave", function(owner)
+                if self.tooltipOwner == owner and GameTooltip then
+                    GameTooltip:Hide()
+                    self.tooltipOwner = nil
+                end
+            end)
+        end
         self:RefreshControl()
     end
 end

@@ -451,6 +451,7 @@ local showtimePendingSpellBookCacheRebuild = false
 local runtimeShowtimeSpellID = nil
 local runtimeShowtimeSpellName = nil
 local showtimeResolutionWarning = nil
+local showtimeSpecialization = {}
 
 local showtimeSpellInput
 local showtimeBurstInput
@@ -1115,6 +1116,7 @@ end
 
 local function ResolveSavedShowtimeSpell()
     if not P5S_UI_DB then return false end
+    if not showtimeSpecialization.id then return false end
 
     local inputText = TrimShowtimeText(P5S_UI_DB.showtimeSpellInput)
     if inputText == "" then
@@ -2018,6 +2020,100 @@ local function UpdateCombatIcons()
         atkFrame:Show() defFrame:Show() spdFrame:Show()
     end
 end
+
+-- 旧顶层字段继续作为当前专精的工作配置；快照只复制 Showtime 技能与时间。
+do
+    local fields = {
+        "showtimeSpellInput", "showtimeSpellID", "showtimeEnabled",
+        "showtimeBurstDuration", "showtimeCooldownDuration", "showtimeLastTriggerServerTime",
+    }
+
+    function showtimeSpecialization:GetCurrent()
+        local getSpec = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization or GetSpecialization
+        local getInfo = C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
+        if type(issecretvalue) ~= "function" or type(getSpec) ~= "function" or type(getInfo) ~= "function" then
+            return nil, "专精不可用"
+        end
+        local ok, index = pcall(getSpec)
+        if not ok or IsShowtimeSecretValue(index) then return nil, "专精不可用" end
+        if type(index) ~= "number" or index < 1 or index > 5 or index ~= math.floor(index) then
+            return nil, "尚无专精"
+        end
+        local infoOK, id, name = pcall(getInfo, index)
+        if not infoOK or IsShowtimeSecretValue(id) or type(id) ~= "number"
+            or id ~= id or id <= 0 or id >= math.huge or id ~= math.floor(id) then
+            return nil, "专精不可用"
+        end
+        if IsShowtimeSecretValue(name) or type(name) ~= "string" or name == "" then
+            name = "专精 " .. id
+        end
+        return id, name
+    end
+
+    function showtimeSpecialization:Save()
+        if not self.id or not P5S_UI_DB then return end
+        local profiles = P5S_UI_DB.showtimeBySpec
+        if type(profiles) ~= "table" then return end
+        local profile = profiles[self.id]
+        if type(profile) ~= "table" then profile = {}; profiles[self.id] = profile end
+        for _, key in ipairs(fields) do profile[key] = P5S_UI_DB[key] end
+    end
+
+    function showtimeSpecialization:RefreshLabel()
+        if self.label then self.label:SetText("当前专精：" .. (self.name or "尚无专精")) end
+    end
+
+    function showtimeSpecialization:Sync()
+        if not P5S_UI_DB or self.switching then return false end
+        local id, name = self:GetCurrent()
+        self.name = name
+        self:RefreshLabel()
+        if self.initialized and id == self.id then return false end
+
+        -- 焦点仍属于旧专精：先提交，再阻止 ClearFocus 的失焦回调写入新配置。
+        if self.id then
+            if CommitShowtimeOptions then CommitShowtimeOptions(true) end
+            self:Save()
+        end
+        self.switching = true
+        if showtimeSpellInput then showtimeSpellInput:ClearFocus() end
+        if showtimeBurstInput then showtimeBurstInput:ClearFocus() end
+        if showtimeCooldownInput then showtimeCooldownInput:ClearFocus() end
+        self.id = id
+        self.initialized = true
+        runtimeShowtimeSpellID = nil
+        runtimeShowtimeSpellName = nil
+        showtimeResolutionWarning = nil
+
+        if id then
+            if type(P5S_UI_DB.showtimeBySpec) ~= "table" then
+                -- 首次识别到专精才迁移一次；未绑定的新专精不会继承上一专精。
+                P5S_UI_DB.showtimeBySpec = {}
+                self:Save()
+            end
+            local profile = P5S_UI_DB.showtimeBySpec[id]
+            if type(profile) ~= "table" then profile = {} end
+            for _, key in ipairs(fields) do P5S_UI_DB[key] = profile[key] end
+            if type(P5S_UI_DB.showtimeSpellInput) ~= "string" then P5S_UI_DB.showtimeSpellInput = "" end
+            P5S_UI_DB.showtimeBurstDuration = GetValidatedShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration, 15)
+            P5S_UI_DB.showtimeCooldownDuration = math.max(P5S_UI_DB.showtimeBurstDuration,
+                GetValidatedShowtimeSeconds(P5S_UI_DB.showtimeCooldownDuration, 120))
+            RebuildShowtimeSpellBookNameCache()
+            ResolveSavedShowtimeSpell()
+            RestoreShowtimeCycle()
+            self:Save()
+        else
+            -- 不可读时停止旧周期，但保留待迁移的旧数据及各专精快照。
+            local triggerTime = P5S_UI_DB.showtimeLastTriggerServerTime
+            EnterShowtimeDisabled()
+            P5S_UI_DB.showtimeLastTriggerServerTime = triggerTime
+            showtimeResolutionWarning = "专精信息暂不可用，Showtime 技能联动已暂停。"
+        end
+        self.switching = false
+        if RefreshShowtimeOptionControls then RefreshShowtimeOptionControls(true) end
+        return true
+    end
+end
 addon.RefreshCombatIndicators = UpdateCombatIcons
 
 do
@@ -2691,7 +2787,7 @@ end
 
 local appearanceSection = CreateSettingsSection(-116, 220, "Joker 资源条", "显示生命、法力/能量及职业专属资源。")
 local indicatorSection = CreateSettingsSection(-348, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
-local showtimeSection = CreateSettingsSection(-592, 232, "Showtime 爆发槽", "施放绑定技能后，显示爆发持续与冷却进度。")
+local showtimeSection = CreateSettingsSection(-592, 232, "Showtime 爆发槽", "每个专精只能绑定一个技能用于 Showtime。")
 
 do
     local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -3011,6 +3107,13 @@ showtimePreviewButton:SetScript("OnClick", function()
 end)
 ApplyPanelTheme("StyleButton", showtimePreviewButton)
 
+showtimeSpecialization.label = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+showtimeSpecialization.label:SetPoint("LEFT", showtimePreviewButton, "RIGHT", 10, 0)
+showtimeSpecialization.label:SetWidth(126)
+showtimeSpecialization.label:SetJustifyH("LEFT")
+ApplyPanelTheme("StyleBodyText", showtimeSpecialization.label)
+showtimeSpecialization:RefreshLabel()
+
 showtimeStatusText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 showtimeStatusText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -67)
 showtimeStatusText:SetWidth(450)
@@ -3077,6 +3180,7 @@ end)
 
 -- 只监听面板打开期间的点击；Shift+点击仍留给技能链接输入。
 local showtimeInputs = { showtimeSpellInput, showtimeBurstInput, showtimeCooldownInput }
+showtimeSpecialization.inputs = showtimeInputs
 OptionsPanel:HookScript("OnShow", function(self)
     self:RegisterEvent("GLOBAL_MOUSE_DOWN")
 end)
@@ -3099,7 +3203,7 @@ local showtimeHelpText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameF
 showtimeHelpText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -137)
 showtimeHelpText:SetWidth(540)
 showtimeHelpText:SetJustifyH("LEFT")
-showtimeHelpText:SetText("总冷却从施放算起且不短于爆发；普通技能提前转好时用 0.5 秒补全。充能技能首版仅按手填时间。预览：3 秒 / 8 秒。")
+showtimeHelpText:SetText("推荐搭配“技能语音设置 → 爆发语音”，绑定同一技能，让 Showtime 与语音同步，更还原原版游戏效果。")
 ApplyPanelTheme("StyleMutedText", showtimeHelpText)
 end
 
@@ -3328,6 +3432,15 @@ end
 RefreshShowtimeOptionControls = function(force)
     if not P5S_UI_DB then return end
     P5SFrame.firePreview:RefreshControl()
+    showtimeSpecialization:RefreshLabel()
+    for _, input in ipairs(showtimeSpecialization.inputs) do
+        if showtimeSpecialization.id then input:Enable() else input:Disable() end
+    end
+    if not showtimeSpecialization.id then
+        for _, input in ipairs(showtimeSpecialization.inputs) do input:SetText("") end
+        RefreshShowtimeStatusText()
+        return
+    end
     if force or not showtimeSpellInput:HasFocus() then
         showtimeSpellInput:SetText(P5S_UI_DB.showtimeSpellInput or "")
     end
@@ -3342,6 +3455,7 @@ end
 
 CommitShowtimeOptions = function(silent)
     if not P5S_UI_DB then return false end
+    if showtimeSpecialization.switching or not showtimeSpecialization.id then return false end
     -- 回车后的失焦、关闭和预览可能连续提交；无编辑时不重复解析或重置周期。
     if showtimeSpellInput:GetText() == (P5S_UI_DB.showtimeSpellInput or "")
         and showtimeBurstInput:GetText() == FormatShowtimeSeconds(P5S_UI_DB.showtimeBurstDuration)
@@ -3380,6 +3494,7 @@ CommitShowtimeOptions = function(silent)
         RefreshShowtimeStatusText()
     end
     RefreshShowtimeOptionControls(true)
+    showtimeSpecialization:Save()
 
     if not silent then
         if resolved and runtimeShowtimeSpellID then
@@ -3400,6 +3515,7 @@ OptionsPanel:HookScript("OnShow", function()
     P5SFrame:ApplyResourceBarVisibility()
     P5SFrame.thirdResource:RefreshOptionControls()
     P5SFrame.resourceFont:RefreshControl()
+    showtimeSpecialization:Sync()
     if RefreshShowtimeOptionControls then RefreshShowtimeOptionControls() end
 end)
 
@@ -3409,6 +3525,9 @@ end)
 local EventFrame = CreateFrame("Frame")
 EventFrame:RegisterEvent("ADDON_LOADED")
 EventFrame:RegisterEvent("PLAYER_LOGIN")
+EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+EventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+EventFrame:RegisterEvent("PLAYER_LOGOUT")
 EventFrame:RegisterEvent("SPELLS_CHANGED")
 EventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 EventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
@@ -3498,14 +3617,30 @@ EventFrame:SetScript("OnEvent", function(self, event, ...)
         UIDropDownMenu_SetText(oocDropdown, stateOptions[P5S_UI_DB.outOfCombatIconState])
 
         InitializeShowtimeRenderer()
-        ResolveSavedShowtimeSpell()
-        RefreshShowtimeOptionControls()
-        RestoreShowtimeCycle()
+        showtimeSpecialization:Sync()
         UpdateCombatIcons()
         return
     end
 
     if not P5S_UI_DB then return end
+
+    if event == "PLAYER_LOGOUT" then
+        CommitShowtimeOptions(true)
+        showtimeSpecialization:Save()
+        return
+    end
+
+    if event == "PLAYER_SPECIALIZATION_CHANGED" then
+        local unit = ...
+        if IsShowtimeSecretValue(unit) or unit ~= "player" then return end
+        showtimeSpecialization:Sync()
+        return
+    end
+
+    if event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD"
+        or event == "SPELLS_CHANGED" or event == "PLAYER_REGEN_ENABLED" then
+        if showtimeSpecialization:Sync() or not showtimeSpecialization.id then return end
+    end
 
     if event == "PLAYER_LOGIN" then
         local previousSpellID = runtimeShowtimeSpellID
@@ -3555,6 +3690,7 @@ EventFrame:SetScript("OnEvent", function(self, event, ...)
         local unit, _, spellID = ...
         -- 战斗触发只比较事件直接提供的玩家 spellID，不读取 Aura、Buff 或冷却数值。
         if unit == "player"
+            and showtimeSpecialization.id
             and P5S_UI_DB.showtimeEnabled
             and runtimeShowtimeSpellID
             and spellID == runtimeShowtimeSpellID

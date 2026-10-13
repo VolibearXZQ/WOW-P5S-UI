@@ -752,7 +752,19 @@ do
                     -- 连续换字体时，旧请求不能再改控件、提示或新选择。
                     if request.generation == self.generation then self:RunRequest(request) end
                 end)
-                if scheduled then self:RefreshControl(); return end
+                if scheduled then
+                    -- 用户实测先切回默认项更易恢复；部分失败仅重试同一文件无效。
+                    -- 每次选择最多一次整组恢复，下一帧再应用目标字体，模拟手动往返。
+                    -- 不改保存选择，也不读取/清空动态文字；新选择仍通过代际取消旧请求。
+                    local defaultPath = self.directory .. self.defaultKey
+                    if not request.rebased and request.path ~= defaultPath then
+                        request.rebased = true
+                        self:ApplyPath(defaultPath, RESOURCE_FONT_LAYOUTS.Rhythm)
+                        request.remaining = self.texts
+                    end
+                    self:RefreshControl()
+                    return
+                end
             end
             self.pending = false
             self.applyFailed = true

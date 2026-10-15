@@ -1,4 +1,4 @@
-## Interface: 120100
+## Interface: 120105
 ## Title: P5S
 ## Notes: 女神异闻录5 魅影攻手风格的玩家界面、目标姓名板与技能语音
 ## Author: XZQ

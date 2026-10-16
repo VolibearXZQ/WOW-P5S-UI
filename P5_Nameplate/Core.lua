@@ -1036,10 +1036,7 @@ local function ShowWeakTestPopup()
     -- 技能事件可能比血条刷新早一点点，先确保进战组已经重新挂到当前目标血条上。
     UpdateP5Visuals()
 
-    -- 如果战斗状态还没来得及刷新，这里临时保证父级可见，避免弹字被隐藏的 CombatGroup 一起藏住。
-    if P5_NameplateDB.combatEnabled and not CombatGroup:IsShown() then
-        CombatGroup:Show()
-    end
+    -- 弹字父级是 UIParent；血条显隐只由 UpdateP5Visuals 决定，避免脱战施法拉起进战组。
 
     WeakPopupFrame.popupGroup:Stop()
     WeakTestAnimDriver:Hide()
@@ -1066,10 +1063,6 @@ local function ShowCriticalTestPopup()
     -- 和 WEAK 一样，只刷新/重挂已有框体，不测量姓名板坐标。
     UpdateP5Visuals()
 
-    if P5_NameplateDB.combatEnabled and not CombatGroup:IsShown() then
-        CombatGroup:Show()
-    end
-
     CriticalPopupFrame.popupGroup:Stop()
     CriticalTestAnimDriver:Hide()
     criticalTestAnimElapsed = 0
@@ -1094,10 +1087,6 @@ local function ShowTechnicalTestPopup()
     if not C_NamePlate.GetNamePlateForUnit("target") then return end
 
     UpdateP5Visuals()
-
-    if P5_NameplateDB.combatEnabled and not CombatGroup:IsShown() then
-        CombatGroup:Show()
-    end
 
     TechnicalTestAnimDriver:Hide()
     technicalTestAnimElapsed = 0

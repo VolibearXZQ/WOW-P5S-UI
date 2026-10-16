@@ -68,7 +68,7 @@ ApplyWeakTheme("StylePanelTitle", panel.title)
 
 local description = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 description:SetPoint("TOPLEFT", panel, "TOPLEFT", 24, -56)
-description:SetText("技能、大小与锁定自动保存；勾选“保持显示”并解锁后，直接拖动图片调整位置。")
+description:SetText("多个技能用逗号分隔，支持名称、Spell ID 或链接；回车或离开输入框完成绑定，设置自动保存。")
 ApplyWeakTheme("StyleMutedText", description)
 
 local section = CreateFrame("Frame", nil, panel, "BackdropTemplate")
@@ -148,6 +148,8 @@ for index, row in ipairs(rows) do
     input:SetPoint("TOPLEFT", section, "TOPLEFT", 100, top)
     input:SetAutoFocus(false)
     input:SetMaxLetters(255)
+    -- 移除 InputBoxTemplate 自带的聚焦全选；保留原生点击定位和拖选，主题稍后附加焦点配色。
+    input:SetScript("OnEditFocusGained", nil)
     input:SetScript("OnTextChanged", function(self, userInput)
         if userInput and P5S_UI_DB then
             P5S_UI_DB[field] = self:GetText()
@@ -170,7 +172,7 @@ for index, row in ipairs(rows) do
     bindingLabel:SetWidth(300)
     bindingLabel:SetWordWrap(false)
     bindingLabel:SetJustifyH("LEFT")
-    bindingLabel:SetText("输入技能名称、Spell ID 或技能链接")
+    bindingLabel:SetText("可绑定多个技能，用逗号分隔")
     bindingLabels[row.key] = bindingLabel
     ApplyWeakTheme("StyleMutedText", bindingLabel)
 

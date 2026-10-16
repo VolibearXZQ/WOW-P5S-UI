@@ -125,24 +125,55 @@ function runtime.ResolveBinding(key)
     text = text:match("^%s*(.-)%s*$")
     bindings[key] = nil
     if text == "" then
-        config.resolvedInput, config.resolvedSpellID = nil, nil
-        options.SetBindingStatus(key, "未绑定：输入技能名称、Spell ID 或链接")
+        config.resolvedInput, config.resolvedSpellID, config.resolvedSpellIDs = nil, nil, nil
+        options.SetBindingStatus(key, "未绑定：多个技能可用逗号分隔")
         return
     end
-    local id = SpellID(tonumber(text:match("spell:(%d+)") or text)) or nameCache[text]
-    -- 已解析的同一输入可在战斗中重载后恢复，不查询战斗数据。
-    if not id and InCombat() and config.resolvedInput == text then id = SpellID(config.resolvedSpellID) end
-    if not id and not InCombat() then
-        local info = SpellInfo(text)
-        if info then id = SpellID(info.spellID) end
+
+    local inCombat = InCombat()
+    local savedIDs = config.resolvedInput == text and config.resolvedSpellIDs
+    if type(savedIDs) ~= "table" then savedIDs = nil end
+    local ids, resolved, count, invalid, singleID = {}, {}, 0, 0, nil
+    -- 先替换中文标点，避免 Lua 字节模式把中文技能名拆坏；规则与目标血条输入一致。
+    local normalized = text:gsub("，", ","):gsub("；", ";"):gsub("、", ",")
+    for inputToken in normalized:gmatch("[^,;]+") do
+        local token = inputToken:match("^%s*(.-)%s*$")
+        if token ~= "" then
+            local id = SpellID(tonumber(token:match("spell:(%d+)") or token)) or nameCache[token]
+            -- 只恢复完全相同输入的已解析快照；兼容旧版单技能字段。
+            if not id and inCombat and config.resolvedInput == text then
+                id = savedIDs and SpellID(savedIDs[token])
+                if not id and token == text then id = SpellID(config.resolvedSpellID) end
+            end
+            if not id and not inCombat then
+                local info = SpellInfo(token)
+                if info then id = SpellID(info.spellID) end
+            end
+            if id then
+                resolved[token] = id
+                if not ids[id] then
+                    ids[id] = true
+                    count, singleID = count + 1, id
+                end
+            else
+                invalid = invalid + 1
+            end
+        end
     end
-    if id then
-        bindings[key] = id
-        config.resolvedInput, config.resolvedSpellID = text, id
-        options.SetBindingStatus(key, "已绑定 Spell ID: " .. id)
+
+    if count > 0 then
+        bindings[key] = ids
+        config.resolvedInput, config.resolvedSpellIDs = text, resolved
+        -- 旧字段仅继续表示单项输入，不把多技能列表伪装为一个技能。
+        config.resolvedSpellID = resolved[text]
+        if invalid > 0 then
+            options.SetBindingStatus(key, "已绑定 " .. count .. " 个；" .. invalid .. (inCombat and " 项待脱战解析" or " 项未识别，请检查名称/ID"))
+        else
+            options.SetBindingStatus(key, count == 1 and ("已绑定 Spell ID: " .. singleID) or ("已绑定 " .. count .. " 个技能"))
+        end
     else
-        config.resolvedInput, config.resolvedSpellID = nil, nil
-        options.SetBindingStatus(key, InCombat() and "技能名称待脱战解析；也可直接填 Spell ID" or "未识别技能，请填写实际施放的 Spell ID")
+        config.resolvedInput, config.resolvedSpellID, config.resolvedSpellIDs = nil, nil, nil
+        options.SetBindingStatus(key, inCombat and "技能名称待脱战解析；也可直接填 Spell ID" or "未识别技能，请填写实际施放的 Spell ID")
     end
 end
 
@@ -375,8 +406,8 @@ events:SetScript("OnEvent", function(_, event, unit, _, spellID)
         if not Public(unit) or unit ~= "player" then return end
         spellID = SpellID(spellID)
         if not spellID then return end
-        for key, id in pairs(bindings) do
-            if spellID == id then SafeActor(actors[key], PlayActor) end
+        for key, ids in pairs(bindings) do
+            if ids[spellID] then SafeActor(actors[key], PlayActor) end
         end
     end
 end)

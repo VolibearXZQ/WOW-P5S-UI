@@ -352,9 +352,10 @@ function PanelTheme:StyleCheckBox(checkButton)
     checkButton._p5sPanelThemeStyled = true
 
     checkButton:SetSize(22, 22)
-    checkButton:SetNormalTexture(nil)
-    checkButton:SetPushedTexture(nil)
-    checkButton:SetDisabledTexture(nil)
+    -- Set*Texture requires an asset; use the dedicated clearing APIs.
+    checkButton:ClearNormalTexture()
+    checkButton:ClearPushedTexture()
+    checkButton:ClearDisabledTexture()
 
     if EnsureBackdrop(checkButton) then
         checkButton:SetBackdrop(CONTROL_BACKDROP)

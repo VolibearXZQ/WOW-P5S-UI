@@ -1523,6 +1523,26 @@ local function SaveP5SpellInput(dbKey, editBox, displayName)
     end
 end
 
+local function ConfigureP5InputAutoSave(editBox, saveInput, getSavedText)
+    local function CommitInput(self)
+        if not P5_NameplateDB then return end
+        if self:GetText() ~= getSavedText() then saveInput(self) end
+    end
+    editBox:SetScript("OnEnterPressed", function(self)
+        saveInput(self)
+        self:ClearFocus()
+    end)
+    editBox:SetScript("OnEscapePressed", function(self)
+        self:SetText(getSavedText())
+        self:ClearFocus()
+    end)
+    editBox:HookScript("OnEditFocusLost", CommitInput)
+    editBox:HookScript("OnHide", function(self)
+        CommitInput(self)
+        self:ClearFocus()
+    end)
+end
+
 local function CreateSpellInputRow(name, parent, displayName, dbKey, y)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     label:SetPoint("TOPLEFT", parent, "TOPLEFT", 18, y)
@@ -1530,23 +1550,11 @@ local function CreateSpellInputRow(name, parent, displayName, dbKey, y)
     ApplyTargetPanelTheme("StyleBodyText", label)
     ApplyPopupLabelColor(label, displayName)
 
-    local hint = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-    hint:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -18, y)
-    hint:SetText("回车保存")
-    ApplyTargetPanelTheme("StyleMutedText", hint)
-
     local editBox = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
     editBox:SetSize(324, 26)
     editBox:SetPoint("TOPLEFT", parent, "TOPLEFT", 18, y - 20)
     editBox:SetAutoFocus(false)
     editBox:SetMaxLetters(255)
-    editBox:SetScript("OnEnterPressed", function(self)
-        SaveP5SpellInput(dbKey, self, displayName)
-        self:ClearFocus()
-    end)
-    editBox:SetScript("OnEscapePressed", function(self)
-        self:ClearFocus()
-    end)
     editBox:SetScript("OnEditFocusGained", function(self)
         activeP5SpellInput = self
         InstallP5SpellLinkInputHook()
@@ -1556,6 +1564,9 @@ local function CreateSpellInputRow(name, parent, displayName, dbKey, y)
             activeP5SpellInput = nil
         end
     end)
+    ConfigureP5InputAutoSave(editBox, function(self)
+        SaveP5SpellInput(dbKey, self, displayName)
+    end, function() return P5_NameplateDB[dbKey] or "" end)
     ApplyTargetPanelTheme("StyleEditBox", editBox)
 
     return editBox
@@ -1596,12 +1607,8 @@ local function CreateDurationInputRow(parent, displayName, y)
     editBox:SetPoint("TOPLEFT", parent, "TOPLEFT", 18, y - 20)
     editBox:SetAutoFocus(false)
     editBox:SetMaxLetters(8)
-    editBox:SetScript("OnEnterPressed", function(self)
-        SaveAllAttackPulseTime(self)
-        self:ClearFocus()
-    end)
-    editBox:SetScript("OnEscapePressed", function(self)
-        self:ClearFocus()
+    ConfigureP5InputAutoSave(editBox, SaveAllAttackPulseTime, function()
+        return FormatP5Seconds(P5_NameplateDB.allAttackPulseTime)
     end)
     ApplyTargetPanelTheme("StyleEditBox", editBox)
 
@@ -1735,7 +1742,7 @@ local function CreateTargetGroupResetButton(y, keys, resetPulse)
     button:SetPoint("TOPRIGHT", targetSection, "TOPRIGHT", -18, y)
     button:SetText("重置")
     button:SetScript("OnClick", function()
-        -- 只重置本组，避免覆盖其他分组及尚未按回车的技能输入。
+        -- 只重置本组，避免覆盖其他分组及技能输入。
         for _, key in ipairs(keys) do
             P5_NameplateDB[key] = defaultSettings[key]
         end
@@ -1767,6 +1774,28 @@ spellInputs.critical = CreateSpellInputRow("P5CriticalSpellInput", spellSection,
 spellInputs.technical = CreateSpellInputRow("P5TechnicalSpellInput", spellSection, "TECHNICAL", "technicalSpellInput", -248)
 spellInputs.allAttack = CreateSpellInputRow("P5AllAttackSpellInput", spellSection, "总攻击 · 爆发计时", "allAttackSpellInput", -328)
 allAttackDurationInput = CreateDurationInputRow(spellSection, "总攻击持续时间", -408)
+
+-- 与 Showtime 输入一致：普通框外点击提交，Shift-点击保留技能链接输入。
+do
+    local inputs = { spellInputs.weak, spellInputs.critical, spellInputs.technical,
+        spellInputs.allAttack, allAttackDurationInput }
+    ConfigPanel:HookScript("OnShow", function(self)
+        self:RegisterEvent("GLOBAL_MOUSE_DOWN")
+    end)
+    ConfigPanel:HookScript("OnHide", function(self)
+        self:UnregisterEvent("GLOBAL_MOUSE_DOWN")
+    end)
+    ConfigPanel:HookScript("OnEvent", function(_, event)
+        if event ~= "GLOBAL_MOUSE_DOWN" then return end
+        for _, input in ipairs(inputs) do
+            if input:HasFocus() and not input:IsMouseOver()
+                and not (input ~= allAttackDurationInput and IsShiftKeyDown())
+            then
+                input:ClearFocus()
+            end
+        end
+    end)
+end
 
 local spellTip = spellSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 spellTip:SetPoint("TOPLEFT", spellSection, "TOPLEFT", 18, -476)
@@ -1865,7 +1894,7 @@ local footerTip = ConfigPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableS
 footerTip:SetPoint("BOTTOMLEFT", ConfigPanel, "BOTTOMLEFT", 24, 23)
 footerTip:SetWidth(880)
 footerTip:SetJustifyH("LEFT")
-footerTip:SetText("滑块实时生效  ·  技能与持续时间按回车保存  ·  /p5atk 预览总攻击")
+footerTip:SetText("滑块实时生效  ·  技能与持续时间离开输入框自动保存  ·  /p5atk 预览总攻击")
 ApplyTargetPanelTheme("StyleMutedText", footerTip)
 
 -- 临时预览总攻击弹字：选中目标后输入 /p5atk。

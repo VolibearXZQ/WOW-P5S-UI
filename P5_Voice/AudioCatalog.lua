@@ -1,3 +1,6 @@
+local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
+
 -- P5S Voice 音频目录。
 -- WoW 运行时不能遍历插件文件夹，因此新增、删除或改名音频时需要同步更新对应角色的表。
 -- Joker 表名保持不变，以兼容旧代码与已经保存的纯文件名配置。
@@ -230,7 +233,7 @@ P5S_VOICE_MAKOTO_AUDIO_FILES = {
 P5S_VOICE_AUDIO_SOURCES = {
     {
         key = "joker",
-        label = "P5 雨宫莲语音",
+        label = L["P5 雨宫莲语音"],
         shortLabel = "Joker",
         directory = "音频",
         files = P5S_VOICE_AUDIO_FILES,
@@ -252,8 +255,8 @@ P5S_VOICE_AUDIO_SOURCES = {
     },
     {
         key = "makoto",
-        label = "P3 结城理语音",
-        shortLabel = "结城理",
+        label = L["P3 结城理语音"],
+        shortLabel = L["结城理"],
         directory = "结城理_Voice",
         files = P5S_VOICE_MAKOTO_AUDIO_FILES,
         legacyFileNames = {

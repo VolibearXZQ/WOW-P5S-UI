@@ -1,15 +1,16 @@
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 -- 名称仅在脱战配置阶段解析；实际显示仍由原生 AuraContainer 驱动。
 local WIDTH, HEIGHT = 980, 520
 local groups = {
-    { key = "attack", symbol = "攻", title = "攻击强化 · 攻", description = "伤害、攻击等增益。" },
-    { key = "defense", symbol = "防", title = "防御强化 · 防", description = "减伤、防御等增益。" },
-    { key = "speed", symbol = "速", title = "速度强化 · 速", description = "移速或急速 Buff。" },
+    { key = "attack", symbol = L["攻"], title = L["攻击强化 · 攻"], description = L["伤害、攻击等增益。"] },
+    { key = "defense", symbol = L["防"], title = L["防御强化 · 防"], description = L["减伤、防御等增益。"] },
+    { key = "speed", symbol = L["速"], title = L["速度强化 · 速"], description = L["移速或急速 Buff。"] },
 }
 local levels = {
-    { key = "small", title = "小提升", arrows = "↑" },
-    { key = "large", title = "大提升", arrows = "↑↑" },
+    { key = "small", title = L["小提升"], arrows = "↑" },
+    { key = "large", title = L["大提升"], arrows = "↑↑" },
 }
 local rows = {}
 
@@ -182,8 +183,8 @@ local function CatalogName(name)
     if #ids == 1 then return NameEntry(ids[1], "catalog") end
     local summary = {}
     for index = 1, math.min(8, #ids) do summary[index] = ids[index] end
-    return nil, name .. "：同名目录 ID 有多个（" .. table.concat(summary, ", ")
-        .. (#ids > 8 and "…" or "") .. "），请填写要监控的 Buff ID。"
+    return nil, name .. L["：同名目录 ID 有多个（"] .. table.concat(summary, ", ")
+        .. (#ids > 8 and "…" or "") .. L["），请填写要监控的 Buff ID。"]
 end
 local function ResolveName(name, learn)
     local cached = CachedName(name)
@@ -227,12 +228,12 @@ local function ParseIDs(text, learn, resolvedNames)
             for number in token:gmatch("%d+") do tokens[#tokens + 1] = number end
         elseif token ~= "" then tokens[#tokens + 1] = token end
     end
-    if #tokens > 128 then return nil, "每份列表最多填写 64 个不同 ID。" end
+    if #tokens > 128 then return nil, L["每份列表最多填写 64 个不同 ID。"] end
     for _, token in ipairs(tokens) do
         local id, entry, displayName
         if token:match("^%d+$") then
             id = tonumber(token)
-            if not ValidID(id) then return nil, "ID 必须是有效范围内的正整数。" end
+            if not ValidID(id) then return nil, L["ID 必须是有效范围内的正整数。"] end
             displayName = DisplayName(id)
             missingName = missingName or not displayName
         else
@@ -240,8 +241,8 @@ local function ParseIDs(text, learn, resolvedNames)
             local resolveError
             entry, resolveError = ResolveName(token, learn)
             if not entry then
-                return nil, resolveError or (CanResolveNames() and ("未找到：" .. token .. "；请确认完整 Buff 名称或填写 ID。")
-                    or "新名称待脱战解析；也可直接填写 Buff ID。")
+                return nil, resolveError or (CanResolveNames() and (L["未找到："] .. token .. L["；请确认完整 Buff 名称或填写 ID。"])
+                    or L["新名称待脱战解析；也可直接填写 Buff ID。"])
             end
             id = entry.id
             displayName = token
@@ -250,31 +251,31 @@ local function ParseIDs(text, learn, resolvedNames)
         end
         local description
         if entry and entry.source == "catalog" then
-            description = token .. "\n客户端目录候选 ID：" .. id .. "（无需先触发；实际 Buff 对应需实测）"
+            description = token .. L["\n客户端目录候选 ID："] .. id .. L["（无需先触发；实际 Buff 对应需实测）"]
         elseif entry and entry.source == "spell" then
-            description = token .. "\n候选技能 ID：" .. id .. "（尚未确认同名 Buff ID，需实测）"
+            description = token .. L["\n候选技能 ID："] .. id .. L["（尚未确认同名 Buff ID，需实测）"]
         elseif entry then
-            description = token .. "\n监控 Buff ID：" .. id
+            description = token .. L["\n监控 Buff ID："] .. id
             if CAST_BY_BUFF[id] == id then
-                description = description .. "\n施法技能与 Buff 共用此 ID。"
+                description = description .. L["\n施法技能与 Buff 共用此 ID。"]
             elseif CAST_BY_BUFF[id] then
-                description = description .. "\n同名施法技能 ID：" .. CAST_BY_BUFF[id] .. "（不用于此名称的监控）"
+                description = description .. L["\n同名施法技能 ID："] .. CAST_BY_BUFF[id] .. L["（不用于此名称的监控）"]
             end
         else
-            description = displayName and ("已解析 Buff：" .. displayName .. "\n监控 ID：" .. id)
-                or ("监控 ID：" .. id .. "\n暂未解析到名称；仍按此 ID 绑定。")
+            description = displayName and (L["已解析 Buff："] .. displayName .. L["\n监控 ID："] .. id)
+                or (L["监控 ID："] .. id .. L["\n暂未解析到名称；仍按此 ID 绑定。"])
             if CAST_BY_BUFF[id] == id then
-                description = description .. "\n已核对的 Buff ID；施法技能与 Buff 共用此 ID。"
+                description = description .. L["\n已核对的 Buff ID；施法技能与 Buff 共用此 ID。"]
             elseif BUFF_BY_CAST[id] then
                 tentative = true
-                description = description .. "\n此为施法 ID，对应玩家 Buff ID：" .. BUFF_BY_CAST[id] .. "；建议改填 Buff ID 或名称。"
+                description = description .. L["\n此为施法 ID，对应玩家 Buff ID："] .. BUFF_BY_CAST[id] .. L["；建议改填 Buff ID 或名称。"]
             elseif not KNOWN_BUFF_IDS[id] then
-                description = description .. "\n名称仅供核对，实际 Buff 对应需实测。"
+                description = description .. L["\n名称仅供核对，实际 Buff 对应需实测。"]
             end
         end
         details[#details + 1] = description
         if not seen[id] then
-            if #ids >= 64 then return nil, "每份列表最多填写 64 个不同 ID。" end
+            if #ids >= 64 then return nil, L["每份列表最多填写 64 个不同 ID。"] end
             ids[#ids + 1] = id
             labels[#labels + 1] = displayName or ("ID " .. id)
             seen[id] = true
@@ -286,14 +287,14 @@ end
 
 local function GetConfig()
     local draft = GetDraft()
-    if not draft then return nil, "分组版本不兼容或尚未初始化。" end
+    if not draft then return nil, L["分组版本不兼容或尚未初始化。"] end
     ResetCatalog()
     local config, resolvedNames = {}, {}
     for _, group in ipairs(groups) do
         local result = { all = {} }
         for _, level in ipairs(levels) do
             local ids, errorText, set = ParseIDs(draft.groups[group.key][level.key], true, resolvedNames)
-            if not ids then return nil, group.title .. "：" .. errorText end
+            if not ids then return nil, group.title .. L["："] .. errorText end
             result[level.key] = set
             for _, id in ipairs(ids) do result.all[id] = true end
         end
@@ -327,18 +328,18 @@ local function RefreshGroupStatus(key)
             label:SetText(errorText)
             label:SetTextColor(1, 0.5, 0.35)
         elseif overlap then
-            label:SetText("大小列表有相同 ID，将按大提升显示。")
+            label:SetText(L["大小列表有相同 ID，将按大提升显示。"])
             label:SetTextColor(1, 0.75, 0.3)
         elseif #ids == 0 then
-            label:SetText("未填写")
+            label:SetText(L["未填写"])
             label:SetTextColor(0.6, 0.62, 0.68)
         else
-            local summary = #ids == 1 and ("已绑定：" .. details.labels[1])
-                or ("已绑定 " .. #ids .. " 项 Buff")
+            local summary = #ids == 1 and (L["已绑定："] .. details.labels[1])
+                or (L["已绑定 "] .. #ids .. L[" 项 Buff"])
             local uncertain = details.tentative or details.missingName
             if uncertain then
-                summary = summary .. (#ids > 1 and "（含待确认项）"
-                    or (details.missingName and "（名称待确认）" or "（待确认）"))
+                summary = summary .. (#ids > 1 and L["（含待确认项）"]
+                    or (details.missingName and L["（名称待确认）"] or L["（待确认）"]))
             end
             summary = summary:gsub("|", "||")
             label:SetText(summary)
@@ -391,7 +392,7 @@ end
 
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 title:SetPoint("CENTER", panel.TitleBg, "CENTER")
-title:SetText("攻 · 防 · 速 — 战斗增益设置")
+title:SetText(L["攻 · 防 · 速 — 战斗增益设置"])
 Theme("StylePanelTitle", title)
 local modeLabel = Label(panel, "", 24, -62, 730)
 
@@ -402,7 +403,7 @@ local function ReturnToMain()
     elseif SlashCmdList.P5SUI then SlashCmdList.P5SUI() end
 end
 
-local notice = Label(panel, "填写后按回车或点击输入框外即可应用。同类优先显示双箭头大提升。", 24, -102, 928)
+local notice = Label(panel, L["填写后按回车或点击输入框外即可应用。同类优先显示双箭头大提升。"], 24, -102, 928)
 Theme("StyleMutedText", notice)
 
 local dirty = false
@@ -462,7 +463,7 @@ for index, group in ipairs(groups) do
             local detail = rows[key][field].detail
             if GameTooltip and detail and detail ~= "" then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText("名称 / ID 解析结果")
+                GameTooltip:SetText(L["名称 / ID 解析结果"])
                 GameTooltip:AddLine(detail:gsub("|", "||"), 1, 1, 1, true)
                 GameTooltip:Show()
             end
@@ -471,13 +472,13 @@ for index, group in ipairs(groups) do
     end
 end
 
-local help = Label(panel, "填写完整 Buff 名称或 ID，多个用逗号分隔。", 24, -470, 730, "GameFontDisableSmall")
+local help = Label(panel, L["填写完整 Buff 名称或 ID，多个用逗号分隔。"], 24, -470, 730, "GameFontDisableSmall")
 Theme("StyleMutedText", help)
 
 local back = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
 back:SetSize(180, 30)
 back:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -24, 24)
-back:SetText("返回 P5S 主界面")
+back:SetText(L["返回 P5S 主界面"])
 back:SetScript("OnClick", ReturnToMain)
 Theme("StyleButton", back)
 
@@ -488,8 +489,8 @@ panel:HookScript("OnShow", function(self)
     self:Raise()
     local draft = GetDraft()
     modeLabel:SetText(P5S_UI_DB and P5S_UI_DB.indicatorMode == "buff"
-        and "当前用途：自身 Buff 监控"
-        or "当前用途：进战 / 脱战提示")
+        and L["当前用途：自身 Buff 监控"]
+        or L["当前用途：进战 / 脱战提示"])
     for _, group in ipairs(groups) do
         for _, level in ipairs(levels) do
             local input = rows[group.key][level.key].input
@@ -499,9 +500,9 @@ panel:HookScript("OnShow", function(self)
         RefreshGroupStatus(group.key)
     end
     if not draft then
-        notice:SetText("分组数据暂不可编辑（尚未初始化或版本不兼容）；原有战斗提示不受影响。")
+        notice:SetText(L["分组数据暂不可编辑（尚未初始化或版本不兼容）；原有战斗提示不受影响。"])
     else
-        notice:SetText("填写后按回车或点击输入框外即可应用。同类优先显示双箭头大提升。")
+        notice:SetText(L["填写后按回车或点击输入框外即可应用。同类优先显示双箭头大提升。"])
     end
 end)
 panel:HookScript("OnHide", function(self)

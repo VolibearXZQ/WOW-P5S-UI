@@ -1,11 +1,14 @@
 ## Interface: 120105
 ## Title: P5S
-## Notes: 女神异闻录5 魅影攻手风格的玩家界面、目标姓名板与技能语音
+## Notes: Persona 5 Strikers inspired player UI, target nameplates, and spell voices
+## Notes-zhCN: 女神异闻录5 魅影攻手风格的玩家界面、目标姓名板与技能语音
+## Notes-zhTW: 女神異聞錄5 亂戰風格的玩家介面、目標名條與技能語音
 ## Author: XZQ
 ## Version: 1.0.0
 ## SavedVariablesPerCharacter: P5S_UI_DB, P5_NameplateDB, P5S_Voice_DB
 ## IconTexture: Interface\AddOns\P5S\P5S_UI\Media\P5S_Icon.tga
 
+P5S_UI\Locale.lua
 P5S_UI\PanelTheme.lua
 P5S_UI\core.lua
 P5S_UI\BuffOptions.lua

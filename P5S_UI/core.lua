@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 local reportedThemeErrors = {}
 
@@ -10,7 +11,7 @@ local function ApplyPanelTheme(methodName, ...)
     local ok, errorMessage = pcall(method, panelTheme, ...)
     if not ok and not reportedThemeErrors[methodName] then
         reportedThemeErrors[methodName] = true
-        print("|cffFF3333[P5S UI]|r 主题样式加载失败（" .. methodName .. "）：" .. tostring(errorMessage))
+        print(L["|cffFF3333[P5S UI]|r 主题样式加载失败（"] .. methodName .. L["）："] .. tostring(errorMessage))
     end
     return ok
 end
@@ -153,11 +154,11 @@ P5SFrame.thirdResource = {
     styleOrder = {"A", "B", "C", "D"},
     styles = {
         A = {
-            label = "样式A",
+            label = L["样式A"],
             texture = "Interface\\AddOns\\P5S\\P5S_UI\\Media\\第三资源贴纸_A.tga",
         },
         B = {
-            label = "样式B",
+            label = L["样式B"],
             texture = "Interface\\AddOns\\P5S\\P5S_UI\\Media\\第三资源贴纸_E.tga",
             -- 【样式 B 独立排版】只改这里即可；保存后进游戏 /reload 查看。
             -- 保留用户调好的参数；与样式 A/C/D 独立，后续调整互不影响。
@@ -177,7 +178,7 @@ P5SFrame.thirdResource = {
             },
         },
         C = {
-            label = "样式C",
+            label = L["样式C"],
             texture = "Interface\\AddOns\\P5S\\P5S_UI\\Media\\第三资源贴纸_B.tga",
             -- 【样式 C 独立排版】只改这里即可；保存后进游戏 /reload 查看。
             -- 初值复制自用户调好的样式 B；本套参数独立，后续调整互不影响。
@@ -197,7 +198,7 @@ P5SFrame.thirdResource = {
             },
         },
         D = {
-            label = "样式D",
+            label = L["样式D"],
             texture = "Interface\\AddOns\\P5S\\P5S_UI\\Media\\第三资源贴纸_F.tga",
             -- 【样式 D 独立排版】只改这里即可；保存后进游戏 /reload 查看。
             -- 初值复制自用户调好的样式 B；本套参数独立，后续调整互不影响。
@@ -254,7 +255,7 @@ do
     function fire:RefreshControl()
         if self.check then
             self.check:SetChecked(P5S_UI_DB and P5S_UI_DB.showtimeFireEnabled and true or false)
-            _G[self.check:GetName() .. "Text"]:SetText(self.failed and "显示亚森火焰（本次加载不可用）" or "显示亚森火焰")
+            _G[self.check:GetName() .. "Text"]:SetText(self.failed and L["显示亚森火焰（本次加载不可用）"] or L["显示亚森火焰"])
         end
     end
 
@@ -629,12 +630,12 @@ do
         defaultKey = "P5S-Rhythm-Compact-Bold.ttf",
         directory = "Interface\\AddOns\\P5S\\P5S_UI\\Font\\",
         entries = {
-            { key = "P5S-Rhythm-Compact-Bold.ttf", label = "P5S-Rhythm-紧凑" },
-            { key = "P5S-Showtime-Compact.ttf", label = "P5S-Showtime-紧凑" },
-            { key = "P5S-Bounce-Compact.ttf", label = "P5S-Bounce-紧凑" },
-            { key = "P5S-Rhythm-Bold.ttf", label = "P5S-Rhythm-标准" },
-            { key = "P5S-Showtime-Regular.ttf", label = "P5S-Showtime-标准" },
-            { key = "P5S-Bounce-Regular.ttf", label = "P5S-Bounce-标准" },
+            { key = "P5S-Rhythm-Compact-Bold.ttf", label = L["P5S-Rhythm-紧凑"] },
+            { key = "P5S-Showtime-Compact.ttf", label = L["P5S-Showtime-紧凑"] },
+            { key = "P5S-Bounce-Compact.ttf", label = L["P5S-Bounce-紧凑"] },
+            { key = "P5S-Rhythm-Bold.ttf", label = L["P5S-Rhythm-标准"] },
+            { key = "P5S-Showtime-Regular.ttf", label = L["P5S-Showtime-标准"] },
+            { key = "P5S-Bounce-Regular.ttf", label = L["P5S-Bounce-标准"] },
         },
         texts = {},
         retryDelays = { 0, 0.15, 0.5, 1 },
@@ -660,13 +661,13 @@ do
             local ok, secret = pcall(issecretvalue, value)
             if not ok or secret ~= false then return fallback end
         end
-        if type(value) == "string" and value ~= "" then return fallback .. "：" .. value:sub(1, 240) end
+        if type(value) == "string" and value ~= "" then return fallback .. L["："] .. value:sub(1, 240) end
         return fallback
     end
 
     function fonts:SetRegionFont(region, path, size)
         local ok, applied = pcall(region.SetFont, region, path, size, "OUTLINE")
-        if not ok then return false, FontErrorDetail(applied, "字体应用接口报错") end
+        if not ok then return false, FontErrorDetail(applied, L["字体应用接口报错"]) end
         if applied == true then return true end
         -- 重复应用或没有明确成功返回时，核对实际字体文件。
         -- 字号读回可能经过客户端换算，不用精确相等判断文件是否可用。
@@ -676,7 +677,7 @@ do
             and currentPath:lower():gsub("/", "\\") == path:lower():gsub("/", "\\") then
             return true
         end
-        return false, readOK and "字体尚未应用到这处文字" or FontErrorDetail(currentPath, "无法确认当前字体")
+        return false, readOK and L["字体尚未应用到这处文字"] or FontErrorDetail(currentPath, L["无法确认当前字体"])
     end
 
     function fonts:AddText(region, size, staticText, layoutKey, point, relative, relativePoint)
@@ -711,7 +712,7 @@ do
                         text.region:SetText(text.staticText)
                     end
                 end)
-                if not layoutOK then applied = false; reason = FontErrorDetail(layoutError, "文字排版尚未更新") end
+                if not layoutOK then applied = false; reason = FontErrorDetail(layoutError, L["文字排版尚未更新"]) end
             end
             text.lastFailure = not applied and reason or nil
             if not applied then
@@ -730,7 +731,7 @@ do
         local key = self:NormalizeKey(P5S_UI_DB and P5S_UI_DB.resourceFont)
         local entry = self:FindEntry(key)
         UIDropDownMenu_SetSelectedValue(self.dropdown, key)
-        local suffix = self.pending and "（正在更新…）" or (self.applyFailed and "（部分文字未更新）" or "")
+        local suffix = self.pending and L["（正在更新…）"] or (self.applyFailed and L["（部分文字未更新）"] or "")
         UIDropDownMenu_SetText(self.dropdown, entry.label .. suffix)
     end
 
@@ -801,7 +802,7 @@ do
     function fonts:CreateOptionControls(parent)
         local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         label:SetPoint("TOPLEFT", parent, "TOPLEFT", 22, -175)
-        label:SetText("文字字体")
+        label:SetText(L["文字字体"])
         ApplyPanelTheme("StyleBodyText", label)
 
         local dropdown = CreateFrame("Frame", "P5S_ResourceFontDropdown", parent, "UIDropDownMenuTemplate")
@@ -827,15 +828,15 @@ do
         -- 只有有限重试仍失败时才显示详情；不新增命令、保存字段或聊天报错。
         local hoverTarget = _G["P5S_ResourceFontDropdownButton"] or dropdown
         if hoverTarget.HasScript and hoverTarget:HasScript("OnEnter") and hoverTarget:HasScript("OnLeave") then
-            local names = { hpValue = "HP 数字", spValue = "SP 数字", hpLabel = "HP 标签", spLabel = "SP 标签", slash = "斜杠" }
+            local names = { hpValue = L["HP 数字"], spValue = L["SP 数字"], hpLabel = L["HP 标签"], spLabel = L["SP 标签"], slash = L["斜杠"] }
             hoverTarget:HookScript("OnEnter", function(owner)
                 if not self.applyFailed or not GameTooltip then return end
                 GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
-                GameTooltip:SetText("部分文字未更新")
+                GameTooltip:SetText(L["部分文字未更新"])
                 for _, text in ipairs(self.failures or {}) do
-                    GameTooltip:AddLine((names[text.layoutKey] or "等级") .. "：" .. text.lastFailure, 1, 0.75, 0.3, true)
+                    GameTooltip:AddLine((names[text.layoutKey] or L["等级"]) .. L["："] .. text.lastFailure, 1, 0.75, 0.3, true)
                 end
-                GameTooltip:AddLine("自动重试已结束，可再次选择当前字体重试。", 0.8, 0.8, 0.8, true)
+                GameTooltip:AddLine(L["自动重试已结束，可再次选择当前字体重试。"], 0.8, 0.8, 0.8, true)
                 GameTooltip:Show()
                 self.tooltipOwner = owner
             end)
@@ -954,9 +955,9 @@ ApplyRotation(spdFrame, SPD_ANGLE)
 addon.BuffIndicatorLayout = {
     parent = P5SFrame, shiftX = SLOT_SHIFT_X,
     groups = {
-        { key = "attack", text = "攻", width = ATK_WIDTH, height = ATK_HEIGHT, x = ATK_X, y = ATK_Y },
-        { key = "defense", text = "防", width = DEF_WIDTH, height = DEF_HEIGHT, x = DEF_X, y = DEF_Y },
-        { key = "speed", text = "速", width = SPD_WIDTH, height = SPD_HEIGHT, x = SPD_X, y = SPD_Y },
+        { key = "attack", text = L["攻"], width = ATK_WIDTH, height = ATK_HEIGHT, x = ATK_X, y = ATK_Y },
+        { key = "defense", text = L["防"], width = DEF_WIDTH, height = DEF_HEIGHT, x = DEF_X, y = DEF_Y },
+        { key = "speed", text = L["速"], width = SPD_WIDTH, height = SPD_HEIGHT, x = SPD_X, y = SPD_Y },
     },
 }
 do
@@ -1181,12 +1182,12 @@ local function RefreshShowtimeStatusText()
     if not showtimeStatusText then return end
 
     local phaseLabels = {
-        [SHOWTIME_PHASE_DISABLED] = "未启用",
-        [SHOWTIME_PHASE_READY] = "已就绪",
-        [SHOWTIME_PHASE_BURST] = "爆发裁切中",
-        [SHOWTIME_PHASE_RECOVERY] = "冷却恢复中",
-        [SHOWTIME_PHASE_FAST_FINISH] = "提前转好",
-        [SHOWTIME_PHASE_READY_FADE] = "冷却完成渐显中",
+        [SHOWTIME_PHASE_DISABLED] = L["未启用"],
+        [SHOWTIME_PHASE_READY] = L["已就绪"],
+        [SHOWTIME_PHASE_BURST] = L["爆发裁切中"],
+        [SHOWTIME_PHASE_RECOVERY] = L["冷却恢复中"],
+        [SHOWTIME_PHASE_FAST_FINISH] = L["提前转好"],
+        [SHOWTIME_PHASE_READY_FADE] = L["冷却完成渐显中"],
     }
 
     if showtimeResolutionWarning then
@@ -1195,18 +1196,18 @@ local function RefreshShowtimeStatusText()
         return
     end
 
-    local phaseText = phaseLabels[showtimeState.phase] or "待命"
+    local phaseText = phaseLabels[showtimeState.phase] or L["待命"]
     if showtimeState.preview then
-        showtimeStatusText:SetText("快速预览  ·  " .. phaseText)
+        showtimeStatusText:SetText(L["快速预览  ·  "] .. phaseText)
         showtimeStatusText:SetTextColor(1, 0.55, 0.58)
         return
     end
     if runtimeShowtimeSpellID then
-        local spellName = runtimeShowtimeSpellName or "技能"
-        showtimeStatusText:SetText(string.format("已绑定：%s（%d）  ·  %s", spellName, runtimeShowtimeSpellID, phaseText))
+        local spellName = runtimeShowtimeSpellName or L["技能"]
+        showtimeStatusText:SetText(string.format(L["已绑定：%s（%d）  ·  %s"], spellName, runtimeShowtimeSpellID, phaseText))
         showtimeStatusText:SetTextColor(0.82, 0.86, 0.95)
     else
-        showtimeStatusText:SetText("尚未绑定技能  ·  可输入名称、Spell ID，或 Shift+点击技能")
+        showtimeStatusText:SetText(L["尚未绑定技能  ·  可输入名称、Spell ID，或 Shift+点击技能"])
         showtimeStatusText:SetTextColor(0.72, 0.75, 0.82)
     end
 end
@@ -1241,11 +1242,11 @@ local function ResolveSavedShowtimeSpell()
     if savedSpellID and savedSpellID > 0 then
         runtimeShowtimeSpellID = math.floor(savedSpellID)
         runtimeShowtimeSpellName = GetShowtimeSpellName(runtimeShowtimeSpellID)
-        showtimeResolutionWarning = "当前名称暂时无法解析，继续使用上次有效的 Spell ID。"
+        showtimeResolutionWarning = L["当前名称暂时无法解析，继续使用上次有效的 Spell ID。"]
     else
         runtimeShowtimeSpellID = nil
         runtimeShowtimeSpellName = nil
-        showtimeResolutionWarning = "技能无法识别；建议改用 Spell ID。"
+        showtimeResolutionWarning = L["技能无法识别；建议改用 Spell ID。"]
     end
     P5S_UI_DB.showtimeEnabled = runtimeShowtimeSpellID ~= nil
     RefreshShowtimeStatusText()
@@ -1497,8 +1498,8 @@ local function DisableShowtimeRenderer(errorMessage)
 
     if not showtimeRenderer.failed then
         showtimeRenderer.failed = true
-        local detail = errorMessage and ("（" .. tostring(errorMessage) .. "）") or ""
-        print("|cffffcc00[P5S UI]|r Showtime 径向动画不可用，已降级为静态显示" .. detail .. "。")
+        local detail = errorMessage and (L["（"] .. tostring(errorMessage) .. L["）"]) or ""
+        print(L["|cffffcc00[P5S UI]|r Showtime 径向动画不可用，已降级为静态显示"] .. detail .. L["。"])
     end
 end
 
@@ -1555,7 +1556,7 @@ local function InitializeShowtimeRenderer()
     }
     for _, methodName in ipairs(requiredMethods) do
         if type(showtimeTexture[methodName]) ~= "function" then
-            DisableShowtimeRenderer("缺少 " .. methodName)
+            DisableShowtimeRenderer(L["缺少 "] .. methodName)
             return false
         end
     end
@@ -1880,7 +1881,7 @@ end
 
 StartShowtimeCycle = function(isPreview, burstOverride, cooldownOverride)
     if isPreview and IsRealShowtimeCycleActive() then
-        print("|cffffcc00[P5S UI]|r 当前真实 Showtime 周期仍在运行，暂不启动预览。")
+        print(L["|cffffcc00[P5S UI]|r 当前真实 Showtime 周期仍在运行，暂不启动预览。"])
         return false
     end
 
@@ -2129,20 +2130,20 @@ do
         local getSpec = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization or GetSpecialization
         local getInfo = C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
         if type(issecretvalue) ~= "function" or type(getSpec) ~= "function" or type(getInfo) ~= "function" then
-            return nil, "专精不可用"
+            return nil, L["专精不可用"]
         end
         local ok, index = pcall(getSpec)
-        if not ok or IsShowtimeSecretValue(index) then return nil, "专精不可用" end
+        if not ok or IsShowtimeSecretValue(index) then return nil, L["专精不可用"] end
         if type(index) ~= "number" or index < 1 or index > 5 or index ~= math.floor(index) then
-            return nil, "尚无专精"
+            return nil, L["尚无专精"]
         end
         local infoOK, id, name = pcall(getInfo, index)
         if not infoOK or IsShowtimeSecretValue(id) or type(id) ~= "number"
             or id ~= id or id <= 0 or id >= math.huge or id ~= math.floor(id) then
-            return nil, "专精不可用"
+            return nil, L["专精不可用"]
         end
         if IsShowtimeSecretValue(name) or type(name) ~= "string" or name == "" then
-            name = "专精 " .. id
+            name = L["专精 "] .. id
         end
         return id, name
     end
@@ -2157,7 +2158,7 @@ do
     end
 
     function showtimeSpecialization:RefreshLabel()
-        if self.label then self.label:SetText("当前专精：" .. (self.name or "尚无专精")) end
+        if self.label then self.label:SetText(L["当前专精："] .. (self.name or L["尚无专精"])) end
     end
 
     function showtimeSpecialization:Sync()
@@ -2204,7 +2205,7 @@ do
             local triggerTime = P5S_UI_DB.showtimeLastTriggerServerTime
             EnterShowtimeDisabled()
             P5S_UI_DB.showtimeLastTriggerServerTime = triggerTime
-            showtimeResolutionWarning = "专精信息暂不可用，Showtime 技能联动已暂停。"
+            showtimeResolutionWarning = L["专精信息暂不可用，Showtime 技能联动已暂停。"]
         end
         self.switching = false
         if RefreshShowtimeOptionControls then RefreshShowtimeOptionControls(true) end
@@ -2328,7 +2329,7 @@ do
     function resource:CreateOptionControls(parent)
         local resourceTitle = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         resourceTitle:SetPoint("TOPLEFT", parent, "TOPLEFT", 22, -135)
-        resourceTitle:SetText("第三资源")
+        resourceTitle:SetText(L["第三资源"])
         ApplyPanelTheme("StyleBodyText", resourceTitle)
 
         local visibilityCheck = CreateFrame(
@@ -2338,7 +2339,7 @@ do
             "UICheckButtonTemplate"
         )
         visibilityCheck:SetPoint("TOPLEFT", parent, "TOPLEFT", 132, -132)
-        _G[visibilityCheck:GetName() .. "Text"]:SetText("显示")
+        _G[visibilityCheck:GetName() .. "Text"]:SetText(L["显示"])
         visibilityCheck:SetScript("OnClick", function(button)
             if not P5S_UI_DB then return end
             P5S_UI_DB.thirdResourceEnabled = button:GetChecked() and true or false
@@ -2831,12 +2832,12 @@ end)
 
 -- 各种隐藏入口仍保存；仅手动点击关闭按钮时提示，切换设置页保持安静。
 OptionsPanel.CloseButton:HookScript("OnClick", function()
-    print("|cffFF0000[P5S UI]|r 设置已保存，萨斯噶Joker！")
+    print(L["|cffFF0000[P5S UI]|r 设置已保存，萨斯噶Joker！"])
 end)
 
 OptionsPanel.title = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 OptionsPanel.title:SetPoint("CENTER", OptionsPanel.TitleBg, "CENTER", 0, 0)
-OptionsPanel.title:SetText("P5S 资源条设置")
+OptionsPanel.title:SetText(L["P5S 资源条设置"])
 ApplyPanelTheme("StylePanelTitle", OptionsPanel.title)
 
 local function OpenSiblingSettingsPanel(slashKey, panelName)
@@ -2844,7 +2845,7 @@ local function OpenSiblingSettingsPanel(slashKey, panelName)
 
     local commandHandler = SlashCmdList[slashKey]
     if not commandHandler then
-        print("|cffFF0000[P5S UI]|r 对应的设置面板暂时不可用。")
+        print(L["|cffFF0000[P5S UI]|r 对应的设置面板暂时不可用。"])
         return
     end
 
@@ -2882,9 +2883,9 @@ local function CreateSettingsSection(topOffset, height, titleText, descriptionTe
     return section
 end
 
-local appearanceSection = CreateSettingsSection(-116, 220, "Joker 资源条", "显示生命、法力/能量及职业专属资源。")
-local indicatorSection = CreateSettingsSection(-348, 232, "攻/防/速 战斗提示", "用攻、防、速图标提示进脱战状态或自身 Buff。")
-local showtimeSection = CreateSettingsSection(-592, 232, "Showtime 爆发槽", "每个专精只能绑定一个技能用于 Showtime。")
+local appearanceSection = CreateSettingsSection(-116, 220, L["Joker 资源条"], L["显示生命、法力/能量及职业专属资源。"])
+local indicatorSection = CreateSettingsSection(-348, 232, L["攻/防/速 战斗提示"], L["用攻、防、速图标提示进脱战状态或自身 Buff。"])
+local showtimeSection = CreateSettingsSection(-592, 232, L["Showtime 爆发槽"], L["每个专精只能绑定一个技能用于 Showtime。"])
 
 do
     local authorText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -2893,7 +2894,7 @@ do
     authorText:SetSize(240, 14)
     authorText:SetJustifyH("LEFT")
     authorText:SetJustifyV("MIDDLE")
-    authorText:SetText("插件制作：难刷素材的XZQ")
+    authorText:SetText(L["插件制作：难刷素材的XZQ"])
     ApplyPanelTheme("StyleMutedText", authorText)
 
     local copyrightText = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -2910,13 +2911,13 @@ end
 
 local navigationLabel = OptionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 navigationLabel:SetPoint("LEFT", OptionsPanel, "TOPLEFT", 34, -76)
-navigationLabel:SetText("快速切换")
+navigationLabel:SetText(L["快速切换"])
 ApplyPanelTheme("StyleMutedText", navigationLabel)
 
 local targetSettingsButton = CreateFrame("Button", "P5S_TargetSettingsButton", OptionsPanel, "UIPanelButtonTemplate")
 targetSettingsButton:SetSize(170, 30)
 targetSettingsButton:SetPoint("TOPLEFT", OptionsPanel, "TOPLEFT", 118, -61)
-targetSettingsButton:SetText("目标血条设置")
+targetSettingsButton:SetText(L["目标血条设置"])
 targetSettingsButton:SetScript("OnClick", function()
     OpenSiblingSettingsPanel("P5TARGET", "P5ConfigPanel")
 end)
@@ -2925,7 +2926,7 @@ ApplyPanelTheme("StyleButton", targetSettingsButton)
 local voiceSettingsButton = CreateFrame("Button", "P5S_VoiceSettingsButton", OptionsPanel, "UIPanelButtonTemplate")
 voiceSettingsButton:SetSize(170, 30)
 voiceSettingsButton:SetPoint("LEFT", targetSettingsButton, "RIGHT", 14, 0)
-voiceSettingsButton:SetText("技能语音设置")
+voiceSettingsButton:SetText(L["技能语音设置"])
 voiceSettingsButton:SetScript("OnClick", function()
     OpenSiblingSettingsPanel("P5VOICE", "P5VoiceConfigPanel")
 end)
@@ -2935,7 +2936,7 @@ do
     local weakSettingsButton = CreateFrame("Button", "P5S_WeakSettingsButton", OptionsPanel, "UIPanelButtonTemplate")
     weakSettingsButton:SetSize(170, 30)
     weakSettingsButton:SetPoint("LEFT", voiceSettingsButton, "RIGHT", 14, 0)
-    weakSettingsButton:SetText("眼神特写设置")
+    weakSettingsButton:SetText(L["眼神特写设置"])
     weakSettingsButton:SetScript("OnClick", function()
         OpenSiblingSettingsPanel("P5WEAK", "P5WeakConfigPanel")
     end)
@@ -2945,7 +2946,7 @@ end
 do
     local visibilityCheck = CreateFrame("CheckButton", "P5S_ResourceBarEnabledCheck", appearanceSection, "UICheckButtonTemplate")
     visibilityCheck:SetPoint("TOPLEFT", appearanceSection, "TOPLEFT", 22, -38)
-    _G[visibilityCheck:GetName() .. "Text"]:SetText("显示整套资源条")
+    _G[visibilityCheck:GetName() .. "Text"]:SetText(L["显示整套资源条"])
     visibilityCheck:SetScript("OnClick", function(self)
         if not P5S_UI_DB then return end
         P5S_UI_DB.resourceBarEnabled = self:GetChecked() and true or false
@@ -2956,7 +2957,7 @@ do
 
     local sizeLabel = appearanceSection:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     sizeLabel:SetPoint("TOPLEFT", appearanceSection, "TOPLEFT", 22, -85)
-    sizeLabel:SetText("整体大小")
+    sizeLabel:SetText(L["整体大小"])
     ApplyPanelTheme("StyleBodyText", sizeLabel)
 end
 
@@ -2983,7 +2984,7 @@ ApplyPanelTheme("StyleSlider", slider)
 
 local lockCheck = CreateFrame("CheckButton", "P5S_LockCheck", appearanceSection, "UICheckButtonTemplate")
 lockCheck:SetPoint("TOPLEFT", appearanceSection, "TOPLEFT", 300, -38)
-_G[lockCheck:GetName() .. "Text"]:SetText("锁定位置")
+_G[lockCheck:GetName() .. "Text"]:SetText(L["锁定位置"])
 
 lockCheck:SetScript("OnClick", function(self)
     local isChecked = self:GetChecked()
@@ -2994,30 +2995,30 @@ P5SFrame.thirdResource:CreateOptionControls(appearanceSection)
 P5SFrame.resourceFont:CreateOptionControls(appearanceSection)
 
 local stateOptions = {
-    "1. 攻小", "2. 防小", "3. 速小", "4. 攻小+防小", "5. 攻小+速小", "6. 防小+速小", "7. 攻小+防小+速小",
-    "8. 攻大", "9. 防大", "10. 速大", "11. 攻大+防大", "12. 攻大+速大", "13. 防大+速大", "14. 攻大+防大+速大",
-    "15. 关闭显示"
+    L["1. 攻小"], L["2. 防小"], L["3. 速小"], L["4. 攻小+防小"], L["5. 攻小+速小"], L["6. 防小+速小"], L["7. 攻小+防小+速小"],
+    L["8. 攻大"], L["9. 防大"], L["10. 速大"], L["11. 攻大+防大"], L["12. 攻大+速大"], L["13. 防大+速大"], L["14. 攻大+防大+速大"],
+    L["15. 关闭显示"]
 }
 
 -- 【战斗提示相关】
 local statusHeader = indicatorSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 statusHeader:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 140, -76)
-statusHeader:SetText("状态")
+statusHeader:SetText(L["状态"])
 ApplyPanelTheme("StyleMutedText", statusHeader)
 
 local combatTitle2 = indicatorSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 combatTitle2:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 300, -76)
-combatTitle2:SetText("动画组合")
+combatTitle2:SetText(L["动画组合"])
 ApplyPanelTheme("StyleMutedText", combatTitle2)
 
 local combatTitle = indicatorSection:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 combatTitle:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 22, -103)
-combatTitle:SetText("进入战斗")
+combatTitle:SetText(L["进入战斗"])
 ApplyPanelTheme("StyleBodyText", combatTitle)
 
 local combatCheck = CreateFrame("CheckButton", "P5S_CombatCheck", indicatorSection, "UICheckButtonTemplate")
 combatCheck:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 132, -100)
-_G[combatCheck:GetName() .. "Text"]:SetText("启用")
+_G[combatCheck:GetName() .. "Text"]:SetText(L["启用"])
 
 combatCheck:SetScript("OnClick", function(self)
     if P5S_UI_DB.indicatorMode == "buff" then return end
@@ -3050,12 +3051,12 @@ ApplyPanelTheme("StyleDropDown", combatDropdown)
 -- 【脱战显示相关】
 local oocTitle = indicatorSection:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 oocTitle:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 22, -143)
-oocTitle:SetText("脱离战斗")
+oocTitle:SetText(L["脱离战斗"])
 ApplyPanelTheme("StyleBodyText", oocTitle)
 
 local oocCheck = CreateFrame("CheckButton", "P5S_OocCheck", indicatorSection, "UICheckButtonTemplate")
 oocCheck:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 132, -140)
-_G[oocCheck:GetName() .. "Text"]:SetText("启用")
+_G[oocCheck:GetName() .. "Text"]:SetText(L["启用"])
 
 oocCheck:SetScript("OnClick", function(self)
     if P5S_UI_DB.indicatorMode == "buff" then return end
@@ -3089,7 +3090,7 @@ ApplyPanelTheme("StyleDropDown", oocDropdown)
 do
     local combatMode = CreateFrame("CheckButton", "P5S_CombatModeCheck", indicatorSection, "UICheckButtonTemplate")
     combatMode:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 16, -40)
-    _G[combatMode:GetName() .. "Text"]:SetText("用于进战/脱战提示")
+    _G[combatMode:GetName() .. "Text"]:SetText(L["用于进战/脱战提示"])
     ApplyPanelTheme("StyleCheckBox", combatMode)
 
     local separator = indicatorSection:CreateTexture(nil, "ARTWORK")
@@ -3100,7 +3101,7 @@ do
 
     local buffMode = CreateFrame("CheckButton", "P5S_BuffModeCheck", indicatorSection, "UICheckButtonTemplate")
     buffMode:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 16, -195)
-    _G[buffMode:GetName() .. "Text"]:SetText("用于自身Buff监控")
+    _G[buffMode:GetName() .. "Text"]:SetText(L["用于自身Buff监控"])
     ApplyPanelTheme("StyleCheckBox", buffMode)
 
     function indicatorSection:RefreshMode()
@@ -3132,7 +3133,7 @@ do
     local buffSettingsButton = CreateFrame("Button", "P5S_BuffSettingsButton", indicatorSection, "UIPanelButtonTemplate")
     buffSettingsButton:SetSize(160, 28)
     buffSettingsButton:SetPoint("TOPLEFT", indicatorSection, "TOPLEFT", 300, -192)
-    buffSettingsButton:SetText("Buff 监控设置")
+    buffSettingsButton:SetText(L["Buff 监控设置"])
     buffSettingsButton:SetScript("OnClick", function()
         local options = addon and addon.BuffOptions
         if options and type(options.Open) == "function" and options.Open() then
@@ -3164,7 +3165,7 @@ end
 
 local showtimeSpellLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 showtimeSpellLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -42)
-showtimeSpellLabel:SetText("爆发技能")
+showtimeSpellLabel:SetText(L["爆发技能"])
 ApplyPanelTheme("StyleBodyText", showtimeSpellLabel)
 
 showtimeSpellInput = CreateFrame("EditBox", "P5S_ShowtimeSpellInput", showtimeSection, "InputBoxTemplate")
@@ -3193,10 +3194,10 @@ ApplyPanelTheme("StyleEditBox", showtimeSpellInput)
 local showtimePreviewButton = CreateFrame("Button", "P5S_ShowtimePreviewButton", showtimeSection, "UIPanelButtonTemplate")
 showtimePreviewButton:SetSize(76, 26)
 showtimePreviewButton:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 418, -35)
-showtimePreviewButton:SetText("快速预览")
+showtimePreviewButton:SetText(L["快速预览"])
 showtimePreviewButton:SetScript("OnClick", function()
     if IsRealShowtimeCycleActive() then
-        print("|cffffcc00[P5S UI]|r 当前真实 Showtime 周期仍在运行，暂不启动预览。")
+        print(L["|cffffcc00[P5S UI]|r 当前真实 Showtime 周期仍在运行，暂不启动预览。"])
         return
     end
     if CommitShowtimeOptions then CommitShowtimeOptions(true) end
@@ -3215,12 +3216,12 @@ showtimeStatusText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontD
 showtimeStatusText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 104, -67)
 showtimeStatusText:SetWidth(450)
 showtimeStatusText:SetJustifyH("LEFT")
-showtimeStatusText:SetText("尚未绑定技能")
+showtimeStatusText:SetText(L["尚未绑定技能"])
 ApplyPanelTheme("StyleMutedText", showtimeStatusText)
 
 local showtimeBurstLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 showtimeBurstLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -100)
-showtimeBurstLabel:SetText("爆发持续")
+showtimeBurstLabel:SetText(L["爆发持续"])
 ApplyPanelTheme("StyleBodyText", showtimeBurstLabel)
 
 showtimeBurstInput = CreateFrame("EditBox", "P5S_ShowtimeBurstInput", showtimeSection, "InputBoxTemplate")
@@ -3233,12 +3234,12 @@ ApplyPanelTheme("StyleEditBox", showtimeBurstInput)
 
 local showtimeBurstUnit = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 showtimeBurstUnit:SetPoint("LEFT", showtimeBurstInput, "RIGHT", 7, 0)
-showtimeBurstUnit:SetText("秒")
+showtimeBurstUnit:SetText(L["秒"])
 ApplyPanelTheme("StyleMutedText", showtimeBurstUnit)
 
 local showtimeCooldownLabel = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 showtimeCooldownLabel:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 232, -100)
-showtimeCooldownLabel:SetText("技能总冷却")
+showtimeCooldownLabel:SetText(L["技能总冷却"])
 ApplyPanelTheme("StyleBodyText", showtimeCooldownLabel)
 
 showtimeCooldownInput = CreateFrame("EditBox", "P5S_ShowtimeCooldownInput", showtimeSection, "InputBoxTemplate")
@@ -3251,7 +3252,7 @@ ApplyPanelTheme("StyleEditBox", showtimeCooldownInput)
 
 local showtimeCooldownUnit = showtimeSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 showtimeCooldownUnit:SetPoint("LEFT", showtimeCooldownInput, "RIGHT", 7, 0)
-showtimeCooldownUnit:SetText("秒（从施放算起）")
+showtimeCooldownUnit:SetText(L["秒（从施放算起）"])
 ApplyPanelTheme("StyleMutedText", showtimeCooldownUnit)
 
 local function CommitShowtimeNumericInput(self)
@@ -3300,7 +3301,7 @@ local showtimeHelpText = showtimeSection:CreateFontString(nil, "OVERLAY", "GameF
 showtimeHelpText:SetPoint("TOPLEFT", showtimeSection, "TOPLEFT", 22, -137)
 showtimeHelpText:SetWidth(540)
 showtimeHelpText:SetJustifyH("LEFT")
-showtimeHelpText:SetText("推荐搭配“技能语音设置 → 爆发语音”，绑定同一技能，让 Showtime 与语音同步，更还原原版游戏效果。")
+showtimeHelpText:SetText(L["推荐搭配“技能语音设置 → 爆发语音”，绑定同一技能，让 Showtime 与语音同步，更还原原版游戏效果。"])
 ApplyPanelTheme("StyleMutedText", showtimeHelpText)
 end
 
@@ -3314,7 +3315,7 @@ do
     aboutButton:SetSize(90, 26)
     aboutButton:SetPoint("TOPRIGHT", showtimeSection, "TOPRIGHT", -22, -186)
     ApplyPanelTheme("StyleButton", aboutButton)
-    aboutButton:SetText("关于")
+    aboutButton:SetText(L["关于"])
 
     local function CreateAboutPanel()
         local panel = CreateFrame("Frame", "P5S_AboutPanel", UIParent, "BackdropTemplate")
@@ -3349,7 +3350,7 @@ do
 
         local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         title:SetPoint("TOP", panel, "TOP", 0, -12)
-        title:SetText("关于 P5SUI / About P5SUI")
+        title:SetText(L["关于 P5SUI / About P5SUI"])
         ApplyPanelTheme("StylePanelTitle", title)
 
         local scroll = CreateFrame("ScrollFrame", "P5S_AboutScroll", panel, "UIPanelScrollFrameTemplate")
@@ -3447,7 +3448,7 @@ do
         local chineseButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
         chineseButton:SetPoint("TOPLEFT", panel, "TOPLEFT", 28, -52)
         chineseButton:SetSize(90, 26)
-        chineseButton:SetText("中文")
+        chineseButton:SetText(L["中文"])
         chineseButton:SetScript("OnClick", function() JumpTo(0) end)
         ApplyPanelTheme("StyleButton", chineseButton)
         local englishButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
@@ -3460,12 +3461,12 @@ do
         local closeButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
         closeButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -28, 16)
         closeButton:SetSize(100, 26)
-        closeButton:SetText("关闭 / Close")
+        closeButton:SetText(L["关闭 / Close"])
         closeButton:SetScript("OnClick", function() panel:Hide() end)
         ApplyPanelTheme("StyleButton", closeButton)
         panel:HookScript("OnShow", function(self)
             self:SetScale(math.min(1, UIParent:GetWidth() / 760, UIParent:GetHeight() / 720))
-            scroll:SetVerticalScroll(0)
+            JumpTo(addon.IsEnglish and englishOffset or 0)
             self:Raise()
         end)
         table.insert(UISpecialFrames, "P5S_AboutPanel")
@@ -3482,7 +3483,7 @@ do
         if not ok then
             aboutFailed = true
             if aboutPanel then aboutPanel:Hide() end
-            aboutButton:SetText("关于（不可用）")
+            aboutButton:SetText(L["关于（不可用）"])
             aboutButton:Disable()
         end
     end)
@@ -3514,14 +3515,14 @@ local function ApplyShowtimeSpellInput(inputText)
     end
 
     if runtimeShowtimeSpellID then
-        local spellName = runtimeShowtimeSpellName or "技能"
+        local spellName = runtimeShowtimeSpellName or L["技能"]
         showtimeResolutionWarning = string.format(
-            "无法识别新输入；技能绑定未改变，仍使用 %s（%d）。",
+            L["无法识别新输入；技能绑定未改变，仍使用 %s（%d）。"],
             spellName,
             runtimeShowtimeSpellID
         )
     else
-        showtimeResolutionWarning = "技能无法识别，技能绑定未保存；建议改用有效 Spell ID。"
+        showtimeResolutionWarning = L["技能无法识别，技能绑定未保存；建议改用有效 Spell ID。"]
     end
     return false
 end
@@ -3595,12 +3596,12 @@ CommitShowtimeOptions = function(silent)
 
     if not silent then
         if resolved and runtimeShowtimeSpellID then
-            local spellName = runtimeShowtimeSpellName or "技能"
-            print(string.format("|cffFF3333[P5S UI]|r Showtime 已绑定：%s（%d）。", spellName, runtimeShowtimeSpellID))
+            local spellName = runtimeShowtimeSpellName or L["技能"]
+            print(string.format(L["|cffFF3333[P5S UI]|r Showtime 已绑定：%s（%d）。"], spellName, runtimeShowtimeSpellID))
         elseif resolved then
-            print("|cffffcc00[P5S UI]|r Showtime 技能已清空。")
+            print(L["|cffffcc00[P5S UI]|r Showtime 技能已清空。"])
         else
-            print("|cffffcc00[P5S UI]|r " .. (showtimeResolutionWarning or "技能无法识别。"))
+            print("|cffffcc00[P5S UI]|r " .. (showtimeResolutionWarning or L["技能无法识别。"]))
         end
     end
     return resolved

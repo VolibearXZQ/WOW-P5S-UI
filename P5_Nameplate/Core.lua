@@ -5,6 +5,7 @@
 -- ==========================================
 
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 local reportedTargetThemeErrors = {}
 
@@ -16,7 +17,7 @@ local function ApplyTargetPanelTheme(methodName, ...)
     local ok, errorMessage = pcall(method, panelTheme, ...)
     if not ok and not reportedTargetThemeErrors[methodName] then
         reportedTargetThemeErrors[methodName] = true
-        print("|cffFF0000[P5血条]|r 设置面板主题应用失败（" .. methodName .. "）：" .. tostring(errorMessage))
+        print(L["|cffFF0000[P5血条]|r 设置面板主题应用失败（"] .. methodName .. L["）："] .. tostring(errorMessage))
     end
     return ok
 end
@@ -1347,13 +1348,13 @@ end)
 
 ConfigPanel.title = ConfigPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 ConfigPanel.title:SetPoint("CENTER", ConfigPanel.TitleBg, "CENTER", 0, 0)
-ConfigPanel.title:SetText("P5S 目标血条设置")
+ConfigPanel.title:SetText(L["P5S 目标血条设置"])
 ApplyTargetPanelTheme("StylePanelTitle", ConfigPanel.title)
 
 local p5CloseButton = ConfigPanel.CloseButton
 ApplyTargetPanelTheme("StyleCloseButton", p5CloseButton)
 p5CloseButton:HookScript("OnClick", function()
-    print("|cffFF0000[P5S 血条]|r 设置已保存，Joker卡酷一！")
+    print(L["|cffFF0000[P5S 血条]|r 设置已保存，Joker卡酷一！"])
 end)
 
 local function CreateSettingsSection(parent, x, y, width, height, titleText)
@@ -1415,9 +1416,9 @@ local popupLabelColors = {
     WEAK = {1.00, 0.82, 0.30},
     CRITICAL = {1.00, 0.45, 0.42},
     TECHNICAL = {0.30, 0.85, 1.00},
-    ["总攻击"] = {0.80, 0.62, 1.00},
+    [L["总攻击"]] = {0.80, 0.62, 1.00},
 }
-popupLabelColors["总攻击 · 爆发计时"] = popupLabelColors["总攻击"]
+popupLabelColors[L["总攻击 · 爆发计时"]] = popupLabelColors[L["总攻击"]]
 
 local function ApplyPopupLabelColor(label, text)
     local color = popupLabelColors[text]
@@ -1501,7 +1502,7 @@ end
 
 local function JoinP5List(list)
     if not list or #list == 0 then
-        return "无"
+        return L["无"]
     end
     return table.concat(list, ", ")
 end
@@ -1513,13 +1514,13 @@ local function SaveP5SpellInput(dbKey, editBox, displayName)
     local validList, invalidList = SetSingleP5SpellTriggerMap(dbKey, text)
 
     if #validList > 0 then
-        print("|cffef4444P5_Nameplate:|r " .. displayName .. " 触发技能已保存：" .. JoinP5List(validList))
+        print("|cffef4444P5_Nameplate:|r " .. displayName .. L[" 触发技能已保存："] .. JoinP5List(validList))
     else
-        print("|cffef4444P5_Nameplate:|r " .. displayName .. " 当前没有有效触发技能。")
+        print("|cffef4444P5_Nameplate:|r " .. displayName .. L[" 当前没有有效触发技能。"])
     end
 
     if #invalidList > 0 then
-        print("|cffffcc00P5_Nameplate:|r 以下输入无法识别，建议改用 Spell ID：" .. JoinP5List(invalidList))
+        print(L["|cffffcc00P5_Nameplate:|r 以下输入无法识别，建议改用 Spell ID："] .. JoinP5List(invalidList))
     end
 end
 
@@ -1585,10 +1586,10 @@ local function SaveAllAttackPulseTime(editBox)
 
     if not value then
         value = defaultSettings.allAttackPulseTime or 5.00
-        print("|cffffcc00P5_Nameplate:|r 总攻击持续时间无法识别，已恢复为默认 " .. FormatP5Seconds(value) .. " 秒。")
+        print(L["|cffffcc00P5_Nameplate:|r 总攻击持续时间无法识别，已恢复为默认 "] .. FormatP5Seconds(value) .. L[" 秒。"])
     else
         value = GetValidatedAllAttackPulseTime(value)
-        print("|cffef4444P5_Nameplate:|r 总攻击持续时间已保存：" .. FormatP5Seconds(value) .. " 秒。")
+        print(L["|cffef4444P5_Nameplate:|r 总攻击持续时间已保存："] .. FormatP5Seconds(value) .. L[" 秒。"])
     end
 
     P5_NameplateDB.allAttackPulseTime = value
@@ -1614,7 +1615,7 @@ local function CreateDurationInputRow(parent, displayName, y)
 
     local hint = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("LEFT", editBox, "RIGHT", 10, 0)
-    hint:SetText("秒  ·  0.1–60")
+    hint:SetText(L["秒  ·  0.1–60"])
     ApplyTargetPanelTheme("StyleMutedText", hint)
 
     return editBox
@@ -1645,7 +1646,7 @@ local function ResetSingleP5PopupYPosition(dbKey, sliderKey, displayName)
     end
 
     RefreshP5PopupYPosition(dbKey)
-    print("|cffef4444P5_Nameplate:|r " .. displayName .. " 的 Y 轴位置已恢复默认。")
+    print("|cffef4444P5_Nameplate:|r " .. displayName .. L[" 的 Y 轴位置已恢复默认。"])
 end
 
 local function ResetP5PopupYPositions()
@@ -1660,14 +1661,14 @@ local function ResetP5PopupYPositions()
     if sliders.allAttackPopupY then sliders.allAttackPopupY:SetValue(P5_NameplateDB.allAttackPopupY) end
 
     RefreshP5PopupYPosition()
-    print("|cffef4444P5_Nameplate:|r Weak / Critical / Technical / 总攻击 的 Y 轴位置已全部恢复默认。")
+    print(L["|cffef4444P5_Nameplate:|r Weak / Critical / Technical / 总攻击 的 Y 轴位置已全部恢复默认。"])
 end
 
 local function CreatePopupYResetButton(parent, y, dbKey, sliderKey, displayName)
     local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     button:SetSize(62, 24)
     button:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -18, y)
-    button:SetText("重置")
+    button:SetText(L["重置"])
     button:SetScript("OnClick", function()
         ResetSingleP5PopupYPosition(dbKey, sliderKey, displayName)
     end)
@@ -1676,9 +1677,9 @@ local function CreatePopupYResetButton(parent, y, dbKey, sliderKey, displayName)
 end
 
 -- 三张信息卡把目标框体、技能触发和弹字位置分开，所有设置同时可见且无需滚动。
-local targetSection = CreateSettingsSection(ConfigPanel, 24, -64, 360, 556, "目标框体")
-local spellSection = CreateSettingsSection(ConfigPanel, 400, -64, 360, 556, "技能触发")
-local popupSection = CreateSettingsSection(ConfigPanel, 776, -64, 320, 556, "弹字位置")
+local targetSection = CreateSettingsSection(ConfigPanel, 24, -64, 360, 556, L["目标框体"])
+local spellSection = CreateSettingsSection(ConfigPanel, 400, -64, 360, 556, L["技能触发"])
+local popupSection = CreateSettingsSection(ConfigPanel, 776, -64, 320, 556, L["弹字位置"])
 
 local function CreateTargetDisplayCheck(name, dbKey, y)
     local check = CreateFrame("CheckButton", name, targetSection, "UICheckButtonTemplate")
@@ -1691,7 +1692,7 @@ local function CreateTargetDisplayCheck(name, dbKey, y)
     check.Text = label
     label:ClearAllPoints()
     label:SetPoint("LEFT", check, "RIGHT", 6, 0)
-    label:SetText("启用")
+    label:SetText(L["启用"])
     check:SetScript("OnClick", function(self)
         P5_NameplateDB[dbKey] = self:GetChecked() and true or false
         UpdateP5Visuals()
@@ -1700,21 +1701,21 @@ local function CreateTargetDisplayCheck(name, dbKey, y)
     return check
 end
 
-CreateGroupLabel(targetSection, "脱战显示", "CHANCE", -40)
+CreateGroupLabel(targetSection, L["脱战显示"], "CHANCE", -40)
 local oocEnabledCheck = CreateTargetDisplayCheck("P5OOCEnabledCheck", "oocEnabled", -34)
-sliders.oocScale = CreateSlider("P5SliderOOCScale", targetSection, "缩放", 0.5, 2.0, 0.05, 98, -78, "oocScale", true, 188)
-sliders.oocX = CreateSlider("P5SliderOOCX", targetSection, "X 偏移", -300, 300, 1, 98, -120, "oocX", false, 188)
-sliders.oocY = CreateSlider("P5SliderOOCY", targetSection, "Y 偏移", -300, 300, 1, 98, -162, "oocY", false, 188)
+sliders.oocScale = CreateSlider("P5SliderOOCScale", targetSection, L["缩放"], 0.5, 2.0, 0.05, 98, -78, "oocScale", true, 188)
+sliders.oocX = CreateSlider("P5SliderOOCX", targetSection, L["X 偏移"], -300, 300, 1, 98, -120, "oocX", false, 188)
+sliders.oocY = CreateSlider("P5SliderOOCY", targetSection, L["Y 偏移"], -300, 300, 1, 98, -162, "oocY", false, 188)
 
 CreateSectionDivider(targetSection, -196)
-CreateGroupLabel(targetSection, "进战显示", "爱心血条", -210)
+CreateGroupLabel(targetSection, L["进战显示"], L["爱心血条"], -210)
 local combatEnabledCheck = CreateTargetDisplayCheck("P5CombatEnabledCheck", "combatEnabled", -204)
-sliders.combatScale = CreateSlider("P5SliderCombatScale", targetSection, "缩放", 0.5, 2.0, 0.05, 98, -248, "combatScale", true, 188)
-sliders.combatX = CreateSlider("P5SliderCombatX", targetSection, "X 偏移", -300, 300, 1, 98, -290, "combatX", false, 188)
-sliders.combatY = CreateSlider("P5SliderCombatY", targetSection, "Y 偏移", -300, 300, 1, 98, -332, "combatY", false, 188)
+sliders.combatScale = CreateSlider("P5SliderCombatScale", targetSection, L["缩放"], 0.5, 2.0, 0.05, 98, -248, "combatScale", true, 188)
+sliders.combatX = CreateSlider("P5SliderCombatX", targetSection, L["X 偏移"], -300, 300, 1, 98, -290, "combatX", false, 188)
+sliders.combatY = CreateSlider("P5SliderCombatY", targetSection, L["Y 偏移"], -300, 300, 1, 98, -332, "combatY", false, 188)
 
 CreateSectionDivider(targetSection, -366)
-CreateGroupLabel(targetSection, "心跳动画", nil, -380)
+CreateGroupLabel(targetSection, L["心跳动画"], nil, -380)
 
 local pulseCheck = CreateFrame("CheckButton", "P5PulseCheck", targetSection, "UICheckButtonTemplate")
 pulseCheck:SetPoint("TOPLEFT", targetSection, "TOPLEFT", 98, -374)
@@ -1725,22 +1726,22 @@ end
 pulseCheck.Text = pulseCheckText
 pulseCheckText:ClearAllPoints()
 pulseCheckText:SetPoint("LEFT", pulseCheck, "RIGHT", 6, 0)
-pulseCheckText:SetText("启用")
+pulseCheckText:SetText(L["启用"])
 pulseCheck:SetScript("OnClick", function(self)
     P5_NameplateDB.pulseEnabled = self:GetChecked()
     UpdateP5Visuals()
 end)
 ApplyTargetPanelTheme("StyleCheckBox", pulseCheck)
 
-sliders.pulseScale = CreateSlider("P5SliderPulseScale", targetSection, "膨胀比例", 1.0, 1.5, 0.01, 98, -418, "pulseScale", true, 188)
-sliders.pulseExpDur = CreateSlider("P5SliderPulseExpDur", targetSection, "膨胀时间", 0.05, 1.0, 0.05, 98, -460, "pulseExpDur", true, 188)
-sliders.pulseShrDur = CreateSlider("P5SliderPulseShrDur", targetSection, "回落时间", 0.1, 2.0, 0.05, 98, -502, "pulseShrDur", true, 188)
+sliders.pulseScale = CreateSlider("P5SliderPulseScale", targetSection, L["膨胀比例"], 1.0, 1.5, 0.01, 98, -418, "pulseScale", true, 188)
+sliders.pulseExpDur = CreateSlider("P5SliderPulseExpDur", targetSection, L["膨胀时间"], 0.05, 1.0, 0.05, 98, -460, "pulseExpDur", true, 188)
+sliders.pulseShrDur = CreateSlider("P5SliderPulseShrDur", targetSection, L["回落时间"], 0.1, 2.0, 0.05, 98, -502, "pulseShrDur", true, 188)
 
 local function CreateTargetGroupResetButton(y, keys, resetPulse)
     local button = CreateFrame("Button", nil, targetSection, "UIPanelButtonTemplate")
     button:SetSize(62, 24)
     button:SetPoint("TOPRIGHT", targetSection, "TOPRIGHT", -18, y)
-    button:SetText("重置")
+    button:SetText(L["重置"])
     button:SetScript("OnClick", function()
         -- 只重置本组，避免覆盖其他分组及技能输入。
         for _, key in ipairs(keys) do
@@ -1766,14 +1767,14 @@ local spellDesc = spellSection:CreateFontString(nil, "OVERLAY", "GameFontHighlig
 spellDesc:SetPoint("TOPLEFT", spellSection, "TOPLEFT", 18, -44)
 spellDesc:SetWidth(324)
 spellDesc:SetJustifyH("LEFT")
-spellDesc:SetText("输入技能名称或 Spell ID；多个项目用逗号分隔。")
+spellDesc:SetText(L["输入技能名称或 Spell ID；多个项目用逗号分隔。"])
 ApplyTargetPanelTheme("StyleMutedText", spellDesc)
 
 spellInputs.weak = CreateSpellInputRow("P5WeakSpellInput", spellSection, "WEAK", "weakSpellInput", -88)
 spellInputs.critical = CreateSpellInputRow("P5CriticalSpellInput", spellSection, "CRITICAL", "criticalSpellInput", -168)
 spellInputs.technical = CreateSpellInputRow("P5TechnicalSpellInput", spellSection, "TECHNICAL", "technicalSpellInput", -248)
-spellInputs.allAttack = CreateSpellInputRow("P5AllAttackSpellInput", spellSection, "总攻击 · 爆发计时", "allAttackSpellInput", -328)
-allAttackDurationInput = CreateDurationInputRow(spellSection, "总攻击持续时间", -408)
+spellInputs.allAttack = CreateSpellInputRow("P5AllAttackSpellInput", spellSection, L["总攻击 · 爆发计时"], "allAttackSpellInput", -328)
+allAttackDurationInput = CreateDurationInputRow(spellSection, L["总攻击持续时间"], -408)
 
 -- 与 Showtime 输入一致：普通框外点击提交，Shift-点击保留技能链接输入。
 do
@@ -1801,30 +1802,30 @@ local spellTip = spellSection:CreateFontString(nil, "OVERLAY", "GameFontDisableS
 spellTip:SetPoint("TOPLEFT", spellSection, "TOPLEFT", 18, -476)
 spellTip:SetWidth(324)
 spellTip:SetJustifyH("LEFT")
-spellTip:SetText("示例：121253, 猛虎掌；支持 Shift-点击技能书填入链接。")
+spellTip:SetText(L["示例：121253, 猛虎掌；支持 Shift-点击技能书填入链接。"])
 ApplyTargetPanelTheme("StyleMutedText", spellTip)
 
 local popupPositionDesc = popupSection:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 popupPositionDesc:SetPoint("TOPLEFT", popupSection, "TOPLEFT", 18, -44)
 popupPositionDesc:SetWidth(284)
 popupPositionDesc:SetJustifyH("LEFT")
-popupPositionDesc:SetText("仅调整 Y 轴；数值越大，弹字越靠上。")
+popupPositionDesc:SetText(L["仅调整 Y 轴；数值越大，弹字越靠上。"])
 ApplyTargetPanelTheme("StyleMutedText", popupPositionDesc)
 
 sliders.weakPopupY = CreateSlider("P5SliderWeakPopupY", popupSection, "WEAK", defaultSettings.weakPopupY - 80, defaultSettings.weakPopupY + 80, 1, 18, -108, "weakPopupY", false, 210, "stacked")
 sliders.criticalPopupY = CreateSlider("P5SliderCriticalPopupY", popupSection, "CRITICAL", defaultSettings.criticalPopupY - 80, defaultSettings.criticalPopupY + 80, 1, 18, -188, "criticalPopupY", false, 210, "stacked")
 sliders.technicalPopupY = CreateSlider("P5SliderTechnicalPopupY", popupSection, "TECHNICAL", defaultSettings.technicalPopupY - 80, defaultSettings.technicalPopupY + 80, 1, 18, -268, "technicalPopupY", false, 210, "stacked")
-sliders.allAttackPopupY = CreateSlider("P5SliderAllAttackPopupY", popupSection, "总攻击", defaultSettings.allAttackPopupY - 80, defaultSettings.allAttackPopupY + 80, 1, 18, -348, "allAttackPopupY", false, 210, "stacked")
+sliders.allAttackPopupY = CreateSlider("P5SliderAllAttackPopupY", popupSection, L["总攻击"], defaultSettings.allAttackPopupY - 80, defaultSettings.allAttackPopupY + 80, 1, 18, -348, "allAttackPopupY", false, 210, "stacked")
 
 CreatePopupYResetButton(popupSection, -99, "weakPopupY", "weakPopupY", "Weak")
 CreatePopupYResetButton(popupSection, -179, "criticalPopupY", "criticalPopupY", "Critical")
 CreatePopupYResetButton(popupSection, -259, "technicalPopupY", "technicalPopupY", "Technical")
-CreatePopupYResetButton(popupSection, -339, "allAttackPopupY", "allAttackPopupY", "总攻击")
+CreatePopupYResetButton(popupSection, -339, "allAttackPopupY", "allAttackPopupY", L["总攻击"])
 
 local resetPopupPositionBtn = CreateFrame("Button", nil, popupSection, "UIPanelButtonTemplate")
 resetPopupPositionBtn:SetSize(128, 28)
 resetPopupPositionBtn:SetPoint("TOPLEFT", popupSection, "TOPLEFT", 18, -400)
-resetPopupPositionBtn:SetText("重置全部位置")
+resetPopupPositionBtn:SetText(L["重置全部位置"])
 resetPopupPositionBtn:SetScript("OnClick", function()
     ResetP5PopupYPositions()
 end)
@@ -1834,7 +1835,7 @@ local popupPositionTip = popupSection:CreateFontString(nil, "OVERLAY", "GameFont
 popupPositionTip:SetPoint("TOPLEFT", popupSection, "TOPLEFT", 18, -450)
 popupPositionTip:SetWidth(284)
 popupPositionTip:SetJustifyH("LEFT")
-popupPositionTip:SetText("单项重置只影响对应弹字；重置全部位置不会改动技能、持续时间或血条设置。")
+popupPositionTip:SetText(L["单项重置只影响对应弹字；重置全部位置不会改动技能、持续时间或血条设置。"])
 ApplyTargetPanelTheme("StyleMutedText", popupPositionTip)
 
 local function InitSliders()
@@ -1871,7 +1872,7 @@ end
 local backToMainButton = CreateFrame("Button", "P5TargetBackToMainButton", ConfigPanel, "UIPanelButtonTemplate")
 backToMainButton:SetSize(156, 26)
 backToMainButton:SetPoint("BOTTOMRIGHT", ConfigPanel, "BOTTOMRIGHT", -24, 17)
-backToMainButton:SetText("返回P5S主界面")
+backToMainButton:SetText(L["返回P5S主界面"])
 backToMainButton:SetScript("OnClick", function()
     ConfigPanel:Hide()
 
@@ -1883,7 +1884,7 @@ backToMainButton:SetScript("OnClick", function()
 
     local commandHandler = SlashCmdList and SlashCmdList["P5SUI"]
     if type(commandHandler) ~= "function" then
-        print("|cffFF0000[P5血条]|r P5S 主界面设置暂时不可用。")
+        print(L["|cffFF0000[P5血条]|r P5S 主界面设置暂时不可用。"])
         return
     end
     commandHandler("")
@@ -1894,7 +1895,7 @@ local footerTip = ConfigPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableS
 footerTip:SetPoint("BOTTOMLEFT", ConfigPanel, "BOTTOMLEFT", 24, 23)
 footerTip:SetWidth(880)
 footerTip:SetJustifyH("LEFT")
-footerTip:SetText("滑块实时生效  ·  技能与持续时间离开输入框自动保存  ·  /p5atk 预览总攻击")
+footerTip:SetText(L["滑块实时生效  ·  技能与持续时间离开输入框自动保存  ·  /p5atk 预览总攻击"])
 ApplyTargetPanelTheme("StyleMutedText", footerTip)
 
 -- 临时预览总攻击弹字：选中目标后输入 /p5atk。
@@ -1926,7 +1927,7 @@ P5Frame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then
         RebuildP5SpellBookNameCache()
         RebuildP5SpellTriggerMaps()
-        print("|cffFF0000[P5S UI]|r 插件已加载，请输入 |cffffd100/p5s|r 打开设置面板。")
+        print(L["|cffFF0000[P5S UI]|r 插件已加载，请输入 |cffffd100/p5s|r 打开设置面板。"])
         return
     end
 

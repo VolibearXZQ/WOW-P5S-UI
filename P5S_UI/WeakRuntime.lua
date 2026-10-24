@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 local options = addon.WeakOptions
 if not options then return end
 
@@ -110,14 +111,14 @@ end
 
 function runtime.InvalidateBinding(key)
     bindings[key] = nil
-    options.SetBindingStatus(key, "输入已保存，回车或离开输入框完成绑定")
+    options.SetBindingStatus(key, L["输入已保存，回车或离开输入框完成绑定"])
 end
 function runtime.ResolveBinding(key)
     local def, config = definitions[key], options.GetSettings(key)
     if not def or not config then return end
     if actors[key] and actors[key].failed then
         bindings[key] = nil
-        options.SetBindingStatus(key, "图片或动画加载失败，本次加载已停用此图")
+        options.SetBindingStatus(key, L["图片或动画加载失败，本次加载已停用此图"])
         return
     end
     local text = P5S_UI_DB[def.field]
@@ -126,7 +127,7 @@ function runtime.ResolveBinding(key)
     bindings[key] = nil
     if text == "" then
         config.resolvedInput, config.resolvedSpellID, config.resolvedSpellIDs = nil, nil, nil
-        options.SetBindingStatus(key, "未绑定：多个技能可用逗号分隔")
+        options.SetBindingStatus(key, L["未绑定：多个技能可用逗号分隔"])
         return
     end
 
@@ -167,13 +168,13 @@ function runtime.ResolveBinding(key)
         -- 旧字段仅继续表示单项输入，不把多技能列表伪装为一个技能。
         config.resolvedSpellID = resolved[text]
         if invalid > 0 then
-            options.SetBindingStatus(key, "已绑定 " .. count .. " 个；" .. invalid .. (inCombat and " 项待脱战解析" or " 项未识别，请检查名称/ID"))
+            options.SetBindingStatus(key, L["已绑定 "] .. count .. L[" 个；"] .. invalid .. (inCombat and L[" 项待脱战解析"] or L[" 项未识别，请检查名称/ID"]))
         else
-            options.SetBindingStatus(key, count == 1 and ("已绑定 Spell ID: " .. singleID) or ("已绑定 " .. count .. " 个技能"))
+            options.SetBindingStatus(key, count == 1 and (L["已绑定 Spell ID: "] .. singleID) or (L["已绑定 "] .. count .. L[" 个技能"]))
         end
     else
         config.resolvedInput, config.resolvedSpellID, config.resolvedSpellIDs = nil, nil, nil
-        options.SetBindingStatus(key, inCombat and "技能名称待脱战解析；也可直接填 Spell ID" or "未识别技能，请填写实际施放的 Spell ID")
+        options.SetBindingStatus(key, inCombat and L["技能名称待脱战解析；也可直接填 Spell ID"] or L["未识别技能，请填写实际施放的 Spell ID"])
     end
 end
 
@@ -200,7 +201,7 @@ local function DisableActor(actor)
     actor.failed = true
     pcall(StopActor, actor)
     pcall(actor.frame.Hide, actor.frame)
-    options.SetBindingStatus(actor.key, "图片或动画加载失败，本次加载已停用此图")
+    options.SetBindingStatus(actor.key, L["图片或动画加载失败，本次加载已停用此图"])
 end
 local function SafeActor(actor, fn, ...)
     if not actor or actor.failed then return end

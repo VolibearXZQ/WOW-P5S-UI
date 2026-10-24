@@ -4,6 +4,7 @@
 -- ==========================================
 
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 local ADDON_NAME = "P5S"
 local AUDIO_ROOT_PATH = "Interface\\AddOns\\P5S\\P5_Voice\\"
@@ -34,7 +35,7 @@ local function ApplyVoicePanelTheme(methodName, ...)
     local ok, errorMessage = pcall(method, panelTheme, ...)
     if not ok and not reportedVoiceThemeErrors[methodName] then
         reportedVoiceThemeErrors[methodName] = true
-        print("|cffFF3333[P5 Voice]|r 设置面板主题应用失败（" .. methodName .. "）：" .. tostring(errorMessage))
+        print(L["|cffFF3333[P5 Voice]|r 设置面板主题应用失败（"] .. methodName .. L["）："] .. tostring(errorMessage))
     end
     return ok
 end
@@ -257,7 +258,7 @@ local function ApplyVoiceLocalStyle(styleName, styleFunction, ...)
     local ok, errorMessage = pcall(styleFunction, ...)
     if not ok and not reportedVoiceThemeErrors[styleName] then
         reportedVoiceThemeErrors[styleName] = true
-        print("|cffFF3333[P5 Voice]|r 设置面板局部样式加载失败（" .. styleName .. "）：" .. tostring(errorMessage))
+        print(L["|cffFF3333[P5 Voice]|r 设置面板局部样式加载失败（"] .. styleName .. L["）："] .. tostring(errorMessage))
     end
     return ok
 end
@@ -265,7 +266,7 @@ end
 local AUDIO_SOURCES = P5S_VOICE_AUDIO_SOURCES or {
     {
         key = "joker",
-        label = "P5 雨宫莲语音",
+        label = L["P5 雨宫莲语音"],
         shortLabel = "Joker",
         directory = "音频",
         files = P5S_VOICE_AUDIO_FILES or {},
@@ -297,29 +298,29 @@ for _, source in ipairs(AUDIO_SOURCES) do
 end
 
 local sectionDefinitions = {
-    { key = "skill",         title = "技能释放语音", count = 20, lineColor = { 0.90, 0.12, 0.12, 0.80 } },
-    { key = "cooldownReady", title = "技能冷却完毕语音", count = 20, lineColor = { 0.15, 0.65, 1.00, 0.80 } },
-    { key = "healing",       title = "治疗语音", count = 20, lineColor = { 0.15, 0.85, 0.30, 0.80 } },
-    { key = "burst",         title = "爆发语音", count = 20, lineColor = { 0.65, 0.25, 1.00, 0.80 } },
+    { key = "skill",         title = L["技能释放语音"], count = 20, lineColor = { 0.90, 0.12, 0.12, 0.80 } },
+    { key = "cooldownReady", title = L["技能冷却完毕语音"], count = 20, lineColor = { 0.15, 0.65, 1.00, 0.80 } },
+    { key = "healing",       title = L["治疗语音"], count = 20, lineColor = { 0.15, 0.85, 0.30, 0.80 } },
+    { key = "burst",         title = L["爆发语音"], count = 20, lineColor = { 0.65, 0.25, 1.00, 0.80 } },
     -- 胜利页使用独立语音池，不创建技能行，也不加入施法触发映射。
-    { key = "victory",       title = "胜利语音", count = 0, lineColor = { 1.00, 0.72, 0.15, 0.80 } },
-    { key = "characterEvents", title = "角色事件语音", count = 0, lineColor = { 0.10, 0.85, 0.80, 0.80 } },
+    { key = "victory",       title = L["胜利语音"], count = 0, lineColor = { 1.00, 0.72, 0.15, 0.80 } },
+    { key = "characterEvents", title = L["角色事件语音"], count = 0, lineColor = { 0.10, 0.85, 0.80, 0.80 } },
 }
 
 local characterEventDefinitions = {
-    { key = "death", title = "死亡语音", help = "真正死亡时播放；假死不触发。" },
-    { key = "resurrection", title = "复活语音", help = "恢复存活后播放；释放灵魂、收到复活邀请时不播放。" },
-    { key = "levelUp", title = "升级语音", help = "玩家升级时播放；同一次升级只触发一次。" },
-    { key = "specialization", title = "切换专精", help = "实际切换专精后播放；同一专精内更换天赋方案不触发。" },
+    { key = "death", title = L["死亡语音"], help = L["真正死亡时播放；假死不触发。"] },
+    { key = "resurrection", title = L["复活语音"], help = L["恢复存活后播放；释放灵魂、收到复活邀请时不播放。"] },
+    { key = "levelUp", title = L["升级语音"], help = L["玩家升级时播放；同一次升级只触发一次。"] },
+    { key = "specialization", title = L["切换专精"], help = L["实际切换专精后播放；同一专精内更换天赋方案不触发。"] },
 }
 
 local victoryEnemyOptions = {
-    { key = "normal",      label = "普通小怪",          default = false },
-    { key = "elite",       label = "精英小怪",          default = false },
-    { key = "rare",        label = "稀有 / 稀有精英",   default = false },
-    { key = "dungeonBoss", label = "地下城 Boss",       default = true },
-    { key = "raidBoss",    label = "团队副本 Boss",     default = true },
-    { key = "worldBoss",   label = "世界 Boss",         default = false },
+    { key = "normal",      label = L["普通小怪"],          default = false },
+    { key = "elite",       label = L["精英小怪"],          default = false },
+    { key = "rare",        label = L["稀有 / 稀有精英"],   default = false },
+    { key = "dungeonBoss", label = L["地下城 Boss"],       default = true },
+    { key = "raidBoss",    label = L["团队副本 Boss"],     default = true },
+    { key = "worldBoss",   label = L["世界 Boss"],         default = false },
 }
 
 local voiceInputs = {
@@ -341,11 +342,11 @@ local voiceRows = {
 }
 
 local channelOptions = {
-    { label = "主音量", value = "Master" },
-    { label = "音乐",   value = "Music" },
-    { label = "效果",   value = "SFX" },
-    { label = "环境音", value = "Ambience" },
-    { label = "对话",   value = "Dialog" },
+    { label = L["主音量"], value = "Master" },
+    { label = L["音乐"],   value = "Music" },
+    { label = L["效果"],   value = "SFX" },
+    { label = L["环境音"], value = "Ambience" },
+    { label = L["对话"],   value = "Dialog" },
 }
 
 local validChannels = {}
@@ -573,7 +574,7 @@ local function BuildSpellIDMap(inputText)
 end
 
 local function JoinList(list)
-    if not list or #list == 0 then return "无" end
+    if not list or #list == 0 then return L["无"] end
     return table.concat(list, ", ")
 end
 
@@ -876,14 +877,14 @@ EnsureVoicePanelChrome(VoicePanel)
 
 VoicePanel.title = VoicePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 VoicePanel.title:SetPoint("CENTER", VoicePanel.TitleBg, "CENTER", 0, 0)
-VoicePanel.title:SetText("P5S 技能语音设置")
+VoicePanel.title:SetText(L["P5S 技能语音设置"])
 ApplyVoicePanelTheme("StylePanelTitle", VoicePanel.title)
 ApplyVoicePanelTheme("StyleCloseButton", VoicePanel.CloseButton)
 
 local backToMainButton = CreateFrame("Button", "P5VoiceBackToMainButton", VoicePanel, "UIPanelButtonTemplate")
 backToMainButton:SetSize(156, 26)
 backToMainButton:SetPoint("BOTTOMRIGHT", VoicePanel, "BOTTOMRIGHT", -34, 17)
-backToMainButton:SetText("返回P5S主界面")
+backToMainButton:SetText(L["返回P5S主界面"])
 backToMainButton:SetScript("OnClick", function()
     VoicePanel:Hide()
     if AudioPicker then AudioPicker:Hide() end
@@ -896,27 +897,27 @@ backToMainButton:SetScript("OnClick", function()
 
     local commandHandler = SlashCmdList and SlashCmdList["P5SUI"]
     if type(commandHandler) ~= "function" then
-        print("|cffFF3333[P5 Voice]|r P5S 主界面设置暂时不可用。")
+        print(L["|cffFF3333[P5 Voice]|r P5S 主界面设置暂时不可用。"])
         return
     end
     commandHandler("")
 end)
 ApplyVoicePanelTheme("StyleButton", backToMainButton)
 
-local infoSection = CreateVoiceSettingsSection(VoicePanel, 24, -56, 1062, 86, "使用说明")
+local infoSection = CreateVoiceSettingsSection(VoicePanel, 24, -56, 1062, 86, L["使用说明"])
 
 local description = infoSection:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 description:SetPoint("TOPLEFT", infoSection, "TOPLEFT", 18, -36)
 description:SetWidth(740)
 description:SetJustifyH("LEFT")
-description:SetText("每行可用逗号分隔多个技能名称 / Spell ID；按回车或点击其他位置会自动保存。")
+description:SetText(L["每行可用逗号分隔多个技能名称 / Spell ID；按回车或点击其他位置会自动保存。"])
 ApplyVoicePanelTheme("StyleBodyText", description)
 
 local cooldownDescription = infoSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 cooldownDescription:SetPoint("TOPLEFT", infoSection, "TOPLEFT", 18, -58)
 cooldownDescription:SetWidth(740)
 cooldownDescription:SetJustifyH("LEFT")
-cooldownDescription:SetText("技能冷却完毕语音监测普通与充能技能；充能每恢复一层播放一次，并忽略公共冷却。")
+cooldownDescription:SetText(L["技能冷却完毕语音监测普通与充能技能；充能每恢复一层播放一次，并忽略公共冷却。"])
 ApplyVoicePanelTheme("StyleMutedText", cooldownDescription)
 
 local statusAccent = VoicePanel:CreateTexture(nil, "ARTWORK")
@@ -927,7 +928,7 @@ local statusText = VoicePanel:CreateFontString(nil, "OVERLAY", "GameFontDisableS
 statusText:SetPoint("BOTTOMLEFT", VoicePanel, "BOTTOMLEFT", 38, 23)
 statusText:SetWidth(880)
 statusText:SetJustifyH("LEFT")
-statusText:SetText("施法与技能冷却完毕语音已启用；触发入口只使用玩家施法事件提供的 Spell ID。")
+statusText:SetText(L["施法与技能冷却完毕语音已启用；触发入口只使用玩家施法事件提供的 Spell ID。"])
 
 local function SetStatus(message, isWarning)
     statusText:SetText(message)
@@ -941,15 +942,15 @@ local function SetStatus(message, isWarning)
     if RefreshVoiceProfiles then RefreshVoiceProfiles() end
 end
 
-SetStatus("施法与技能冷却完毕语音已启用；触发入口只使用玩家施法事件提供的 Spell ID。", false)
+SetStatus(L["施法与技能冷却完毕语音已启用；触发入口只使用玩家施法事件提供的 Spell ID。"], false)
 
 local function GetAudioDisplayName(audioID)
     local item = audioItemsByID[audioID]
     if not item then return tostring(audioID or "") end
 
     local source = audioSourcesByKey[item.sourceKey]
-    local sourceLabel = item.shared and "通用" or (source and source.shortLabel or item.sourceKey)
-    return sourceLabel .. "｜" .. item.fileName
+    local sourceLabel = item.shared and L["通用"] or (source and source.shortLabel or item.sourceKey)
+    return sourceLabel .. L["｜"] .. item.fileName
 end
 
 -- 只记录手动试听的句柄；自动触发语音不随设置窗口关闭而停止。
@@ -969,17 +970,17 @@ local function PlayAudioFile(audioID, quiet, isPreview)
 
     local item = audioItemsByID[audioID]
     if not item then
-        if not quiet then SetStatus("找不到音频目录项：" .. tostring(audioID), true) end
+        if not quiet then SetStatus(L["找不到音频目录项："] .. tostring(audioID), true) end
         return false
     end
     if type(PlaySoundFile) ~= "function" then
-        if not quiet then SetStatus("当前环境没有可用的音频播放接口。", true) end
+        if not quiet then SetStatus(L["当前环境没有可用的音频播放接口。"], true) end
         return false
     end
 
     local ok, willPlay, soundHandle = pcall(PlaySoundFile, AUDIO_ROOT_PATH .. item.relativePath, P5S_Voice_DB.channel)
     if not ok or willPlay == false then
-        if not quiet then SetStatus("音频播放失败：" .. GetAudioDisplayName(audioID), true) end
+        if not quiet then SetStatus(L["音频播放失败："] .. GetAudioDisplayName(audioID), true) end
         return false
     end
 
@@ -987,7 +988,7 @@ local function PlayAudioFile(audioID, quiet, isPreview)
         previewSoundHandles[#previewSoundHandles + 1] = soundHandle
     end
     if not quiet then
-        SetStatus("正在试听：" .. GetAudioDisplayName(audioID) .. "（" .. channelLabels[P5S_Voice_DB.channel] .. "）", false)
+        SetStatus(L["正在试听："] .. GetAudioDisplayName(audioID) .. L["（"] .. channelLabels[P5S_Voice_DB.channel] .. L["）"], false)
     end
     return true
 end
@@ -1739,7 +1740,7 @@ local function SaveVoiceInput(sectionKey, index, editBox)
         SetEntrySpellMap(entry, {})
         RebuildVoiceTriggerMap()
         editBox:SetText("")
-        SetStatus("已清空当前技能输入；该行已选音频仍然保留。", false)
+        SetStatus(L["已清空当前技能输入；该行已选音频仍然保留。"], false)
         return
     end
 
@@ -1748,11 +1749,11 @@ local function SaveVoiceInput(sectionKey, index, editBox)
     RebuildVoiceTriggerMap()
 
     if #validList > 0 and #invalidList == 0 then
-        SetStatus("已保存触发技能：" .. JoinList(validList), false)
+        SetStatus(L["已保存触发技能："] .. JoinList(validList), false)
     elseif #validList > 0 then
-        SetStatus("已保存：" .. JoinList(validList) .. "；无法识别：" .. JoinList(invalidList), true)
+        SetStatus(L["已保存："] .. JoinList(validList) .. L["；无法识别："] .. JoinList(invalidList), true)
     else
-        SetStatus("已保留输入，但没有可用的触发技能；建议脱战后重试或直接填写 Spell ID。", true)
+        SetStatus(L["已保留输入，但没有可用的触发技能；建议脱战后重试或直接填写 Spell ID。"], true)
     end
 end
 
@@ -1783,12 +1784,12 @@ local function GetAudioCategory(fileName)
 end
 
 local categoryLabels = {
-    skill = "技能",
-    healing = "治疗",
-    persona = "面具",
-    cooldown = "冷却",
-    victory = "胜利",
-    other = "角色事件",
+    skill = L["技能"],
+    healing = L["治疗"],
+    persona = L["面具"],
+    cooldown = L["冷却"],
+    victory = L["胜利"],
+    other = L["角色事件"],
 }
 
 local RefreshVoiceRow
@@ -1820,7 +1821,7 @@ end)
 
 AudioPicker.title = AudioPicker:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 AudioPicker.title:SetPoint("CENTER", AudioPicker.TitleBg, "CENTER", 0, 0)
-AudioPicker.title:SetText("选择音频")
+AudioPicker.title:SetText(L["选择音频"])
 ApplyVoicePanelTheme("StylePanelTitle", AudioPicker.title)
 ApplyVoicePanelTheme("StyleCloseButton", AudioPicker.CloseButton)
 
@@ -1937,8 +1938,8 @@ pickerHeaderRightAccent:SetPoint("TOPRIGHT", AudioPicker, "TOPRIGHT", -1, -1)
 pickerHeaderRightAccent:SetPoint("BOTTOMRIGHT", AudioPicker, "TOPRIGHT", -1, -39)
 pickerHeaderRightAccent:SetWidth(3)
 
-local pickerFilterSection = CreateVoiceSettingsSection(AudioPicker, 24, -56, 952, 146, "音频来源与分类")
-local pickerListSection = CreateVoiceSettingsSection(AudioPicker, 24, -214, 952, 420, "音频列表")
+local pickerFilterSection = CreateVoiceSettingsSection(AudioPicker, 24, -56, 952, 146, L["音频来源与分类"])
+local pickerListSection = CreateVoiceSettingsSection(AudioPicker, 24, -214, 952, 420, L["音频列表"])
 
 local pickerHelpText = pickerFilterSection:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 pickerHelpText:SetPoint("TOPLEFT", pickerFilterSection, "TOPLEFT", 18, -116)
@@ -1946,13 +1947,13 @@ pickerHelpText:SetWidth(916)
 pickerHelpText:SetHeight(16)
 pickerHelpText:SetJustifyH("LEFT")
 if pickerHelpText.SetWordWrap then pickerHelpText:SetWordWrap(false) end
-pickerHelpText:SetText("提示：主音频可多选；触发时会随机播放一条，选好后直接关闭窗口即可。")
+pickerHelpText:SetText(L["提示：主音频可多选；触发时会随机播放一条，选好后直接关闭窗口即可。"])
 ApplyVoicePanelTheme("StyleMutedText", pickerHelpText)
 
 local clearAudioButton = CreateFrame("Button", nil, pickerFilterSection, "UIPanelButtonTemplate")
 clearAudioButton:SetSize(148, 26)
 clearAudioButton:SetPoint("TOPRIGHT", pickerFilterSection, "TOPRIGHT", -18, -38)
-clearAudioButton:SetText("清除当前音频")
+clearAudioButton:SetText(L["清除当前音频"])
 ApplyVoicePanelTheme("StyleButton", clearAudioButton)
 ApplyVoiceLocalStyle("StylePickerAccentButton:clear", StylePickerAccentButton, clearAudioButton)
 
@@ -2017,14 +2018,14 @@ pickerTableHeader:SetBackdropBorderColor(0.28, 0.32, 0.40, 0.72)
 
 local pickerFileHeader = pickerTableHeader:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 pickerFileHeader:SetPoint("LEFT", pickerTableHeader, "LEFT", 14, 0)
-pickerFileHeader:SetText("音频文件")
+pickerFileHeader:SetText(L["音频文件"])
 ApplyVoicePanelTheme("StyleMutedText", pickerFileHeader)
 
 local pickerActionHeader = pickerTableHeader:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 pickerActionHeader:SetPoint("LEFT", pickerTableHeader, "LEFT", 646, 0)
 pickerActionHeader:SetWidth(212)
 pickerActionHeader:SetJustifyH("CENTER")
-pickerActionHeader:SetText("操作")
+pickerActionHeader:SetText(L["操作"])
 ApplyVoicePanelTheme("StyleMutedText", pickerActionHeader)
 
 local pickerScroll = CreateFrame("ScrollFrame", "P5VoiceAudioPickerScroll", pickerListSection, "UIPanelScrollFrameTemplate")
@@ -2043,7 +2044,7 @@ ApplyVoicePanelTheme("StyleMutedText", pickerResultText)
 
 local pickerEmptyText = pickerListSection:CreateFontString(nil, "OVERLAY", "GameFontDisable")
 pickerEmptyText:SetPoint("CENTER", pickerScroll, "CENTER", 0, 0)
-pickerEmptyText:SetText("没有符合当前筛选条件的音频")
+pickerEmptyText:SetText(L["没有符合当前筛选条件的音频"])
 ApplyVoicePanelTheme("StyleMutedText", pickerEmptyText)
 pickerEmptyText:Hide()
 
@@ -2093,7 +2094,7 @@ for rowIndex = 1, #audioItems do
     row.previewButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     row.previewButton:SetSize(80, 24)
     row.previewButton:SetPoint("LEFT", 646, 0)
-    row.previewButton:SetText("试听")
+    row.previewButton:SetText(L["试听"])
     row.previewButton:SetScript("OnClick", function()
         StopAudioPreview()
         PlayAudioFile(row.audioID, false, true)
@@ -2104,7 +2105,7 @@ for rowIndex = 1, #audioItems do
     row.selectButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     row.selectButton:SetSize(116, 24)
     row.selectButton:SetPoint("LEFT", 742, 0)
-    row.selectButton:SetText("选择")
+    row.selectButton:SetText(L["选择"])
     row.selectButton:SetScript("OnClick", function()
         if not pickerTarget or not row.audioID then return end
         EnsureDatabase()
@@ -2119,9 +2120,9 @@ for rowIndex = 1, #audioItems do
             RefreshAudioPickerResults(true)
 
             if isAdding then
-                SetStatus("已加入主音频随机池；当前共 " .. tostring(selectedCount) .. " 条。", false)
+                SetStatus(L["已加入主音频随机池；当前共 "] .. tostring(selectedCount) .. L[" 条。"], false)
             else
-                SetStatus("已移出主音频随机池；当前剩余 " .. tostring(selectedCount) .. " 条。", false)
+                SetStatus(L["已移出主音频随机池；当前剩余 "] .. tostring(selectedCount) .. L[" 条。"], false)
             end
             return
         end
@@ -2129,7 +2130,7 @@ for rowIndex = 1, #audioItems do
         entry.audio2 = selectedAudioID
         RefreshVoiceRow(pickerTarget.sectionKey, pickerTarget.index, false)
         AudioPicker:Hide()
-        SetStatus("已选择叠加音频；点击“试听”可播放。", false)
+        SetStatus(L["已选择叠加音频；点击“试听”可播放。"], false)
     end)
     ApplyVoicePanelTheme("StyleButton", row.selectButton)
     ApplyVoiceLocalStyle("StylePickerAccentButton:select", StylePickerAccentButton, row.selectButton)
@@ -2141,15 +2142,15 @@ for rowIndex = 1, #audioItems do
         local source = audioSourcesByKey[item.sourceKey]
         GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
         GameTooltip:SetText(item.fileName, 1, 1, 1)
-        GameTooltip:AddLine("角色：" .. (item.shared and "P5 雨宫莲 / P3 结城理通用" or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
-        GameTooltip:AddLine("分类：" .. categoryLabels[GetAudioCategory(item.fileName)], 0.8, 0.8, 0.8)
+        GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
+        GameTooltip:AddLine(L["分类："] .. categoryLabels[GetAudioCategory(item.fileName)], 0.8, 0.8, 0.8)
         if row.isCurrentSelection then
             local palette = GetPickerAccentPalette()
             local selectionText = palette.selectionText
             GameTooltip:AddLine(
                 pickerTarget and pickerTarget.slotKey == "audio1"
-                    and "已加入主音频随机播放"
-                    or "当前叠加音频已选择此文件",
+                    and L["已加入主音频随机播放"]
+                    or L["当前叠加音频已选择此文件"],
                 selectionText[1],
                 selectionText[2],
                 selectionText[3]
@@ -2239,9 +2240,9 @@ RefreshAudioPickerResults = function(preserveScroll)
             row.selectedBackground:SetShown(row.isCurrentSelection)
             row.selectedAccent:SetShown(row.isCurrentSelection)
             if pickerTarget and pickerTarget.slotKey == "audio1" then
-                row.selectButton:SetText(row.isCurrentSelection and "取消选择" or "加入随机")
+                row.selectButton:SetText(row.isCurrentSelection and L["取消选择"] or L["加入随机"])
             else
-                row.selectButton:SetText(row.isCurrentSelection and "已选择" or "选择")
+                row.selectButton:SetText(row.isCurrentSelection and L["已选择"] or L["选择"])
             end
             row:Show()
         end
@@ -2271,17 +2272,17 @@ RefreshAudioPickerResults = function(preserveScroll)
 
     local source = audioSourcesByKey[pickerSource]
     local resultSummary =
-        "显示 " .. tostring(shownCount) .. " 项  ·  "
+        L["显示 "] .. tostring(shownCount) .. L[" 项  ·  "]
         .. (source and source.label or pickerSource) .. "  ·  "
         .. (categoryLabels[pickerCategory] or pickerCategory)
     if pickerTarget and pickerTarget.slotKey == "audio1" then
-        resultSummary = resultSummary .. "  ·  已选 " .. tostring(selectedAudioCount) .. " 条"
+        resultSummary = resultSummary .. L["  ·  已选 "] .. tostring(selectedAudioCount) .. L[" 条"]
     end
     pickerResultText:SetText(resultSummary)
     pickerEmptyText:SetShown(shownCount == 0)
 
     if shownCount == 0 then
-        SetStatus("当前角色的这个分类下没有音频。", true)
+        SetStatus(L["当前角色的这个分类下没有音频。"], true)
     end
 end
 
@@ -2310,14 +2311,14 @@ clearAudioButton:SetScript("OnClick", function()
         ClearMainAudioChoices(entry)
         RefreshVoiceRow(pickerTarget.sectionKey, pickerTarget.index, false)
         RefreshAudioPickerResults(true)
-        SetStatus(pickerTarget.sectionKey == "victory" and "已清空胜利语音池。" or "已清除该行的全部主音频。", false)
+        SetStatus(pickerTarget.sectionKey == "victory" and L["已清空胜利语音池。"] or L["已清除该行的全部主音频。"], false)
         return
     end
 
     entry.audio2 = nil
     RefreshVoiceRow(pickerTarget.sectionKey, pickerTarget.index, false)
     AudioPicker:Hide()
-    SetStatus("已清除当前叠加音频。", false)
+    SetStatus(L["已清除当前叠加音频。"], false)
 end)
 
 local function OpenAudioPicker(sectionKey, index, slotKey)
@@ -2342,13 +2343,13 @@ local function OpenAudioPicker(sectionKey, index, slotKey)
     pickerCategory = sectionKey == "victory" and "victory"
         or (sectionKey == "characterEvents" and "other")
         or (currentItem and GetAudioCategory(currentItem.fileName) or "skill")
-    AudioPicker.title:SetText(slotKey == "audio1" and "选择主音频" or "选择叠加音频")
+    AudioPicker.title:SetText(slotKey == "audio1" and L["选择主音频"] or L["选择叠加音频"])
     pickerHelpText:SetText(
         slotKey == "audio1"
-            and "提示：主音频可多选；触发时会随机播放一条，选好后直接关闭窗口即可。"
-            or "提示：叠加音频为单选；选择后会自动返回设置面板。"
+            and L["提示：主音频可多选；触发时会随机播放一条，选好后直接关闭窗口即可。"]
+            or L["提示：叠加音频为单选；选择后会自动返回设置面板。"]
     )
-    clearAudioButton:SetText(slotKey == "audio1" and "清除全部主音频" or "清除当前音频")
+    clearAudioButton:SetText(slotKey == "audio1" and L["清除全部主音频"] or L["清除当前音频"])
     RefreshAudioPickerResults(false)
     AudioPicker:Show()
 end
@@ -2357,7 +2358,7 @@ VoicePanel:SetScript("OnHide", function()
     StopAudioPreview()
     SaveActiveVoiceInput()
     AudioPicker:Hide()
-    print("|cffFF0000[P5S 语音]|r 语音已保存，偏铝唢呐！")
+    print(L["|cffFF0000[P5S 语音]|r 语音已保存，偏铝唢呐！"])
 end)
 
 -- ==========================================
@@ -2369,7 +2370,7 @@ UIDropDownMenu_SetWidth(channelDropdown, 118)
 
 local channelLabel = infoSection:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 channelLabel:SetPoint("RIGHT", channelDropdown, "LEFT", 6, 2)
-channelLabel:SetText("播放频道：")
+channelLabel:SetText(L["播放频道："])
 ApplyVoicePanelTheme("StyleBodyText", channelLabel)
 
 UIDropDownMenu_Initialize(channelDropdown, function()
@@ -2385,14 +2386,14 @@ UIDropDownMenu_Initialize(channelDropdown, function()
             P5S_Voice_DB.channel = value
             UIDropDownMenu_SetSelectedValue(channelDropdown, value)
             UIDropDownMenu_SetText(channelDropdown, label)
-            SetStatus("播放频道已切换为：" .. label, false)
+            SetStatus(L["播放频道已切换为："] .. label, false)
         end
         UIDropDownMenu_AddButton(info)
     end
 end)
 ApplyVoicePanelTheme("StyleDropDown", channelDropdown)
 
-local configSection = CreateVoiceSettingsSection(VoicePanel, 24, -254, 1062, 512, "语音配置 · 每类 20 项")
+local configSection = CreateVoiceSettingsSection(VoicePanel, 24, -254, 1062, 512, L["语音配置 · 每类 20 项"])
 
 local victorySettingsFrame = CreateFrame("Frame", nil, configSection)
 victorySettingsFrame:SetPoint("TOPLEFT", configSection, "TOPLEFT", 14, -76)
@@ -2407,18 +2408,18 @@ do
     local enableLabel = enableCheck.Text or _G[enableCheck:GetName() .. "Text"]
     enableLabel:ClearAllPoints()
     enableLabel:SetPoint("LEFT", enableCheck, "RIGHT", 6, 0)
-    enableLabel:SetText("启用胜利语音")
+    enableLabel:SetText(L["启用胜利语音"])
     ApplyVoicePanelTheme("StyleCheckBox", enableCheck)
     enableCheck:SetScript("OnClick", function(self)
         EnsureDatabase()
         P5S_Voice_DB.victorySettings.enabled = not not self:GetChecked()
         ResetVictoryPlayback()
-        SetStatus(self:GetChecked() and "胜利语音已开启，将从下一场战斗开始判断。" or "胜利语音已关闭，待播放语音已取消。", false)
+        SetStatus(self:GetChecked() and L["胜利语音已开启，将从下一场战斗开始判断。"] or L["胜利语音已关闭，待播放语音已取消。"], false)
     end)
 
     local enemyLabel = victorySettingsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     enemyLabel:SetPoint("TOPLEFT", 0, -54)
-    enemyLabel:SetText("适用敌人：")
+    enemyLabel:SetText(L["适用敌人："])
     ApplyVoicePanelTheme("StyleBodyText", enemyLabel)
 
     local enemyDropdown = CreateFrame("Frame", "P5VoiceVictoryEnemyDropdown", victorySettingsFrame, "UIDropDownMenuTemplate")
@@ -2431,27 +2432,27 @@ do
     local protectionLabel = protectionCheck.Text or _G[protectionCheck:GetName() .. "Text"]
     protectionLabel:ClearAllPoints()
     protectionLabel:SetPoint("LEFT", protectionCheck, "RIGHT", 6, 0)
-    protectionLabel:SetText("防连续播放保护")
+    protectionLabel:SetText(L["防连续播放保护"])
     ApplyVoicePanelTheme("StyleCheckBox", protectionCheck)
 
     local protectionHelp = victorySettingsFrame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     protectionHelp:SetPoint("TOPLEFT", 588, -50)
     protectionHelp:SetWidth(416)
     protectionHelp:SetJustifyH("LEFT")
-    protectionHelp:SetText("战斗至少 10 秒，连续脱战 2 秒后播放；\n两次胜利语音至少间隔 60 秒。")
+    protectionHelp:SetText(L["战斗至少 10 秒，连续脱战 2 秒后播放；\n两次胜利语音至少间隔 60 秒。"])
     ApplyVoicePanelTheme("StyleMutedText", protectionHelp)
 
     local pendingNote = victorySettingsFrame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     pendingNote:SetPoint("TOPLEFT", 200, -8)
     pendingNote:SetWidth(804)
     pendingNote:SetJustifyH("LEFT")
-    pendingNote:SetText("设置自动保存；开启并选择主音频后，从下一场战斗开始判断胜利。")
+    pendingNote:SetText(L["设置自动保存；开启并选择主音频后，从下一场战斗开始判断胜利。"])
     ApplyVoicePanelTheme("StyleMutedText", pendingNote)
 
     local audioButton = CreateFrame("Button", "P5VoiceVictoryAudioButton", victorySettingsFrame, "UIPanelButtonTemplate")
     audioButton:SetPoint("TOPLEFT", 0, -104)
     audioButton:SetSize(400, 30)
-    audioButton:SetText("选择主音频")
+    audioButton:SetText(L["选择主音频"])
     audioButton:SetScript("OnClick", function() OpenAudioPicker("victory", 1, "audio1") end)
     ApplyVoicePanelTheme("StyleButton", audioButton)
 
@@ -2464,41 +2465,41 @@ do
     local previewButton = CreateFrame("Button", "P5VoiceVictoryPreviewButton", victorySettingsFrame, "UIPanelButtonTemplate")
     previewButton:SetPoint("TOPLEFT", 416, -104)
     previewButton:SetSize(84, 30)
-    previewButton:SetText("试听")
+    previewButton:SetText(L["试听"])
     previewButton:SetScript("OnClick", function()
         StopAudioPreview()
         EnsureDatabase()
         local audioID = GetRandomMainAudioID(P5S_Voice_DB.victorySettings.mainAudio)
         if audioID then PlayAudioFile(audioID, false, true)
-        else SetStatus("请先选择至少一条有效的胜利主音频。", true) end
+        else SetStatus(L["请先选择至少一条有效的胜利主音频。"], true) end
     end)
     ApplyVoicePanelTheme("StyleButton", previewButton)
 
     local clearButton = CreateFrame("Button", "P5VoiceVictoryClearButton", victorySettingsFrame, "UIPanelButtonTemplate")
     clearButton:SetPoint("TOPLEFT", 512, -104)
     clearButton:SetSize(84, 30)
-    clearButton:SetText("清空")
+    clearButton:SetText(L["清空"])
     clearButton:SetScript("OnClick", function()
         EnsureDatabase()
         ClearMainAudioChoices(P5S_Voice_DB.victorySettings.mainAudio)
         ResetVictoryPlayback()
         RefreshVictorySettings()
         if pickerTarget and pickerTarget.sectionKey == "victory" then RefreshAudioPickerResults(true) end
-        SetStatus("已清空胜利语音池；开关和敌人类型设置已保留。", false)
+        SetStatus(L["已清空胜利语音池；开关和敌人类型设置已保留。"], false)
     end)
     ApplyVoicePanelTheme("StyleButton", clearButton)
 
-    local rulesSection = CreateVoiceSettingsSection(victorySettingsFrame, 0, -184, 1004, 224, "胜利语音规则")
+    local rulesSection = CreateVoiceSettingsSection(victorySettingsFrame, 0, -184, 1004, 224, L["胜利语音规则"])
     local rules = rulesSection:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     rules:SetPoint("TOPLEFT", 18, -38)
     rules:SetWidth(968)
     rules:SetJustifyH("LEFT")
     rules:SetText(
-        "开启后：仅在所选敌人类型的战斗确认胜利时，从主音频池随机播放一条；无需绑定技能。\n\n"
-        .. "胜利判断：副本 Boss 以成功结果为准；其他敌人须安全记录交战并确认记录中的敌人全部死亡，信息受限时跳过。\n\n"
-        .. "死亡与失败：玩家仍然死亡或处于灵魂状态、团灭、战斗失败不播；仅仅脱战不算胜利，复活后不补播。\n\n"
-        .. "开启保护：战斗至少 10 秒，连续脱战 2 秒，且距上次胜利播放至少 60 秒；等待期间重新进战则取消，不排队补播。\n\n"
-        .. "关闭保护：取消上述时长与间隔限制；仍需确认胜利、排除死亡与失败，同一场战斗最多播放一次。"
+        L["开启后：仅在所选敌人类型的战斗确认胜利时，从主音频池随机播放一条；无需绑定技能。\n\n"]
+        .. L["胜利判断：副本 Boss 以成功结果为准；其他敌人须安全记录交战并确认记录中的敌人全部死亡，信息受限时跳过。\n\n"]
+        .. L["死亡与失败：玩家仍然死亡或处于灵魂状态、团灭、战斗失败不播；仅仅脱战不算胜利，复活后不补播。\n\n"]
+        .. L["开启保护：战斗至少 10 秒，连续脱战 2 秒，且距上次胜利播放至少 60 秒；等待期间重新进战则取消，不排队补播。\n\n"]
+        .. L["关闭保护：取消上述时长与间隔限制；仍需确认胜利、排除死亡与失败，同一场战斗最多播放一次。"]
     )
     ApplyVoicePanelTheme("StyleBodyText", rules)
 
@@ -2512,8 +2513,8 @@ do
                 selectedLabel = option.label
             end
         end
-        local summary = count == 0 and "未选择敌人类型"
-            or (count == 1 and selectedLabel or "已选择 " .. count .. " 类敌人（可多选）")
+        local summary = count == 0 and L["未选择敌人类型"]
+            or (count == 1 and selectedLabel or L["已选择 "] .. count .. L[" 类敌人（可多选）"])
         UIDropDownMenu_SetText(enemyDropdown, summary)
         protectionCheck:SetChecked(settings.antiSpamEnabled)
         enableCheck:SetChecked(settings.enabled)
@@ -2522,8 +2523,8 @@ do
         for _, audioID in ipairs(choices) do
             if audioItemsByID[audioID] then available = available + 1 end
         end
-        selectedText:SetText(#choices == 0 and "尚未选择主音频；支持多选，每次随机播放一条。"
-            or "已选 " .. #choices .. " 条主音频（可播放 " .. available .. " 条）；点击“选择主音频”可查看或取消选择。")
+        selectedText:SetText(#choices == 0 and L["尚未选择主音频；支持多选，每次随机播放一条。"]
+            or L["已选 "] .. #choices .. L[" 条主音频（可播放 "] .. available .. L[" 条）；点击“选择主音频”可查看或取消选择。"])
     end
 
     UIDropDownMenu_Initialize(enemyDropdown, function(_, level)
@@ -2542,7 +2543,7 @@ do
                 selected[key] = not selected[key]
                 ResetVictoryPlayback()
                 RefreshVictorySettings()
-                SetStatus("胜利语音适用敌人已保存，将从下一场战斗使用新设置。", false)
+                SetStatus(L["胜利语音适用敌人已保存，将从下一场战斗使用新设置。"], false)
             end
             UIDropDownMenu_AddButton(info, level)
         end
@@ -2553,7 +2554,7 @@ do
         EnsureDatabase()
         P5S_Voice_DB.victorySettings.antiSpamEnabled = not not self:GetChecked()
         ResetVictoryPlayback()
-        SetStatus("防连续播放保护选项已保存，将从下一场战斗使用新设置。", false)
+        SetStatus(L["防连续播放保护选项已保存，将从下一场战斗使用新设置。"], false)
     end)
     victorySettingsFrame:SetScript("OnShow", RefreshVictorySettings)
     victorySettingsFrame:SetScript("OnHide", function()
@@ -2583,39 +2584,39 @@ do
         local label = check.Text or _G[check:GetName() .. "Text"]
         label:ClearAllPoints()
         label:SetPoint("LEFT", check, "RIGHT", 6, 0)
-        label:SetText("启用")
+        label:SetText(L["启用"])
         ApplyVoicePanelTheme("StyleCheckBox", check)
         check:SetScript("OnClick", function(self)
             EnsureDatabase()
             P5S_Voice_DB.characterEvents[key].enabled = not not self:GetChecked()
             ResetCharacterEventPlayback()
-            SetStatus(title .. (self:GetChecked() and "已开启；从下一次对应事件生效。" or "已关闭。"), false)
+            SetStatus(title .. (self:GetChecked() and L["已开启；从下一次对应事件生效。"] or L["已关闭。"]), false)
         end)
 
         local audio = CreateFrame("Button", "P5VoiceCharacter" .. key .. "Audio", card, "UIPanelButtonTemplate")
         audio:SetPoint("TOPLEFT", 120, -36)
         audio:SetSize(400, 30)
-        audio:SetText("选择主音频")
+        audio:SetText(L["选择主音频"])
         audio:SetScript("OnClick", function() OpenAudioPicker("characterEvents", key, "audio1") end)
         ApplyVoicePanelTheme("StyleButton", audio)
 
         local preview = CreateFrame("Button", "P5VoiceCharacter" .. key .. "Preview", card, "UIPanelButtonTemplate")
         preview:SetPoint("TOPLEFT", 532, -36)
         preview:SetSize(84, 30)
-        preview:SetText("试听")
+        preview:SetText(L["试听"])
         preview:SetScript("OnClick", function()
             StopAudioPreview()
             EnsureDatabase()
             local audioID = GetRandomMainAudioID(GetVoiceAudioEntry("characterEvents", key))
             if audioID then PlayAudioFile(audioID, false, true)
-            else SetStatus("请先选择至少一条有效的" .. title .. "。", true) end
+            else SetStatus(L["请先选择至少一条有效的"] .. title .. L["。"], true) end
         end)
         ApplyVoicePanelTheme("StyleButton", preview)
 
         local clear = CreateFrame("Button", "P5VoiceCharacter" .. key .. "Clear", card, "UIPanelButtonTemplate")
         clear:SetPoint("TOPLEFT", 628, -36)
         clear:SetSize(84, 30)
-        clear:SetText("清空")
+        clear:SetText(L["清空"])
         clear:SetScript("OnClick", function()
             EnsureDatabase()
             ClearMainAudioChoices(GetVoiceAudioEntry("characterEvents", key))
@@ -2624,7 +2625,7 @@ do
             if pickerTarget and pickerTarget.sectionKey == "characterEvents" and pickerTarget.index == key then
                 RefreshAudioPickerResults(true)
             end
-            SetStatus("已清空" .. title .. "的音频选择；开关保持原样。", false)
+            SetStatus(L["已清空"] .. title .. L["的音频选择；开关保持原样。"], false)
         end)
         ApplyVoicePanelTheme("StyleButton", clear)
 
@@ -2640,7 +2641,7 @@ do
     note:SetPoint("TOPLEFT", 14, -374)
     note:SetWidth(976)
     note:SetJustifyH("LEFT")
-    note:SetText("四项独立开关，默认关闭；在“角色事件”分类选择音频，多选后每次随机播放一条，设置随语音方案保存。\n复活包含他人复活、跑尸、灵魂医者及灵魂石等自我复活；选择音频不播放，点击“试听”才试听。")
+    note:SetText(L["四项独立开关，默认关闭；在“角色事件”分类选择音频，多选后每次随机播放一条，设置随语音方案保存。\n复活包含他人复活、跑尸、灵魂医者及灵魂石等自我复活；选择音频不播放，点击“试听”才试听。"])
     ApplyVoicePanelTheme("StyleMutedText", note)
 
     RefreshCharacterEventSettings = function()
@@ -2653,8 +2654,8 @@ do
             for _, audioID in ipairs(choices) do
                 if audioItemsByID[audioID] then available = available + 1 end
             end
-            control.summary:SetText(#choices == 0 and "尚未选择主音频"
-                or "已选 " .. #choices .. " 条，可播放 " .. available .. " 条")
+            control.summary:SetText(#choices == 0 and L["尚未选择主音频"]
+                or L["已选 "] .. #choices .. L[" 条，可播放 "] .. available .. L[" 条"])
         end
     end
     characterEventsFrame:SetScript("OnShow", RefreshCharacterEventSettings)
@@ -2676,11 +2677,11 @@ local function CreateColumnTitle(text, x, width)
     ApplyVoicePanelTheme("StyleMutedText", title)
 end
 
-CreateColumnTitle("序号", 8, 32)
-CreateColumnTitle("技能名称 / Spell ID", 48, 220)
-CreateColumnTitle("主音频（可多选）", 282, 260)
-CreateColumnTitle("叠加音频（可选）", 554, 260)
-CreateColumnTitle("操作", 826, 160)
+CreateColumnTitle(L["序号"], 8, 32)
+CreateColumnTitle(L["技能名称 / Spell ID"], 48, 220)
+CreateColumnTitle(L["主音频（可多选）"], 282, 260)
+CreateColumnTitle(L["叠加音频（可选）"], 554, 260)
+CreateColumnTitle(L["操作"], 826, 160)
 
 local rowScroll = CreateFrame("ScrollFrame", "P5VoiceRowsScroll", configSection, "UIPanelScrollFrameTemplate")
 rowScroll:SetPoint("TOPLEFT", configSection, "TOPLEFT", 14, -106)
@@ -2692,9 +2693,9 @@ rowScroll:SetScrollChild(rowContent)
 
 local function SetAudioButtonText(button, audioID)
     if not audioID or audioID == "" then
-        button:SetText("选择音频…")
+        button:SetText(L["选择音频…"])
     elseif not audioItemsByID[audioID] then
-        button:SetText("|cffff5555缺失：|r" .. audioID)
+        button:SetText(L["|cffff5555缺失：|r"] .. audioID)
     else
         button:SetText(GetAudioDisplayName(audioID))
     end
@@ -2703,11 +2704,11 @@ end
 local function SetMainAudioButtonText(button, entry)
     local choices = GetMainAudioChoices(entry)
     if #choices == 0 then
-        button:SetText("选择主音频…")
+        button:SetText(L["选择主音频…"])
     elseif #choices == 1 then
         SetAudioButtonText(button, choices[1])
     else
-        button:SetText("随机播放 " .. tostring(#choices) .. " 条语音")
+        button:SetText(L["随机播放 "] .. tostring(#choices) .. L[" 条语音"])
     end
 end
 
@@ -2741,32 +2742,32 @@ local function ShowAudioButtonTooltip(button, sectionKey, index, slotKey)
         GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 
         if #choices == 0 then
-            GameTooltip:SetText("尚未选择主音频", 1, 1, 1)
-            GameTooltip:AddLine("点击打开选择器；主音频支持多选和随机播放。", 0.8, 0.8, 0.8)
+            GameTooltip:SetText(L["尚未选择主音频"], 1, 1, 1)
+            GameTooltip:AddLine(L["点击打开选择器；主音频支持多选和随机播放。"], 0.8, 0.8, 0.8)
         elseif #choices == 1 then
             local item = audioItemsByID[choices[1]]
             if item then
                 local source = audioSourcesByKey[item.sourceKey]
                 GameTooltip:SetText(item.fileName, 1, 1, 1)
-                GameTooltip:AddLine("角色：" .. (item.shared and "P5 雨宫莲 / P3 结城理通用" or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
-                GameTooltip:AddLine("当前主音频共 1 条；点击可继续添加随机语音。", 0.8, 0.8, 0.8)
+                GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
+                GameTooltip:AddLine(L["当前主音频共 1 条；点击可继续添加随机语音。"], 0.8, 0.8, 0.8)
             else
-                GameTooltip:SetText("找不到主音频：" .. choices[1], 1, 0.35, 0.35)
-                GameTooltip:AddLine("点击打开选择器，可移除此项或添加其他语音。", 0.8, 0.8, 0.8)
+                GameTooltip:SetText(L["找不到主音频："] .. choices[1], 1, 0.35, 0.35)
+                GameTooltip:AddLine(L["点击打开选择器，可移除此项或添加其他语音。"], 0.8, 0.8, 0.8)
             end
         else
-            GameTooltip:SetText("已选择 " .. tostring(#choices) .. " 个主音频", 1, 1, 1)
-            GameTooltip:AddLine("每次触发会从以下语音中随机播放一条：", 0.8, 0.8, 0.8)
+            GameTooltip:SetText(L["已选择 "] .. tostring(#choices) .. L[" 个主音频"], 1, 1, 1)
+            GameTooltip:AddLine(L["每次触发会从以下语音中随机播放一条："], 0.8, 0.8, 0.8)
             local shownChoiceCount = math.min(#choices, 6)
             for choiceIndex = 1, shownChoiceCount do
                 local audioID = choices[choiceIndex]
-                local prefix = audioItemsByID[audioID] and "- " or "- 缺失："
+                local prefix = audioItemsByID[audioID] and "- " or L["- 缺失："]
                 GameTooltip:AddLine(prefix .. GetAudioDisplayName(audioID), 0.72, 0.82, 1.0)
             end
             if #choices > shownChoiceCount then
-                GameTooltip:AddLine("另有 " .. tostring(#choices - shownChoiceCount) .. " 条……", 0.6, 0.62, 0.68)
+                GameTooltip:AddLine(L["另有 "] .. tostring(#choices - shownChoiceCount) .. L[" 条……"], 0.6, 0.62, 0.68)
             end
-            GameTooltip:AddLine("点击继续添加或取消选择。", 0.8, 0.8, 0.8)
+            GameTooltip:AddLine(L["点击继续添加或取消选择。"], 0.8, 0.8, 0.8)
         end
         GameTooltip:Show()
         return
@@ -2778,14 +2779,14 @@ local function ShowAudioButtonTooltip(button, sectionKey, index, slotKey)
     if item then
         local source = audioSourcesByKey[item.sourceKey]
         GameTooltip:SetText(item.fileName, 1, 1, 1)
-        GameTooltip:AddLine("角色：" .. (item.shared and "P5 雨宫莲 / P3 结城理通用" or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
-        GameTooltip:AddLine("点击重新选择；可在选择器中清除此项。", 0.8, 0.8, 0.8)
+        GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
+        GameTooltip:AddLine(L["点击重新选择；可在选择器中清除此项。"], 0.8, 0.8, 0.8)
     elseif audioID then
-        GameTooltip:SetText("找不到音频：" .. audioID, 1, 0.35, 0.35)
-        GameTooltip:AddLine("点击重新选择；可在选择器中清除此项。", 0.8, 0.8, 0.8)
+        GameTooltip:SetText(L["找不到音频："] .. audioID, 1, 0.35, 0.35)
+        GameTooltip:AddLine(L["点击重新选择；可在选择器中清除此项。"], 0.8, 0.8, 0.8)
     else
-        GameTooltip:SetText("尚未选择音频", 1, 1, 1)
-        GameTooltip:AddLine("点击打开音频选择器。", 0.8, 0.8, 0.8)
+        GameTooltip:SetText(L["尚未选择音频"], 1, 1, 1)
+        GameTooltip:AddLine(L["点击打开音频选择器。"], 0.8, 0.8, 0.8)
     end
     GameTooltip:Show()
 end
@@ -2857,11 +2858,11 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
         for _, spellID in ipairs(spellIDs) do table.insert(spellIDTexts, tostring(spellID)) end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if #spellIDs > 0 then
-            GameTooltip:SetText(entry.input ~= "" and entry.input or "已解析技能", 1, 1, 1)
+            GameTooltip:SetText(entry.input ~= "" and entry.input or L["已解析技能"], 1, 1, 1)
             GameTooltip:AddLine("Spell ID: " .. table.concat(spellIDTexts, ", "), 0.5, 1, 0.5, true)
         else
-            GameTooltip:SetText("技能尚未解析", 1, 0.8, 0.2)
-            GameTooltip:AddLine("可用逗号分隔多个技能；按回车或点击其他位置保存。", 0.8, 0.8, 0.8)
+            GameTooltip:SetText(L["技能尚未解析"], 1, 0.8, 0.2)
+            GameTooltip:AddLine(L["可用逗号分隔多个技能；按回车或点击其他位置保存。"], 0.8, 0.8, 0.8)
         end
         GameTooltip:Show()
     end)
@@ -2899,22 +2900,22 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
     local previewButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     previewButton:SetSize(74, 25)
     previewButton:SetPoint("LEFT", 826, 0)
-    previewButton:SetText("试听")
+    previewButton:SetText(L["试听"])
     previewButton:SetScript("OnClick", function()
         EnsureDatabase()
         local entry = P5S_Voice_DB.inputs[sectionKey][index]
         local played, mainAudioID = PlayConfiguredEntry(sectionKey, index, true)
         if played then
             local randomNote = mainAudioID and #GetMainAudioChoices(entry) > 1
-                and "；本次随机：" .. GetAudioDisplayName(mainAudioID)
+                and L["；本次随机："] .. GetAudioDisplayName(mainAudioID)
                 or ""
             SetStatus(
-                "正在试听第 " .. string.format("%02d", index) .. " 行的音频组合"
-                .. randomNote .. "（" .. channelLabels[P5S_Voice_DB.channel] .. "）。",
+                L["正在试听第 "] .. string.format("%02d", index) .. L[" 行的音频组合"]
+                .. randomNote .. L["（"] .. channelLabels[P5S_Voice_DB.channel] .. L["）。"],
                 false
             )
         else
-            SetStatus("当前行没有可播放的有效音频。", true)
+            SetStatus(L["当前行没有可播放的有效音频。"], true)
         end
     end)
     ApplyVoicePanelTheme("StyleButton", previewButton)
@@ -2922,7 +2923,7 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
     local clearButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     clearButton:SetSize(68, 25)
     clearButton:SetPoint("LEFT", 912, 0)
-    clearButton:SetText("清空")
+    clearButton:SetText(L["清空"])
     clearButton:SetScript("OnClick", function()
         EnsureDatabase()
         local entry = P5S_Voice_DB.inputs[sectionKey][index]
@@ -2932,7 +2933,7 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
         entry.audio2 = nil
         RebuildVoiceTriggerMap()
         RefreshVoiceRow(sectionKey, index, true)
-        SetStatus("已清空当前整行配置。", false)
+        SetStatus(L["已清空当前整行配置。"], false)
     end)
     ApplyVoicePanelTheme("StyleButton", clearButton)
 
@@ -3021,13 +3022,13 @@ SelectVoiceSection = function(sectionKey)
     characterEventsFrame:SetShown(eventsSelected)
     tableHeader:SetShown(not victorySelected and not eventsSelected)
     rowScroll:SetShown(not victorySelected and not eventsSelected)
-    configSection.Title:SetText(eventsSelected and "角色事件语音配置" or (victorySelected and "胜利语音配置" or "语音配置 · 每类 20 项"))
-    description:SetText(eventsSelected and "分别设置死亡、复活、升级和切换专精语音；开启对应选项并选择主音频即可，无需绑定技能。" or (victorySelected
-        and "选择想听的胜利主音频，可多选；试听会随机播放其中一条，清空只移除语音选择。"
-        or "每行可用逗号分隔多个技能名称 / Spell ID；按回车或点击其他位置会自动保存。"))
-    cooldownDescription:SetText(eventsSelected and "只在对应事件发生时播放；登录、重载不会补播，释放灵魂不算复活。" or (victorySelected
-        and "自动播放遵循敌人筛选、胜利确认和保护规则；手动试听不受总开关与保护间隔限制。"
-        or "技能冷却完毕语音监测普通与充能技能；充能每恢复一层播放一次，并忽略公共冷却。"))
+    configSection.Title:SetText(eventsSelected and L["角色事件语音配置"] or (victorySelected and L["胜利语音配置"] or L["语音配置 · 每类 20 项"]))
+    description:SetText(eventsSelected and L["分别设置死亡、复活、升级和切换专精语音；开启对应选项并选择主音频即可，无需绑定技能。"] or (victorySelected
+        and L["选择想听的胜利主音频，可多选；试听会随机播放其中一条，清空只移除语音选择。"]
+        or L["每行可用逗号分隔多个技能名称 / Spell ID；按回车或点击其他位置会自动保存。"]))
+    cooldownDescription:SetText(eventsSelected and L["只在对应事件发生时播放；登录、重载不会补播，释放灵魂不算复活。"] or (victorySelected
+        and L["自动播放遵循敌人筛选、胜利确认和保护规则；手动试听不受总开关与保护间隔限制。"]
+        or L["技能冷却完毕语音监测普通与充能技能；充能每恢复一层播放一次，并忽略公共冷却。"]))
 
     for _, definition in ipairs(sectionDefinitions) do
         local selected = definition.key == sectionKey
@@ -3114,7 +3115,7 @@ do
         if db.profiles == nil then
             db.profiles = {
                 version = 1, nextID = 2, activeID = 1, order = { 1 },
-                items = { [1] = { name = "初始方案", data = Snapshot(false) } },
+                items = { [1] = { name = L["初始方案"], data = Snapshot(false) } },
             }
         end
         local library = db.profiles
@@ -3142,7 +3143,7 @@ do
     end
 
     local function DisplayName(name)
-        return (name or "未命名配置"):gsub("|", "||")
+        return (name or L["未命名配置"]):gsub("|", "||")
     end
 
     local function Plain(value, expected)
@@ -3151,14 +3152,14 @@ do
         return ok and not secret and type(value) == expected
     end
 
-    local profileSection = CreateVoiceSettingsSection(VoicePanel, 24, -154, 1062, 88, "语音方案 · 当前角色")
+    local profileSection = CreateVoiceSettingsSection(VoicePanel, 24, -154, 1062, 88, L["语音方案 · 当前角色"])
     local specText = profileSection:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     specText:SetPoint("TOPRIGHT", profileSection, "TOPRIGHT", -18, -12)
     specText:SetWidth(560)
     specText:SetJustifyH("RIGHT")
     ApplyVoicePanelTheme("StyleBodyText", specText)
     local function RefreshSpecialization()
-        local label = "当前专精：暂不可用"
+        local label = L["当前专精：暂不可用"]
         local getSpec = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization or GetSpecialization
         local getInfo = C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
         if type(getSpec) == "function" and type(getInfo) == "function" then
@@ -3169,12 +3170,12 @@ do
                     local classOK, className = false, nil
                     if type(UnitClass) == "function" then classOK, className = pcall(UnitClass, "player") end
                     local classLabel = classOK and Plain(className, "string") and (className .. " · ") or ""
-                    local roles = { TANK = "坦克", HEALER = "治疗", DAMAGER = "输出" }
+                    local roles = { TANK = L["坦克"], HEALER = L["治疗"], DAMAGER = L["输出"] }
                     local roleLabel = Plain(role, "string") and roles[role] or nil
-                    label = "当前专精：" .. classLabel .. name .. (roleLabel and ("（" .. roleLabel .. "）") or "")
+                    label = L["当前专精："] .. classLabel .. name .. (roleLabel and (L["（"] .. roleLabel .. L["）"]) or "")
                 end
             elseif ok and (Plain(index, "nil") or (Plain(index, "number") and index == 0)) then
-                label = "当前专精：尚未选择"
+                label = L["当前专精：尚未选择"]
             end
         end
         specText:SetText(label)
@@ -3197,9 +3198,9 @@ do
         ApplyVoicePanelTheme("StyleButton", button)
         return button
     end
-    local saveButton = Button(profileSection, "P5VoiceProfileSave", "保存", 410, -34)
-    local newButton = Button(profileSection, "P5VoiceProfileSaveAs", "另存为", 516, -34)
-    local manageButton = Button(profileSection, "P5VoiceProfileManage", "管理…", 622, -34)
+    local saveButton = Button(profileSection, "P5VoiceProfileSave", L["保存"], 410, -34)
+    local newButton = Button(profileSection, "P5VoiceProfileSaveAs", L["另存为"], 516, -34)
+    local manageButton = Button(profileSection, "P5VoiceProfileManage", L["管理…"], 622, -34)
 
     -- 模态遮罩阻止确认期间继续改动底层配置；关闭面板会取消操作。
     local overlay = CreateFrame("Frame", "P5VoiceProfileOverlay", VoicePanel)
@@ -3237,9 +3238,9 @@ do
     errorText:SetJustifyH("LEFT")
     errorText:SetTextColor(1, 0.75, 0.2)
     local buttons = {
-        Button(dialog, "P5VoiceProfileConfirm", "确定", 22, -208, 166),
+        Button(dialog, "P5VoiceProfileConfirm", L["确定"], 22, -208, 166),
         Button(dialog, "P5VoiceProfileAlternate", "", 197, -208, 166),
-        Button(dialog, "P5VoiceProfileCancel", "取消", 372, -208, 166),
+        Button(dialog, "P5VoiceProfileCancel", L["取消"], 372, -208, 166),
     }
     local action, targetID, afterSaveID, manageID
     local OpenDialog, ApplyProfile, RequestSwitch
@@ -3254,14 +3255,14 @@ do
     RefreshVoiceProfiles = function()
         local library = Library()
         if not library then
-            profileState:SetText("方案数据暂不可用；当前语音设置仍可使用。")
+            profileState:SetText(L["方案数据暂不可用；当前语音设置仍可使用。"])
             return
         end
         local profile = library.items[library.activeID]
         UIDropDownMenu_SetText(dropdown, DisplayName(profile and profile.name))
         local dirty = Dirty()
-        profileState:SetText(dirty and "有未保存到方案的修改 · 当前调整自动保留，点击“保存”更新命名方案。"
-            or "与已保存方案一致 · 可另存多套配置；专精变化后请手动选择方案。")
+        profileState:SetText(dirty and L["有未保存到方案的修改 · 当前调整自动保留，点击“保存”更新命名方案。"]
+            or L["与已保存方案一致 · 可另存多套配置；专精变化后请手动选择方案。"])
         profileState:SetTextColor(dirty and 1 or 0.6, dirty and 0.75 or 0.62, dirty and 0.2 or 0.68)
     end
 
@@ -3269,7 +3270,7 @@ do
         if type(InCombatLockdown) ~= "function" then return false end
         local ok, combat = pcall(InCombatLockdown)
         if not ok or not Plain(combat, "boolean") or combat ~= false then
-            SetStatus("战斗中不能切换语音方案，请脱战后重新选择。", true)
+            SetStatus(L["战斗中不能切换语音方案，请脱战后重新选择。"], true)
             return false
         end
         return true
@@ -3281,7 +3282,7 @@ do
         local profile = library and library.items[library.activeID]
         if not profile then return false end
         profile.data = Snapshot(false)
-        SetStatus("已保存语音方案：" .. DisplayName(profile.name), false)
+        SetStatus(L["已保存语音方案："] .. DisplayName(profile.name), false)
         return true
     end
 
@@ -3291,7 +3292,7 @@ do
         local profile = library and library.items[id]
         if not profile or type(profile.data) ~= "table" or type(profile.data.inputs) ~= "table"
             or type(profile.data.victorySettings) ~= "table" then
-            SetStatus("这个方案的数据不可用，当前配置未改变。", true)
+            SetStatus(L["这个方案的数据不可用，当前配置未改变。"], true)
             return
         end
         SaveActiveVoiceInput()
@@ -3329,9 +3330,9 @@ do
         end
         local missingCount = 0
         for _ in pairs(missing) do missingCount = missingCount + 1 end
-        local note = missingCount > 0 and ("；有 " .. missingCount .. " 条音频目录项缺失，保留选择并跳过播放。")
-            or "；之后的施法、战斗及角色事件使用新设置。"
-        SetStatus("已切换语音方案：" .. DisplayName(profile.name) .. note, missingCount > 0)
+        local note = missingCount > 0 and (L["；有 "] .. missingCount .. L[" 条音频目录项缺失，保留选择并跳过播放。"])
+            or L["；之后的施法、战斗及角色事件使用新设置。"]
+        SetStatus(L["已切换语音方案："] .. DisplayName(profile.name) .. note, missingCount > 0)
     end
 
     OpenDialog = function(mode, id, nextID)
@@ -3343,32 +3344,32 @@ do
         nameBox:Hide()
         manager:Hide()
         buttons[2]:Hide()
-        buttons[1]:SetText("确定")
-        buttons[3]:SetText("取消")
+        buttons[1]:SetText(L["确定"])
+        buttons[3]:SetText(L["取消"])
         local library = Library()
         local profile = library and library.items[id]
         if mode == "name" or mode == "rename" then
-            prompt:SetText(mode == "name" and "另存为语音方案\n输入名称（最多 40 个字符，不能与已有方案重名）。"
-                or "重命名语音方案\n只修改名称，保存内容保持不变。")
+            prompt:SetText(mode == "name" and L["另存为语音方案\n输入名称（最多 40 个字符，不能与已有方案重名）。"]
+                or L["重命名语音方案\n只修改名称，保存内容保持不变。"])
             nameBox:SetText(mode == "rename" and profile and profile.name or "")
             nameBox:Show()
         elseif mode == "switch" then
-            prompt:SetText("当前调整尚未保存到方案。\n切换到“" .. DisplayName(profile and profile.name) .. "”之前，要保存吗？")
-            buttons[1]:SetText("保存并切换")
-            buttons[2]:SetText("不保存，直接切换")
+            prompt:SetText(L["当前调整尚未保存到方案。\n切换到“"] .. DisplayName(profile and profile.name) .. L["”之前，要保存吗？"])
+            buttons[1]:SetText(L["保存并切换"])
+            buttons[2]:SetText(L["不保存，直接切换"])
             buttons[2]:Show()
         elseif mode == "delete" then
-            prompt:SetText("确认删除语音方案“" .. DisplayName(profile and profile.name) .. "”？\n此操作无法撤销；当前正在使用的语音配置会保留。")
-            buttons[1]:SetText("删除方案")
+            prompt:SetText(L["确认删除语音方案“"] .. DisplayName(profile and profile.name) .. L["”？\n此操作无法撤销；当前正在使用的语音配置会保留。"])
+            buttons[1]:SetText(L["删除方案"])
         elseif mode == "manage" then
-            prompt:SetText("管理语音方案\n选择需要重命名或删除的方案，不会切换当前配置。")
+            prompt:SetText(L["管理语音方案\n选择需要重命名或删除的方案，不会切换当前配置。"])
             manageID = library.activeID or library.order[1]
             UIDropDownMenu_SetText(manager, DisplayName(manageID and library.items[manageID] and library.items[manageID].name))
             manager:Show()
-            buttons[1]:SetText("重命名")
-            buttons[2]:SetText("删除…")
+            buttons[1]:SetText(L["重命名"])
+            buttons[2]:SetText(L["删除…"])
             buttons[2]:Show()
-            buttons[3]:SetText("关闭")
+            buttons[3]:SetText(L["关闭"])
         end
         overlay:Show()
         if nameBox:IsShown() then nameBox:SetFocus(); nameBox:HighlightText() end
@@ -3379,12 +3380,12 @@ do
         if not library then return end
         local name = TrimText(nameBox:GetText())
         if name == "" or name:find("[%c|]") then
-            errorText:SetText("请输入名称，不要包含换行或竖线符号。")
+            errorText:SetText(L["请输入名称，不要包含换行或竖线符号。"])
             return
         end
         for id, profile in pairs(library.items) do
             if profile.name == name and (action ~= "rename" or id ~= targetID) then
-                errorText:SetText("已有同名方案，请换一个名称。")
+                errorText:SetText(L["已有同名方案，请换一个名称。"])
                 return
             end
         end
@@ -3403,7 +3404,7 @@ do
             library.activeID = id
         end
         CloseDialog()
-        SetStatus("已保存语音方案：" .. DisplayName(name), false)
+        SetStatus(L["已保存语音方案："] .. DisplayName(name), false)
         if nextID then ApplyProfile(nextID) end
     end
 
@@ -3425,7 +3426,7 @@ do
             if total > 15 and level == 1 then
                 for first = 1, total, 15 do
                     local info = UIDropDownMenu_CreateInfo()
-                    info.text = "方案 " .. first .. "–" .. math.min(first + 14, total)
+                    info.text = L["方案 "] .. first .. "–" .. math.min(first + 14, total)
                     info.hasArrow, info.notCheckable, info.menuList = true, true, first
                     UIDropDownMenu_AddButton(info, level)
                 end
@@ -3469,7 +3470,7 @@ do
             end
             if library.activeID == targetID then library.activeID = nil end
             CloseDialog()
-            SetStatus("方案已删除，当前语音配置保持不变。", false)
+            SetStatus(L["方案已删除，当前语音配置保持不变。"], false)
         end
     end)
     buttons[2]:SetScript("OnClick", function()
@@ -3500,7 +3501,7 @@ do
         elseif event == "PLAYER_REGEN_DISABLED" then
             if overlay:IsShown() and (action == "switch" or afterSaveID) then
                 CloseDialog()
-                SetStatus("已进入战斗，方案切换已取消，请脱战后重新选择。", true)
+                SetStatus(L["已进入战斗，方案切换已取消，请脱战后重新选择。"], true)
             end
         elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or (Plain(unit, "string") and unit == "player") then
             RefreshSpecialization()

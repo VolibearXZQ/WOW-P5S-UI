@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 -- Lua 只处理用户配置。Aura 匹配、优先级和补位全部留在原生控件内。
 local layout = addon.BuffIndicatorLayout
@@ -8,7 +9,7 @@ addon.BuffRuntime = runtime
 local host
 local positions, priorities = {}, {}
 local attempted, failed, pending, applied = false, false, false, false
-local status = "尚未应用分组。"
+local status = L["尚未应用分组。"]
 
 local function Filters(ids) return { includeSpellIDs = ids } end
 
@@ -97,7 +98,7 @@ local function Initialize()
     failed = not ok
     if failed then
         if host then host:Hide() end
-        status = "Buff 显示初始化失败；本次加载已停用，请 /reload 后重试。"
+        status = L["Buff 显示初始化失败；本次加载已停用，请 /reload 后重试。"]
     end
     return ok
 end
@@ -113,14 +114,14 @@ end
 function runtime.Apply()
     if InCombatLockdown() then
         pending = true
-        status = "已保存；脱战后应用分组，当前继续使用上次有效分组。"
+        status = L["已保存；脱战后应用分组，当前继续使用上次有效分组。"]
         runtime.RefreshVisibility()
         return false
     end
     pending = false
     local config, errorText = addon.BuffOptions.GetConfig()
     if not config then
-        status = errorText .. " 当前保留上次有效分组。"
+        status = errorText .. L[" 当前保留上次有效分组。"]
         return false
     end
     if not Initialize() then return false end
@@ -141,11 +142,11 @@ function runtime.Apply()
     if not ok then
         failed = true
         host:Hide()
-        status = "Buff 分组应用失败；本次加载已停用，请 /reload 后重试。"
+        status = L["Buff 分组应用失败；本次加载已停用，请 /reload 后重试。"]
         return false
     end
     applied = true
-    status = "分组已应用；同类大提升优先。请在主面板选择自身 Buff 监控。"
+    status = L["分组已应用；同类大提升优先。请在主面板选择自身 Buff 监控。"]
     runtime.RefreshVisibility()
     return true
 end

@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = (addon and addon.L) or setmetatable({}, { __index = function(_, key) return key end })
 
 -- 独立设置入口；通过插件私有共享对象通知图片模块。
 local function NotifyRuntime(method, ...)
@@ -63,12 +64,12 @@ end)
 
 panel.title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 panel.title:SetPoint("CENTER", panel.TitleBg, "CENTER", 0, 0)
-panel.title:SetText("Weak眼神特写")
+panel.title:SetText(L["Weak眼神特写"])
 ApplyWeakTheme("StylePanelTitle", panel.title)
 
 local description = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 description:SetPoint("TOPLEFT", panel, "TOPLEFT", 24, -56)
-description:SetText("多个技能用逗号分隔，支持名称、Spell ID 或链接；回车或离开输入框完成绑定，设置自动保存。")
+description:SetText(L["多个技能用逗号分隔，支持名称、Spell ID 或链接；回车或离开输入框完成绑定，设置自动保存。"])
 ApplyWeakTheme("StyleMutedText", description)
 
 local section = CreateFrame("Frame", nil, panel, "BackdropTemplate")
@@ -81,7 +82,7 @@ accent:SetPoint("BOTTOMLEFT")
 accent:SetWidth(4)
 local sectionTitle = section:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 sectionTitle:SetPoint("TOPLEFT", section, "TOPLEFT", 14, -12)
-sectionTitle:SetText("技能与图片设置")
+sectionTitle:SetText(L["技能与图片设置"])
 if not ApplyWeakTheme("StyleSection", section, sectionTitle, accent) then
     section:SetBackdrop({
         bgFile = "Interface\\Buttons\\WHITE8X8",
@@ -133,12 +134,12 @@ local feedback = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 feedback:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 24, 30)
 feedback:SetWidth(660)
 feedback:SetJustifyH("LEFT")
-feedback:SetText("在一组中复制位置，再到另一组粘贴；只复制位置。")
+feedback:SetText(L["在一组中复制位置，再到另一组粘贴；只复制位置。"])
 ApplyWeakTheme("StyleMutedText", feedback)
 
 local rows = {
     { label = "Joker", key = "joker", field = "weakJokerSpellInput", name = "P5S_WeakJokerSpellInput", prefix = "P5S_WeakJoker" },
-    { label = "结城理", key = "makoto", field = "weakMakotoSpellInput", name = "P5S_WeakMakotoSpellInput", prefix = "P5S_WeakMakoto" },
+    { label = L["结城理"], key = "makoto", field = "weakMakotoSpellInput", name = "P5S_WeakMakotoSpellInput", prefix = "P5S_WeakMakoto" },
 }
 for index, row in ipairs(rows) do
     local field = row.field
@@ -172,7 +173,7 @@ for index, row in ipairs(rows) do
     bindingLabel:SetWidth(300)
     bindingLabel:SetWordWrap(false)
     bindingLabel:SetJustifyH("LEFT")
-    bindingLabel:SetText("可绑定多个技能，用逗号分隔")
+    bindingLabel:SetText(L["可绑定多个技能，用逗号分隔"])
     bindingLabels[row.key] = bindingLabel
     ApplyWeakTheme("StyleMutedText", bindingLabel)
 
@@ -194,13 +195,13 @@ for index, row in ipairs(rows) do
         local config = GetPortraitSettings(row.key)
         if not config or not FiniteNumber(value) then return end
         config.size = math.floor(math.max(MIN_SIZE, math.min(MAX_SIZE, value)) + 0.5)
-        sizeText:SetText("图片大小: " .. config.size)
+        sizeText:SetText(L["图片大小: "] .. config.size)
         NotifyRuntime("RefreshLayout", row.key)
     end)
     ApplyWeakTheme("StyleSlider", sizeSlider)
 
     local lockCheck = CreateFrame("CheckButton", row.prefix .. "LockCheck", section, "UICheckButtonTemplate")
-    _G[lockCheck:GetName() .. "Text"]:SetText("锁定位置")
+    _G[lockCheck:GetName() .. "Text"]:SetText(L["锁定位置"])
     lockCheck:SetScript("OnClick", function(self)
         local config = GetPortraitSettings(row.key)
         if config then config.isLocked = self:GetChecked() and true or false end
@@ -212,7 +213,7 @@ for index, row in ipairs(rows) do
     local previewCheck = CreateFrame("CheckButton", row.prefix .. "PreviewCheck", section, "UICheckButtonTemplate")
     previewCheck:SetPoint("TOPLEFT", section, "TOPLEFT", 96, top - 54)
     previewCheck:SetChecked(false)
-    _G[previewCheck:GetName() .. "Text"]:SetText("保持显示")
+    _G[previewCheck:GetName() .. "Text"]:SetText(L["保持显示"])
     previewCheck:SetScript("OnClick", function(self)
         NotifyRuntime("SetPreview", row.key, self:GetChecked() and true or false)
     end)
@@ -222,36 +223,36 @@ for index, row in ipairs(rows) do
     local centerButton = CreateFrame("Button", row.prefix .. "CenterPosition", section, "UIPanelButtonTemplate")
     centerButton:SetSize(120, 28)
     centerButton:SetPoint("TOPLEFT", section, "TOPLEFT", 710, top - 3)
-    centerButton:SetText("重置位置")
+    centerButton:SetText(L["重置位置"])
     centerButton:SetScript("OnClick", function()
         local config = GetPortraitSettings(row.key)
         if not config then return end
         config.xOfs, config.yOfs = 0, 0
         -- 保留当前预览选择；预览开启时同时结束旧拖动，避免坐标被写回。
         NotifyRuntime("SetPreview", row.key, previewCheck:GetChecked() and true or false)
-        feedback:SetText(row.label .. " 已回到屏幕中央；大小、技能与锁定状态保留。")
+        feedback:SetText(row.label .. L[" 已回到屏幕中央；大小、技能与锁定状态保留。"])
     end)
     ApplyWeakTheme("StyleButton", centerButton)
 
     local copyButton = CreateFrame("Button", row.prefix .. "CopyPosition", section, "UIPanelButtonTemplate")
     copyButton:SetSize(96, 28)
     copyButton:SetPoint("TOPLEFT", section, "TOPLEFT", 466, top - 54)
-    copyButton:SetText("复制位置")
+    copyButton:SetText(L["复制位置"])
     copyButton:SetScript("OnClick", function()
         local config = GetPortraitSettings(row.key)
         if not config then return end
         copiedPosition = { xOfs = config.xOfs, yOfs = config.yOfs, label = row.label }
-        feedback:SetText("已复制 " .. row.label .. " 的位置，可粘贴给另一张眼神图。")
+        feedback:SetText(L["已复制 "] .. row.label .. L[" 的位置，可粘贴给另一张眼神图。"])
     end)
     ApplyWeakTheme("StyleButton", copyButton)
 
     local pasteButton = CreateFrame("Button", row.prefix .. "PastePosition", section, "UIPanelButtonTemplate")
     pasteButton:SetSize(96, 28)
     pasteButton:SetPoint("LEFT", copyButton, "RIGHT", 12, 0)
-    pasteButton:SetText("粘贴位置")
+    pasteButton:SetText(L["粘贴位置"])
     pasteButton:SetScript("OnClick", function()
         if not copiedPosition then
-            feedback:SetText("请先在 Joker 或结城理处点击“复制位置”。")
+            feedback:SetText(L["请先在 Joker 或结城理处点击“复制位置”。"])
             return
         end
         local config = GetPortraitSettings(row.key)
@@ -259,7 +260,7 @@ for index, row in ipairs(rows) do
         -- 只复制坐标数值，保留目标的技能、大小与锁定状态。
         config.xOfs, config.yOfs = copiedPosition.xOfs, copiedPosition.yOfs
         NotifyRuntime("RefreshLayout", row.key)
-        feedback:SetText(string.format("已将 %s 的位置粘贴给 %s；大小与锁定状态保留。", copiedPosition.label, row.label))
+        feedback:SetText(string.format(L["已将 %s 的位置粘贴给 %s；大小与锁定状态保留。"], copiedPosition.label, row.label))
     end)
     ApplyWeakTheme("StyleButton", pasteButton)
 
@@ -283,20 +284,20 @@ local helpText = section:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"
 helpText:SetPoint("TOPLEFT", section, "TOPLEFT", 24, -310)
 helpText:SetWidth(800)
 helpText:SetJustifyH("LEFT")
-helpText:SetText("勾选“保持显示”并解锁后拖动；图片移出屏幕时，点击“重置位置”找回。\n位置自动保存；关闭面板会取消“保持显示”，再次打开时默认未勾选。")
+helpText:SetText(L["勾选“保持显示”并解锁后拖动；图片移出屏幕时，点击“重置位置”找回。\n位置自动保存；关闭面板会取消“保持显示”，再次打开时默认未勾选。"])
 ApplyWeakTheme("StyleMutedText", helpText)
 
 local voiceTip = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 voiceTip:SetPoint("TOPLEFT", panel, "TOPLEFT", 24, -448)
 voiceTip:SetWidth(852)
 voiceTip:SetJustifyH("LEFT")
-voiceTip:SetText("推荐搭配“技能语音设置 → 爆发语音”，绑定同一技能，让眼神特写与语音同步，更还原原版游戏效果。")
+voiceTip:SetText(L["推荐搭配“技能语音设置 → 爆发语音”，绑定同一技能，让眼神特写与语音同步，更还原原版游戏效果。"])
 ApplyWeakTheme("StyleMutedText", voiceTip)
 
 local backButton = CreateFrame("Button", "P5WeakBackToMainButton", panel, "UIPanelButtonTemplate")
 backButton:SetSize(156, 28)
 backButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -24, 24)
-backButton:SetText("返回P5S主界面")
+backButton:SetText(L["返回P5S主界面"])
 backButton:SetScript("OnClick", function()
     panel:Hide()
     local mainPanel = _G.P5S_OptionsPanel

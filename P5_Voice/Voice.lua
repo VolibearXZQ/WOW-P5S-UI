@@ -280,12 +280,14 @@ local audioSourcesByKey = {}
 for _, source in ipairs(AUDIO_SOURCES) do
     audioSourcesByKey[source.key] = source
     for _, fileName in ipairs(source.files or {}) do
-        -- 改名音频沿用旧标识；显示名与播放路径始终使用目录中的实际文件名。
+        -- 改名音频沿用旧标识；英文名仅用于显示，分类与播放仍使用实际文件名。
         local savedFileName = source.legacyFileNames and source.legacyFileNames[fileName] or fileName
         local audioID = source.useLegacyFileName and savedFileName or (source.directory .. "\\" .. savedFileName)
+        local englishName = addon and addon.IsEnglish and source.englishNames and source.englishNames[fileName]
         local item = {
             id = audioID,
             fileName = fileName,
+            displayName = type(englishName) == "string" and englishName ~= "" and englishName or fileName,
             sourceKey = source.key,
             -- 共用一个目录项和保存标识，跨角色切换不会重复加入随机池。
             shared = source.key == "makoto" and (string.find(fileName, "胜利_", 1, true) == 1
@@ -950,7 +952,7 @@ local function GetAudioDisplayName(audioID)
 
     local source = audioSourcesByKey[item.sourceKey]
     local sourceLabel = item.shared and L["通用"] or (source and source.shortLabel or item.sourceKey)
-    return sourceLabel .. L["｜"] .. item.fileName
+    return sourceLabel .. L["｜"] .. item.displayName
 end
 
 -- 只记录手动试听的句柄；自动触发语音不随设置窗口关闭而停止。
@@ -2141,7 +2143,7 @@ for rowIndex = 1, #audioItems do
         row.hover:Show()
         local source = audioSourcesByKey[item.sourceKey]
         GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-        GameTooltip:SetText(item.fileName, 1, 1, 1)
+        GameTooltip:SetText(item.displayName, 1, 1, 1)
         GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
         GameTooltip:AddLine(L["分类："] .. categoryLabels[GetAudioCategory(item.fileName)], 0.8, 0.8, 0.8)
         if row.isCurrentSelection then
@@ -2231,7 +2233,7 @@ RefreshAudioPickerResults = function(preserveScroll)
             shownCount = shownCount + 1
             local row = pickerRows[shownCount]
             row.audioID = item.id
-            row.fileText:SetText(item.fileName)
+            row.fileText:SetText(item.displayName)
             if pickerTarget and pickerTarget.slotKey == "audio1" then
                 row.isCurrentSelection = selectedAudioMap[item.id] == true
             else
@@ -2748,7 +2750,7 @@ local function ShowAudioButtonTooltip(button, sectionKey, index, slotKey)
             local item = audioItemsByID[choices[1]]
             if item then
                 local source = audioSourcesByKey[item.sourceKey]
-                GameTooltip:SetText(item.fileName, 1, 1, 1)
+                GameTooltip:SetText(item.displayName, 1, 1, 1)
                 GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
                 GameTooltip:AddLine(L["当前主音频共 1 条；点击可继续添加随机语音。"], 0.8, 0.8, 0.8)
             else
@@ -2778,7 +2780,7 @@ local function ShowAudioButtonTooltip(button, sectionKey, index, slotKey)
     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
     if item then
         local source = audioSourcesByKey[item.sourceKey]
-        GameTooltip:SetText(item.fileName, 1, 1, 1)
+        GameTooltip:SetText(item.displayName, 1, 1, 1)
         GameTooltip:AddLine(L["角色："] .. (item.shared and L["P5 雨宫莲 / P3 结城理通用"] or (source and source.label or item.sourceKey)), 0.8, 0.8, 0.8)
         GameTooltip:AddLine(L["点击重新选择；可在选择器中清除此项。"], 0.8, 0.8, 0.8)
     elseif audioID then

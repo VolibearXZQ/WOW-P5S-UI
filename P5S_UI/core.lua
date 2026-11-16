@@ -1088,7 +1088,8 @@ local function RebuildShowtimeSpellBookNameCache()
                 if type(offset) == "number" and type(count) == "number" and count > 0 then
                     for slot = offset + 1, offset + count do
                         local okItem, itemInfo = pcall(C_SpellBook.GetSpellBookItemInfo, slot, spellBank)
-                        if okItem and type(itemInfo) == "table" then
+                        if okItem and type(itemInfo) == "table"
+                            and (not addon.Compat or addon.Compat.UseSpellBookItem(slot, spellBank)) then
                             local spellID = itemInfo.spellID or itemInfo.actionID or itemInfo.spellIDOfOverriddenSpell
                             AddShowtimeSpellNameToCache(cache, spellID, itemInfo.name)
                         end
@@ -2226,6 +2227,13 @@ do
         WARLOCK = {powerType = Enum.PowerType.SoulShards, powerToken = "SOUL_SHARDS", supportsPartialFill = true},
         EVOKER = {powerType = Enum.PowerType.Essence, powerToken = "ESSENCE"},
     }
+    if addon.Compat and addon.Compat.IsForever then
+        -- Forever has target-bound combo points, not Retail's specialization resources.
+        resource.byClass = {
+            DRUID = {powerType = Enum.PowerType.ComboPoints, powerToken = "COMBO_POINTS", requiresEnergyForm = true, targetBound = true},
+            ROGUE = {powerType = Enum.PowerType.ComboPoints, powerToken = "COMBO_POINTS", targetBound = true},
+        }
+    end
     resource.getPlayerSpecialization = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization or GetSpecialization
     resource.getPlayerSpecializationInfo = C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
     resource.runeEntries = {}
@@ -2656,7 +2664,12 @@ do
         end
 
         local okMax, maxPower = pcall(UnitPowerMax, "player", config.powerType)
-        local okCurrent, currentPower = pcall(UnitPower, "player", config.powerType)
+        local okCurrent, currentPower
+        if config.targetBound then
+            okCurrent, currentPower = addon.Compat.ReadTargetComboPoints()
+        else
+            okCurrent, currentPower = pcall(UnitPower, "player", config.powerType)
+        end
         if not okMax or not okCurrent
             or not self:IsSafeNumber(maxPower)
             or not self:IsSafeNumber(currentPower) then
@@ -2698,6 +2711,9 @@ PlayerEvents:RegisterEvent("PLAYER_TALENT_UPDATE")
 PlayerEvents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 PlayerEvents:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 PlayerEvents:RegisterEvent("PLAYER_TARGET_CHANGED")
+if addon.Compat and addon.Compat.IsForever then
+    pcall(PlayerEvents.RegisterEvent, PlayerEvents, "COMBO_TARGET_CHANGED")
+end
 
 local percentCurve = C_CurveUtil.CreateCurve()
 percentCurve:SetType(Enum.LuaCurveType.Linear)
@@ -2706,7 +2722,7 @@ percentCurve:AddPoint(1, 100)
 
 PlayerEvents:SetScript("OnEvent", function(self, event, arg1, arg2)
     -- RUNE_POWER_UPDATE 的事件参数在 12.1 可为 Secret Payload；不要让它进入后续单位字符串比较。
-    if event == "RUNE_POWER_UPDATE" then
+    if event == "RUNE_POWER_UPDATE" or event == "COMBO_TARGET_CHANGED" then
         P5SFrame.thirdResource:Update()
         return
     end

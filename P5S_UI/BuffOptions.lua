@@ -73,6 +73,8 @@ local knownBuffs = {
     { name = "死亡脚步", buffID = 48265, castID = 48265 },
     { name = "鲜血禁闭", buffID = 273947 }, -- 用户客户端同名自身 Buff 已确认。
 }
+-- Retail's verified Death Knight mappings are not a Forever spell database.
+if addon.Compat and addon.Compat.IsForever then knownBuffs = {} end
 local BUFF_BY_CAST, CAST_BY_BUFF, BUFF_BY_NAME, KNOWN_BUFF_IDS = {}, {}, {}, {}
 for _, record in ipairs(knownBuffs) do
     BUFF_BY_NAME[record.name] = record.buffID
@@ -158,6 +160,7 @@ local function CatalogName(name)
                             local gotInfo, info = pcall(api.GetCooldownViewerCooldownInfo, cooldownID)
                             if gotInfo and Public(info) and type(info) == "table" then
                                 AddSpell(info.spellID)
+                                if addon.Compat and addon.Compat.IsForever then AddSpell(info.displaySpellID) end
                                 AddSpell(info.overrideSpellID)
                                 AddSpell(info.overrideTooltipSpellID)
                                 local linked = info.linkedSpellIDs

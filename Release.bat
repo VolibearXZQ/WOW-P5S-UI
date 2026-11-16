@@ -123,7 +123,7 @@ function Test-ZipHeaders([string]$Path, $Expected) {
 
 try {
     Write-Host 'P5S 一键发布打包' -ForegroundColor Cyan
-    Write-Host '版本号仅用于 ZIP 文件名；插件内的 TOC 版本保持原样。'
+    Write-Host '选择客户端后生成对应测试/发布包；只更新包内 TOC，源码保持原样。'
     if (-not (Test-Path -LiteralPath $sevenZip -PathType Leaf)) { throw "找不到 7-Zip，请安装到 $sevenZip 或修改脚本中的 sevenZip 路径。" }
     Assert-RegularPath $root
     $tocPath = Join-Path $root 'P5S.toc'
@@ -131,11 +131,25 @@ try {
     $toc = [IO.File]::ReadAllText($tocPath, [Text.Encoding]::UTF8)
     $tocVersion = [regex]::Match($toc, '(?m)^## Version:\s*(.+)').Groups[1].Value.Trim()
     Write-Host "当前 P5S.toc 版本：$tocVersion"
+    $target = Read-Host '请选择客户端：1 正式服 / 2 无限服（留空取消）'
+    if ([string]::IsNullOrWhiteSpace($target)) { Write-Host '已取消。'; exit 0 }
+    switch ($target.Trim()) {
+        '1' { $flavor = 'Retail'; $interfaceVersion = '120105' }
+        '2' { $flavor = 'Forever'; $interfaceVersion = '16001' }
+        default { throw '客户端选择无效，请输入 1 或 2。' }
+    }
     $version = Read-Host '请输入发布版本号（例如 1.0.2 或 1.0.2-beta.1；留空取消）'
     if ([string]::IsNullOrWhiteSpace($version)) { Write-Host '已取消。'; exit 0 }
     $version = $version.Trim()
     if ($version.Length -gt 64 -or $version -cnotmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?$') { throw '版本号格式无效，请使用 1.0.2 或 1.0.2-beta.1 格式。' }
-    $final = Join-Path $outputDir "P5S-$version.zip"
+    foreach ($field in @('Interface', 'Version')) {
+        if ([regex]::Matches($toc, "(?m)^## ${field}:[^\r\n]*").Count -ne 1) {
+            throw "根 TOC 必须恰好包含一个 $field 声明。"
+        }
+    }
+    $packageToc = [regex]::Replace($toc, '(?m)^## Interface:[^\r\n]*', "## Interface: $interfaceVersion")
+    $packageToc = [regex]::Replace($packageToc, '(?m)^## Version:[^\r\n]*', "## Version: $version")
+    $final = Join-Path $outputDir "P5S-$version-$flavor.zip"
     if (Test-Path -LiteralPath $final) { throw "同版本文件已存在，不会覆盖：$final" }
     if (Test-Path -LiteralPath $outputDir) { Assert-RegularPath $outputDir }
     [void][IO.Directory]::CreateDirectory($outputDir)
@@ -157,6 +171,9 @@ try {
         [IO.File]::Copy($file.FullName, $destination, $false)
         $expected.Add(('P5S/' + $relative.Replace('\', '/')), (Get-Item -LiteralPath $destination).Length)
     }
+    $stagedToc = Join-Path $stage 'P5S.toc'
+    [IO.File]::WriteAllText($stagedToc, $packageToc, (New-Object Text.UTF8Encoding($false)))
+    $expected['P5S/P5S.toc'] = (Get-Item -LiteralPath $stagedToc).Length
     foreach ($line in ($toc -split '\r?\n')) {
         $entry = $line.Trim()
         if ($entry -and -not $entry.StartsWith('#') -and -not $expected.ContainsKey('P5S/' + $entry.Replace('\', '/'))) {
@@ -186,7 +203,7 @@ try {
     # File.Move refuses an existing destination, including a concurrent release.
     [IO.File]::Move($pending, $final)
     Write-Host "`n打包成功：$final" -ForegroundColor Green
-    Write-Host '可以将此 ZIP 上传到 CurseForge；上传页面请自行选择适用游戏版本。'
+    Write-Host "目标客户端：$flavor；接口号：$interfaceVersion；包内版本：$version。请先完成游戏内测试。"
     $result = 0
 } catch {
     Write-Host "`n打包失败：$($_.Exception.Message)" -ForegroundColor Red

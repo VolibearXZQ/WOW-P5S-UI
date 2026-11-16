@@ -1,11 +1,15 @@
 # P5S — Persona-Inspired UI for World of Warcraft
 
+> 本分支正在测试无限服适配（1.1.0-beta.1），尚未完成游戏内验证。请阅读 [无限服测试说明](FOREVER_TESTING.md)，使用带 `Forever` 后缀的测试包；正式服原版保留在 `main`。
+>
+> This branch contains experimental Forever support (1.1.0-beta.1), pending in-game validation. Use the `Forever` package; the existing Retail version remains on `main`.
+
 **《女神异闻录》风格的《魔兽世界》正式服界面插件。**  
 *A Persona-inspired UI addon for World of Warcraft Retail.*
 
-**版本 / Version:** 1.0.0
+**版本 / Version:** 1.1.0-beta.1（测试版 / Beta）
 **作者 / Creator:** 难刷素材的XZQ (VolibearXZQ)  
-**游戏版本 / Game:** World of Warcraft Retail（当前 `.toc` 接口号 / current `.toc` interface: `120100`）
+**游戏版本 / Game:** Retail `120105`；Forever 测试包 / beta package `16001`
 
 [中文介绍](#中文介绍) · [English](#english)
 

@@ -78,6 +78,7 @@ local function SpellInfo(value)
     if ok and Public(info) and type(info) == "table" then return info end
 end
 local function AddBookEntry(slot, bank)
+    if addon.Compat and not addon.Compat.UseSpellBookItem(slot, bank) then return end
     local ok, info = pcall(C_SpellBook.GetSpellBookItemInfo, slot, bank)
     if not ok or not Public(info) or type(info) ~= "table" then return end
     local id = SpellID(info.spellID)

@@ -178,7 +178,8 @@ local function RebuildP5SpellBookNameCache()
                     for slot = offset + 1, offset + count do
                         for _, bank in ipairs(bankList) do
                             local okItem, itemInfo = pcall(C_SpellBook.GetSpellBookItemInfo, slot, bank)
-                            if okItem and type(itemInfo) == "table" then
+                            if okItem and type(itemInfo) == "table"
+                                and (not addon.Compat or addon.Compat.UseSpellBookItem(slot, bank)) then
                                 local spellID = itemInfo.spellID or itemInfo.actionID or itemInfo.spellIDOfOverriddenSpell
                                 AddP5SpellNameToCache(cache, spellID, itemInfo.name)
                             end

@@ -50,7 +50,7 @@ button:SetScript("OnDragStop", function()
 end)
 button:SetScript("OnEnter", function(self)
     if dragging then return end
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip_SetDefaultAnchor(GameTooltip, self)
     GameTooltip:SetUnit("player")
     GameTooltip:Show()
 end)

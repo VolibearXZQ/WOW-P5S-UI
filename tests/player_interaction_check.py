@@ -47,6 +47,7 @@ local f=P5S_MainFrame
 f:SetSize(400,400); f:SetHitRectInsets(40,180,150,100)
 f:SetScale(1); f:SetFrameStrata('MEDIUM'); f:SetFrameLevel(1)
 f:SetPoint('CENTER',UIParent,'CENTER',10,20)
+GameTooltip_SetDefaultAnchor=function(tooltip,owner) tooltip:SetOwner(owner); tooltip.defaultAnchor=true end
 GameTooltip={SetOwner=function(self,owner) self.owner=owner end,
  SetUnit=function(self,unit) self.unit=unit end, Show=function(self) self.shown=true end,
  Hide=function(self) self.shown=false end, IsOwned=function(self,owner) return self.owner==owner end}
@@ -59,7 +60,7 @@ assert(b.parent==UIParent and b.template=='SecureUnitButtonTemplate')
 assert(b.attrs.unit=='player' and b.attrs['*type1']=='target' and b.clicks[1]=='LeftButtonUp')
 assert(b.insets[1]==40 and b.insets[2]==180 and b.insets[3]==150 and b.insets[4]==100)
 assert(b.point[2]==UIParent and b.shown)
-b.scripts.OnEnter(b); assert(GameTooltip.shown and GameTooltip.unit=='player')
+b.scripts.OnEnter(b); assert(GameTooltip.shown and GameTooltip.unit=='player' and GameTooltip.defaultAnchor)
 b.scripts.OnLeave(b); assert(not GameTooltip.shown)
 P5S_UI_DB.isLocked=true; b.scripts.OnDragStart(b); assert(not f.moving)
 P5S_UI_DB.isLocked=false; b.scripts.OnDragStart(b); assert(f.moving)

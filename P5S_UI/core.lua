@@ -126,6 +126,8 @@ local P5SFrame = CreateFrame("Frame", "P5S_MainFrame", UIParent)
 P5SFrame:SetSize(BASE_SIZE, BASE_SIZE) 
 
 function P5SFrame:ApplyResourceBarVisibility()
+    -- The secure player mouse surface must keep matching the visible artwork.
+    if InCombatLockdown() then return end
     local enabled = not P5S_UI_DB or P5S_UI_DB.resourceBarEnabled ~= false
     -- 只改变整套组件的可见性与鼠标交互，保留原生动画和 Showtime 时间轴。
     -- 不读取子 Aura 控件的显隐或其他受限值，也不改变各子项的独立开关。
@@ -2992,7 +2994,7 @@ local sliderText = _G[slider:GetName() .. 'Text']
 slider:SetScript("OnValueChanged", function(self, value)
     local roundedValue = math.floor(value + 0.5)
     local scale = roundedValue / BASE_SIZE
-    P5SFrame:SetScale(scale)
+    if not InCombatLockdown() then P5SFrame:SetScale(scale) end
     sliderText:SetText(tostring(roundedValue))
     if P5S_UI_DB then P5S_UI_DB.size = roundedValue end
 end)

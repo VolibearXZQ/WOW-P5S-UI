@@ -2885,6 +2885,24 @@ local function CreateVoiceRow(sectionKey, index, y, alternate, sectionColor)
     audio1Button:SetScript("OnEnter", function(self) ShowAudioButtonTooltip(self, sectionKey, index, "audio1") end)
     audio1Button:SetScript("OnLeave", GameTooltip_Hide)
     ApplyVoicePanelTheme("StyleButton", audio1Button)
+    -- A one-unit edge can disappear at fractional panel/UI scales. Keep this
+    -- local to the reported Forever control; retain the theme's hover colors.
+    if addon and addon.Compat and addon.Compat.IsForever and audio1Button.GetBackdrop then
+        local original = audio1Button:GetBackdrop()
+        local backdrop
+        if original then
+            backdrop = {}
+            for key, value in pairs(original) do backdrop[key] = value end
+        end
+        if backdrop then
+            backdrop.edgeSize = 2
+            local r, g, b, a = audio1Button:GetBackdropColor()
+            local br, bg, bb, ba = audio1Button:GetBackdropBorderColor()
+            audio1Button:SetBackdrop(backdrop)
+            audio1Button:SetBackdropColor(r, g, b, a)
+            audio1Button:SetBackdropBorderColor(br, bg, bb, ba)
+        end
+    end
 
     local audio2Button = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     audio2Button:SetSize(260, 25)

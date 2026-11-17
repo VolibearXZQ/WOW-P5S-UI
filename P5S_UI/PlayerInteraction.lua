@@ -7,7 +7,19 @@ local button = CreateFrame("Button", "P5S_PlayerButton", UIParent, "SecureUnitBu
 button:Hide()
 button:SetAttribute("unit", "player")
 button:SetAttribute("*type1", "target")
-button:RegisterForClicks("LeftButtonUp")
+button:SetAttribute("*type2", "menu")
+button:SetAttribute("menu-function", function(self)
+    -- Use the same native SELF menu as Blizzard's player portrait.
+    -- A missing menu API must not disable targeting, dragging or tooltips.
+    if type(UnitPopup_OpenMenu) ~= "function" then return end
+    GameTooltip:Hide()
+    UnitPopup_OpenMenu("SELF", {
+        unit = "player",
+        fromPlayerFrame = true,
+        ownerFrame = self,
+    })
+end)
+button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 button:RegisterForDrag("LeftButton")
 button:SetSize(frame:GetSize())
 button:SetHitRectInsets(frame:GetHitRectInsets())

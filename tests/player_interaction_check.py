@@ -56,6 +56,17 @@ lua.execute(Path('P5S_UI/PlayerInteraction.lua').read_text(encoding='utf-8-sig')
 lua.execute(r'''
 local b,f=P5S_PlayerButton,P5S_MainFrame
 local events=frames[#frames]
+assert(b.attrs['*type2']=='menu' and b.clicks[2]=='RightButtonUp')
+local menuCalls=0
+UnitPopup_OpenMenu=function(which, context)
+ assert(which=='SELF' and context.unit=='player' and context.fromPlayerFrame==true and context.ownerFrame==b)
+ menuCalls=menuCalls+1
+end
+b.attrs['menu-function'](b)
+combat=true; b.attrs['menu-function'](b); combat=false
+assert(menuCalls==2)
+UnitPopup_OpenMenu=nil; b.attrs['menu-function'](b)
+assert(menuCalls==2)
 assert(b.parent==UIParent and b.template=='SecureUnitButtonTemplate')
 assert(b.attrs.unit=='player' and b.attrs['*type1']=='target' and b.clicks[1]=='LeftButtonUp')
 assert(b.insets[1]==40 and b.insets[2]==180 and b.insets[3]==150 and b.insets[4]==100)
